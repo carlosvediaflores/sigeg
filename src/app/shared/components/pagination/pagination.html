@@ -1,0 +1,16 @@
+<div class="join flex justify-center items-center">
+
+  @for (page of getPagesList(); track page) {
+
+    <button
+      class="join-item btn"
+      [class.btn-primary]="page === currentPage()"
+      [routerLink]="[]"
+      [queryParams]="{ page: page }"
+    >
+      {{ page }}
+    </button>
+
+  }
+
+</div>

@@ -1,0 +1,7 @@
+.drawer-side {
+  scrollbar-width: thin;
+}
+
+.drawer-content {
+  overflow-x: hidden;
+}

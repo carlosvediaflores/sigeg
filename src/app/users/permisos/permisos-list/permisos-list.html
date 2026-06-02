@@ -1,0 +1,225 @@
+
+<div class="flex-1  pt-5 px-5">
+
+    <div class="flex items-center gap-5 ">
+        <h1 class="text-1xl font-bold">Listado de permisos</h1>
+        <h3 class="text-lg">
+            Total
+            <span class="text-accent">{{ permisosResource.value()?.total}}</span>
+        </h3>
+    </div>
+    <div class="divider p-0 m-0"></div>
+
+    <div class="flex gap-2 items-center h-20 p-0 m-0">
+        <app-pagination [pages]="permisosResource.value()?.pages ?? 0" [currentPage]="currentPage()" />
+
+        <select class="select select-bordered w-32" (change)="permisosPerPage.set(+selectPerPage.value)" #selectPerPage>
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+
+        <div class="flex flex-1"></div>
+
+        <button class="btn btn-primary" (click)="openNewModal()">
+            Agregar permiso
+        </button>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="table">
+            <!-- head -->
+            <thead>
+                <tr>
+                    <!-- <th>
+                        <label>
+                            <input type="checkbox" class="checkbox" />
+                        </label>
+                    </th> -->
+                    <th>Nombre</th>
+                    <th>Módulo</th>
+                    <th>URN</th>
+                    <th>Método</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- row 1 -->
+                @for (permiso of permisosResource.value()?.permissions; track permiso._id) {
+
+                <tr>
+                    <!-- <th>
+                        <label>
+                            <input type="checkbox" class="checkbox" />
+                        </label>
+                    </th> -->
+                    <td>
+                        <div class="flex items-center gap-3">
+
+                            <div>
+                                <a [routerLink]="['/users/permisos', permiso._id]"
+                                    class="font-bold hover:text-accent transition-colors duration-300">{{ permiso.name
+                                    }} </a>
+
+
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {{ permiso.description }}
+                    </td>
+                    <td>
+                        {{ permiso.urn }}
+                    </td>
+                    <td>
+                        {{ permiso.method }}
+                    </td>
+                    <th>
+                        <a (click)="openEditModal(permiso)" class="btn btn-ghost text-accent btn-xs">
+                            Detalles
+                        </a>
+                    </th>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<dialog id="permiso_modal" class="modal">
+
+    <div class="modal-box max-w-4xl">
+
+        <h3 class="font-bold text-2xl mb-4">
+
+            @if(selectedPermisoId() === 'new') {
+
+            Nuevo Permiso
+
+            } @else {
+
+            Editar Permiso
+
+            }
+
+        </h3>
+
+        <form [formGroup]="permisoForm" (ngSubmit)="onSubmit()">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <div>
+
+                    <input type="text" placeholder="Nombre" class="input input-bordered w-full" formControlName="name"
+                        [class.input-error]="getFieldError('name')" />
+                    <form-error-label [errorMessage]="getFieldError('name')" />
+
+                </div>
+
+                <div>
+
+                   <select class="select select-bordered w-full" placeholder="Selecciona un módulo"
+                        formControlName="description" [class.input-error]="getFieldError('description')">
+                        <option value="" disabled selected>Selecciona un módulo</option>
+                        <option value="Usuarios">Usuarios</option>
+                        <option value="Permisos">Permisos</option>
+                        <option value="Roles">Roles</option>
+                        <option value="Hoja_Ruta">Hoja de Ruta</option>
+                        <option value="Cargo">Cargo</option>
+
+                    </select>
+                    <form-error-label [errorMessage]="getFieldError('description')" />
+
+                </div>
+
+
+                <div>
+                    <select class="select select-bordered w-full" placeholder="Selecciona un método"
+                        formControlName="method" [class.input-error]="getFieldError('method')">
+                        <option value="" disabled selected>Selecciona un método</option>
+                        <option value="POST">POST</option>
+                        <option value="GET">GET</option>
+                        <option value="PATCH">PATCH</option>
+                        <option value="DELETE">DELETE</option>
+                        <option value="PUT">PUT</option>
+
+                    </select>
+                    <form-error-label [errorMessage]="getFieldError('method')" />
+
+                   <!--  <input type="text" placeholder="Método" class="input input-bordered w-full" formControlName="method"
+                        [disabled]="isPosting()" [class.input-error]="getFieldError('method')" />
+                    <form-error-label [errorMessage]="getFieldError('method')" /> -->
+
+                </div>
+
+                <div>
+
+                    <input type="text" placeholder="URN" class="input input-bordered w-full" formControlName="urn"
+                        [class.input-error]="getFieldError('urn')" />
+                    <form-error-label [errorMessage]="getFieldError('urn')" />
+
+                </div>
+
+            </div>
+
+            <div class="modal-action">
+
+                <button type="button" class="btn btn-secondary" onclick="permiso_modal.close()">
+
+                    Cancelar
+
+                </button>
+
+                <button type="submit" class="btn btn-success" [disabled]="isPosting()">
+
+                    @if(isPosting()) {
+
+                    <span class="loading loading-spinner loading-sm">
+                    </span>
+
+                    Guardando...
+
+                    } @else {
+
+                    Guardar
+
+                    }
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <form method="dialog" class="modal-backdrop">
+
+        <button>
+            cerrar
+        </button>
+
+    </form>
+
+
+</dialog>
+<!-- @if (wasSaved()) {
+<div class="toast toast-end toast-bottom">
+  <div class="alert alert-success">
+    <span>
+      {{ selectedPermisoId() === 'new'
+          ? 'Permiso creado correctamente'
+          : 'Permiso actualizado correctamente' }}
+    </span>
+  </div>
+</div>
+} -->
+
+@if (wasSaved()) {
+<div class="toast toast-end toast-top z-50">
+    <div class="alert alert-success">
+        <span>{{ successMessage() }}</span>
+    </div>
+</div>
+}

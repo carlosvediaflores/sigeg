@@ -1,0 +1,164 @@
+<div class="flex-1  pt-5 px-5">
+
+    <div class="flex items-center gap-5 ">
+        <h1 class="text-1xl font-bold">Listado de roles</h1>
+        <h3 class="text-lg">
+            Total
+            <span class="text-accent">
+                {{ rolesResource.value()?.length ?? 0 }}
+            </span>
+        </h3>
+
+         <button class="btn btn-primary" (click)="openNewModal()">
+            Agregar rol
+        </button>
+    </div>
+    <div class="divider p-0 m-0"></div>
+
+    <div class="overflow-x-auto">
+        <table class="table">
+            <!-- head -->
+            <thead>
+                <tr>
+
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- row 1 -->
+                @for (rol of rolesResource.value(); track rol._id) {
+
+                <tr>
+                    <td>
+                        <div class="flex items-center gap-3">
+
+                            <div>
+                                <a [routerLink]="['/users/roles', rol._id]"
+                                    class="font-bold hover:text-accent transition-colors duration-300">{{ rol.name
+                                    }} </a>
+
+
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {{ rol.description }}
+                    </td>
+
+                    <th>
+                        <a (click)="openEditModal(rol)" class="btn btn-ghost text-accent btn-xs">
+                            Detalles
+                        </a>
+                         <a (click)="openEditModal(rol)" class="btn btn-ghost text-secondary btn-xs">
+                            Editar
+                        </a>
+                    </th>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<dialog id="role_modal" class="modal">
+
+    <div class="modal-box max-w-4xl">
+
+        <h3 class="font-bold text-2xl mb-4">
+
+            @if(selectedRoleId() === 'new') {
+
+            Nuevo Rol
+
+            } @else {
+
+            Editar Rol
+
+            }
+
+        </h3>
+
+        <form [formGroup]="roleForm" (ngSubmit)="onSubmit()">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <div>
+
+                    <input type="text" placeholder="Nombre" class="input input-bordered w-full" formControlName="name"
+                        [class.input-error]="getFieldError('name')" />
+                    <form-error-label [errorMessage]="getFieldError('name')" />
+
+                </div>
+
+                <div>
+
+                    <input type="text" placeholder="Descripción" class="input input-bordered w-full"
+                        formControlName="description" [class.input-error]="getFieldError('description')" />
+                    <form-error-label [errorMessage]="getFieldError('description')" />
+
+                </div>
+
+            </div>
+
+            <div class="modal-action">
+
+                <button type="button" class="btn btn-secondary" onclick="role_modal.close()">
+
+                    Cancelar
+
+                </button>
+
+                <button type="submit" class="btn btn-success" [disabled]="isPosting()">
+
+                    @if(isPosting()) {
+
+                    <span class="loading loading-spinner loading-sm">
+                    </span>
+
+                    Guardando...
+
+                    } @else {
+
+                    Guardar
+
+                    }
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <form method="dialog" class="modal-backdrop">
+
+        <button>
+            cerrar
+        </button>
+
+    </form>
+
+
+</dialog>
+<!-- @if (wasSaved()) {
+<div class="toast toast-end toast-bottom">
+  <div class="alert alert-success">
+    <span>
+      {{ selectedPermisoId() === 'new'
+          ? 'Permiso creado correctamente'
+          : 'Permiso actualizado correctamente' }}
+    </span>
+  </div>
+</div>
+} -->
+
+@if (wasSaved()) {
+<div class="toast toast-end toast-top z-50">
+    <div class="alert alert-success">
+        <span>{{ successMessage() }}</span>
+    </div>
+</div>
+}

@@ -1,0 +1,100 @@
+<div class="container mx-auto p-4">
+    @if (permisoResource.isLoading()) {
+    <div class="flex justify-center items-center h-screen">
+        <span class="loading loading-spinner loading-lg"></span>
+    </div>
+    }
+    <!--  -->
+
+    <h1 class="text-3xl font-bold">
+
+        @if(isNewPermiso()) {
+        Nuevo Permiso
+        } @else {
+        Editar Permiso
+        }
+
+    </h1>
+    <div class="divider"></div>
+
+    <form [formGroup]="permisoForm" autocomplete="off" class="grid grid-cols-1  gap-4" (ngSubmit)="onSubmit()">
+        <!-- Datos generales -->
+
+        <div class="card bg-base-100 shadow-md">
+            <div class="card-body gap-6">
+                <div class="flex flex-col gap-2">
+                    <h2 class="text-2xl font-bold h-12">Datos generales</h2>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div>
+                            <input type="text" placeholder="Nombre" class="input input-bordered w-full"
+                                formControlName="name" [disabled]="isPosting()"
+                                [class.input-error]="getFieldError('name')" />
+                            <form-error-label [errorMessage]="getFieldError('name')" />
+                        </div>
+
+                        <div>
+                            <input type="text" placeholder="Descripción" class="input input-bordered w-full"
+                                formControlName="description" [class.input-error]="getFieldError('description')" />
+                            <form-error-label [errorMessage]="getFieldError('description')" />
+                        </div>
+                    </div>
+
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div>
+                            <input type="text" placeholder="Método" class="input input-bordered w-full"
+                                formControlName="method" [class.input-error]="getFieldError('method')" />
+                            <form-error-label [errorMessage]="getFieldError('method')" />
+                        </div>
+
+                        <div>
+                            <input type="text" placeholder="URN" class="input input-bordered w-full"
+                                formControlName="urn" [class.input-error]="getFieldError('urn')" />
+                            <form-error-label [errorMessage]="getFieldError('urn')" />
+                        </div>
+                    </div>
+
+                    <!-- <select class="select select-bordered w-full">
+      <option value="male">Masculino</option>
+      <option value="female">Femenino</option>
+      <option value="unisex">Unisex</option>
+    </select> -->
+
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <div class="flex justify-between h-12">
+                        <button type="button" class="btn btn-secondary" [routerLink]="['/users/permisos-list']">
+                            Cancelar
+                        </button>
+                        <button class="btn btn-success" type="submit" [disabled]="isPosting()">
+
+                            @if(isPosting()) {
+
+                            <span class="loading loading-spinner loading-sm"></span>
+
+                            Guardando...
+
+                            } @else {
+
+                            Guardar
+
+                            }
+
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <pre>{{ permisoForm.value | json }}</pre>
+
+    @if (wasSaved()) {
+    <div class="alert alert-success fixed bottom-4 right-4 w-80 animate-fadeIn">
+        <span>Datos actualizados correctamente</span>
+    </div>
+    }
+</div>

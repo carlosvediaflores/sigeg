@@ -1,0 +1,148 @@
+<h1 class="text-2xl font-bold">
+
+    @if(user()._id === 'new') {
+
+    Nuevo Usuario
+
+    } @else {
+
+    {{ user().nombre }}
+    {{ user().apellidos }}
+
+    }
+
+</h1>
+<div class="divider"></div>
+
+<form [formGroup]="userForm" autocomplete="off" class="grid grid-cols-1 sm:grid-cols-2 gap-4" (ngSubmit)="onSubmit()">
+    <!-- Datos generales -->
+    <div class="flex flex-col gap-2">
+        <h2 class="text-2xl font-bold h-12">Datos generales</h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div>
+                <input type="text" placeholder="Nombre" class="input input-bordered w-full" formControlName="nombre"
+                    [class.border-red-500]="userForm.get('nombre')?.errors ?? false" />
+                <form-error-label [errorMessage]="getFieldError('nombre')" />
+            </div>
+
+            <div>
+                <input type="text" placeholder="Apellidos" class="input input-bordered w-full"
+                    formControlName="apellidos" [class.border-red-500]="userForm.get('apellidos')?.errors ?? false" />
+                <form-error-label [errorMessage]="getFieldError('apellidos')" />
+            </div>
+        </div>
+
+        <input type="text" placeholder="Email" class="input input-bordered w-full" formControlName="email"
+            [class.border-red-500]="userForm.get('email')?.errors ?? false" />
+        <form-error-label [errorMessage]="getFieldError('email')" />
+
+        <input type="password" class="input input-bordered w-full" formControlName="password" [placeholder]="
+  isNewUser()
+    ? 'Contraseña *'
+    : 'Nueva contraseña (opcional)'
+" [class.input-error]="getFieldError('password')" />
+        <form-error-label [errorMessage]="getFieldError('password')" />
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div>
+                <input type="text" placeholder="CI" class="input input-bordered w-full" formControlName="ci"
+                    [class.border-red-500]="userForm.get('ci')?.errors ?? false" />
+                <form-error-label [errorMessage]="getFieldError('ci')" />
+            </div>
+
+            <div>
+                <input type="text" placeholder="Teléfono" class="input input-bordered w-full" formControlName="telefono"
+                    [class.border-red-500]="userForm.get('telefono')?.errors ?? false" />
+                <form-error-label [errorMessage]="getFieldError('telefono')" />
+            </div>
+        </div>
+
+        <input type="text" placeholder="Dirección" class="input input-bordered w-full" formControlName="direccion"
+            [class.border-red-500]="userForm.get('direccion')?.errors ?? false" />
+        <form-error-label [errorMessage]="getFieldError('direccion')" />
+
+        <input type="date" placeholder="Fecha de nacimiento" class="input input-bordered w-full"
+            formControlName="fechaNac" [class.border-red-500]="userForm.get('fechaNac')?.errors ?? false" />
+
+
+        <form-error-label [errorMessage]="getFieldError('fechaNac')" />
+
+        <h2 class="text-lg font-bold">Datos del Cargo</h2>
+        <h2 class="text-lg font-bold">Roles y permisos</h2>
+        <div class="grid grid-cols-6 gap-2">
+           
+           @for (role of rolesResource.value(); track role._id) {
+
+<label class="flex flex-col items-center gap-2">
+
+    <input
+        type="checkbox"
+        class="checkbox checkbox-primary"
+        [checked]="hasRole(role._id)"
+        (change)="toggleRoles(role)"
+    />
+
+    <span class="text-sm text-center">
+        {{ role.name }}
+    </span>
+
+</label>
+
+}
+        </div>
+
+
+
+        <!-- <select class="select select-bordered w-full">
+      <option value="male">Masculino</option>
+      <option value="female">Femenino</option>
+      <option value="unisex">Unisex</option>
+    </select> -->
+
+
+    </div>
+
+
+
+    <!-- Imágenes -->
+    <div class="flex flex-col gap-2">
+        <div class="flex justify-end h-12">
+            <button class="btn btn-secondary" type="submit" [disabled]="isPosting()">
+
+                @if(isPosting()) {
+
+                <span class="loading loading-spinner loading-sm"></span>
+
+                Guardando...
+
+                } @else {
+
+                Guardar
+
+                }
+
+            </button>
+        </div>
+
+        <!-- <product-carousel [images]="imagesToCarousel()" /> -->
+
+        <!--  <input type="file" multiple accept="image/*" class="file-input file-input-bordered w-full mt-4"
+      (change)="onFilesChanged($event)" />
+
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2">
+      @for (image of tempImages(); track image) {
+      <img [src]="image" alt="Temporal image" class="w-full object-cover rounded-xl" />
+      }
+    </div> -->
+    </div>
+</form>
+
+<pre>{{ userForm.value | json }}</pre>
+
+@if (wasSaved()) {
+<div class="alert alert-success fixed bottom-4 right-4 w-80 animate-fadeIn">
+    <span>Datos actualizados correctamente</span>
+</div>
+
+}

@@ -1,0 +1,57 @@
+<div class="mb-6">
+  <h1 class="text-3xl font-bold">
+    {{ rolResource.value()?.name }}
+  </h1>
+
+  <p class="text-base-content/70">
+    {{ rolResource.value()?.description }}
+  </p>
+</div>
+
+<div class="divider"></div>
+
+<div class="overflow-x-auto">
+    @for (group of groupedPermissions(); track group[0]) {
+
+    <div class="card bg-base-100 border border-base-300 shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <h2 class="card-title">
+                {{ group[0] }}
+            </h2>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+
+                @for (permiso of group[1]; track permiso._id) {
+
+                <label class="flex flex-col items-center gap-2">
+
+
+                    <input type="checkbox" class="checkbox checkbox-primary" [checked]="hasPermission(permiso._id)"
+                        (change)="togglePermission(permiso)" />
+
+                    <span class="text-sm text-center">
+                        {{ permiso.name }}
+                    </span>
+
+                </label>
+
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+
+    }
+    @if (wasSaved()) {
+    <div class="toast toast-end toast-top z-50">
+        <div class="alert alert-success">
+            <span>{{ successMessage() }}</span>
+        </div>
+    </div>
+    }
+
+</div>
