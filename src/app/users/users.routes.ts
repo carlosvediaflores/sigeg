@@ -8,6 +8,7 @@ import { Permisos } from "./permisos/permisos";
 import { Roles } from "./roles/roles";
 import { PermisosList } from "./permisos/permisos-list/permisos-list";
 import { RolesList } from "./roles/roles-list/roles-list";
+import { UserDetalles } from "./user/user-detalles/user-detalles";
 
 export const mainRoutes: Routes = [
   {
@@ -30,7 +31,7 @@ export const mainRoutes: Routes = [
 
       {
         path: ':id',
-        component: User,
+        component: UserDetalles,
       },
       //   {
       //     path: 'product/:idSlug',

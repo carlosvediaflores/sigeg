@@ -11,14 +11,12 @@ import { distinctUntilChanged, map, switchMap, firstValueFrom } from 'rxjs';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { PermisosService } from '../services/permisos.service';
-import { Permiso } from '../interfaces/permisos.interface';
 import { FormErrorLabel } from '@shared/components/form-error-label/form-error-label';
 import { FormUtils } from '../../utils copy/form-utils';
-import { JsonPipe } from '@angular/common';
 
 @Component({
   selector: 'app-permisos',
-  imports: [ReactiveFormsModule, FormErrorLabel, JsonPipe, RouterLink],
+  imports: [ReactiveFormsModule, FormErrorLabel, RouterLink],
   templateUrl: './permisos.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

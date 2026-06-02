@@ -8,7 +8,7 @@ import { RolesService } from '../services/roles.service';
 
 @Component({
   selector: 'app-user',
-  imports: [UserDetalles],
+  imports: [],
   templateUrl: './user.html',
   styleUrl: './user.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

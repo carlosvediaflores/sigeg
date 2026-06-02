@@ -24,9 +24,9 @@ export class Roles {
     )
   );
   rolId$ = toObservable(this.rolId);
- wasSaved = signal(false);
- successMessage = signal('');
- 
+  wasSaved = signal(false);
+  successMessage = signal('');
+
   groupedPermissions = computed<[string, Permiso[]][]>(() => {
 
     const groups = this.permisosGroupResource.value();
@@ -76,7 +76,7 @@ export class Roles {
       );
 
       this.rolResource.reload();
-      
+
       // Actualizar localmente
       this.rolResource.set?.({
         ...role,

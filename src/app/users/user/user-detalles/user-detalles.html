@@ -1,13 +1,13 @@
 <h1 class="text-2xl font-bold">
 
-    @if(user()._id === 'new') {
+    @if(userResource.value()?._id === 'new') {
 
     Nuevo Usuario
 
     } @else {
 
-    {{ user().nombre }}
-    {{ user().apellidos }}
+    {{ userResource.value()?.nombre }}
+    {{ userResource.value()?.apellidos }}
 
     }
 
@@ -70,36 +70,29 @@
 
         <h2 class="text-lg font-bold">Datos del Cargo</h2>
         <h2 class="text-lg font-bold">Roles y permisos</h2>
-        <div class="grid grid-cols-6 gap-2">
-           
-           @for (role of rolesResource.value(); track role._id) {
 
-<label class="flex flex-col items-center gap-2">
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
 
-    <input
-        type="checkbox"
-        class="checkbox checkbox-primary"
-        [checked]="hasRole(role._id)"
-        (change)="toggleRoles(role)"
-    />
+       
 
-    <span class="text-sm text-center">
-        {{ role.name }}
-    </span>
+                @for (role of rolesResource.value() ?? []; track role._id) {
 
-</label>
+                <label class="flex flex-col items-center gap-2">
 
-}
+                    <input type="checkbox" class="checkbox checkbox-primary" [checked]="hasRole(role._id)"
+                        (change)="toggleRoles(role)" />
+
+                    <span class="text-sm text-center">
+                        {{ role.name }}
+                    </span>
+
+                </label>
+
+                }
+
+        
+
         </div>
-
-
-
-        <!-- <select class="select select-bordered w-full">
-      <option value="male">Masculino</option>
-      <option value="female">Femenino</option>
-      <option value="unisex">Unisex</option>
-    </select> -->
-
 
     </div>
 
