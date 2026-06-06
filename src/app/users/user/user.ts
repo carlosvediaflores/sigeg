@@ -59,8 +59,6 @@ export class User {
       this.router.navigate([
         'users/list'
       ]);
-
     }
-
   });
 }

@@ -8,7 +8,7 @@ export const mainRoutes: Routes = [
     component: MainLayout,
     children: [
       {
-        path: 'main',
+        path: '',
         component: AppPage,
       },
 

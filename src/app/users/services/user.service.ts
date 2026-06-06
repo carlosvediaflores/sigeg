@@ -73,12 +73,25 @@ export class UserService {
       .pipe(tap((user) => this.userCache.set(id, user)));
   }
 
-  createUser(
+  /* createUser(
     userLike: Partial<User>
   ): Observable<User> {
     return this.http
       .post<User>(`${baseUrl}/users`, userLike)
       .pipe(tap((user) => this.updateUserCache(user)));
+  } */
+
+  createUser(
+    userLike: Partial<User>
+  ): Observable<User> {
+    return this.http
+      .post<User>(`${baseUrl}/users`, userLike)
+      .pipe(
+        tap(user => {
+          this.userCache.set(user._id, user);
+          this.usersCache.clear();
+        })
+      );
   }
 
   updateUser(
@@ -90,32 +103,48 @@ export class UserService {
       .pipe(tap((user) => this.updateUserCache(user)));
   }
 
-  updateProduct(
-    id: string,
-    updatedUser: Partial<User>,
-  ): Observable<User> {
-    return this.http
-      .patch<User>(`${baseUrl}/users/${id}`, updatedUser)
-      .pipe(tap((user) => this.updateUserCache(user)));
+  /*  updateUserCache(user: User) {
+     const userId = user._id;
+ 
+     this.userCache.set(userId, user);
+ 
+     this.usersCache.forEach((userResponse) => {
+       userResponse.users = userResponse.users.map(
+         (currentUser) =>
+           currentUser._id === userId ? user : currentUser
+       );
+     });
+ 
+     console.log('Caché actualizado');
+   } */
 
-    // return this.http
-    //   .patch<Product>(`${baseUrl}/products/${id}`, productLike)
-    //   .pipe(tap((product) => this.updateProductCache(product)));
-  }
+  private updateUserCache(user: User) {
 
-  updateUserCache(user: User) {
     const userId = user._id;
 
     this.userCache.set(userId, user);
 
-    this.usersCache.forEach((userResponse) => {
-      userResponse.users = userResponse.users.map(
-        (currentUser) =>
-          currentUser._id === userId ? user : currentUser
+    this.usersCache.forEach((response) => {
+
+      const exists = response.users.some(
+        u => u._id === userId
       );
+
+      if (exists) {
+
+        response.users = response.users.map(
+          u => u._id === userId ? user : u
+        );
+
+      } else {
+
+        response.users.unshift(user);
+        response.count += 1;
+
+      }
+
     });
 
-    console.log('Caché actualizado');
   }
 
 }

@@ -15,15 +15,11 @@ import { Pagination } from '@shared/components/pagination/pagination';
   styleUrl: './list-users.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ListUsers implements OnInit {
+export class ListUsers  {
 
   userService = inject(UserService);
   public users = signal<UsersResponse[] | null>(null);
 
-  ngOnInit() {
-
- console.log(this.users());
-  }
 
 
   route = inject(ActivatedRoute);
@@ -47,7 +43,7 @@ export class ListUsers implements OnInit {
     }
   );
 
-  usersPerPage = signal(20);
+  usersPerPage = signal(10);
      currentPage$ = toObservable(this.currentPage);
 
     usersPerPage$ =

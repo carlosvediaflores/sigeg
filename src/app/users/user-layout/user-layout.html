@@ -119,7 +119,7 @@
 
             <!-- LOGO -->
             <!-- LOGO -->
-            <div class="h-16 flex items-center gap-3 px-4 border-b border-base-300">
+            <div routerLink="/" class="btn btn-ghost h-16 flex items-center gap-3 px-4 border-b border-base-300">
 
                 <!-- ICONO / LOGO -->
                 <div class="flex-shrink-0">
@@ -246,8 +246,8 @@
                         <span class="text-sm text-white/50 hidden md:block">Data Overview</span>
                     </div>
                 </a>
-                <a routerLink="/admin/products" routerLinkActive="bg-blue-800"
-                    class="w-full px-2 inline-flex space-x-2 items-center border-b border-slate-700 py-3 hover:bg-white/5 transition ease-linear duration-150">
+                <a routerLink="/users/list" routerLinkActive="bg-blue-800"
+                    class="w-full px-2 inline-flex space-x-2 items-center border-b border-slate-700 py-3 hover:bg-white/5 transition ease-linear duration-150 text-accent text-lg hover:underline cursor-pointer">
                     <div>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                             stroke="currentColor" class="w-6 h-6">
@@ -256,15 +256,29 @@
                         </svg>
                     </div>
                     <div class="flex flex-col">
-                        <span class="text-lg text-slate-300 font-bold leading-5">Productos</span>
-                        <span class="text-sm text-slate-500 hidden md:block">Listado de productos</span>
+                        <span class="text-lg text-slate-300 font-bold leading-5">Usuarios</span>
+                        <span class="text-sm text-slate-500 hidden md:block">Listado de usuarios</span>
+                    </div>
+                </a>
+                <a routerLink="/users/roles-list" routerLinkActive="bg-blue-800"
+                    class="w-full px-2 inline-flex space-x-2 items-center border-b border-slate-700 py-3 hover:bg-white/5 transition ease-linear duration-150 text-accent text-lg hover:underline cursor-pointer">
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+                        </svg>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-lg text-slate-300 font-bold leading-5">Roles</span>
+                        <span class="text-sm text-slate-500 hidden md:block">Listado de roles</span>
                     </div>
                 </a>
                 <!-- Menu Item End -->
 
                 <div class="divider my-2"></div>
 
-                <button class="btn btn-ghost text-accent w-full" (click)="authService.logout()">
+                <button  routerLink="/" class="btn btn-ghost text-accent w-full" (click)="authService.logout()">
                     Cerrar sesión
                 </button>
             </div>
