@@ -1,16 +1,16 @@
-<div class="drawer lg:drawer-open" [class.drawer-open]="sidebarOpen()">
+<div class="drawer" [class.drawer-open]="sidebarOpen()">
 
     <!-- CONTROL -->
     <input id="sidebar" type="checkbox" class="drawer-toggle" [checked]="sidebarOpen()" />
 
     <!-- PAGE -->
-    <div class="drawer-content flex flex-col bg-base-200 transition-all duration-300 overflow-x-hidden">
+    <div class="drawer-content flex flex-col bg-base-200 transition-all duration-300">
 
         <!-- NAVBAR -->
         <div class="navbar bg-base-100 border-b border-base-300 sticky top-0 z-50">
 
             <!-- LEFT -->
-            <div class="flex-none lg:hidden">
+            <div class="flex-none">
 
                 <button class="btn btn-square btn-ghost" (click)="toggleSidebar()">
 
@@ -30,7 +30,7 @@
             <!-- TITLE -->
             <div class="flex-1">
                 <a class="font-montserrat text-3xl font-bold">
-                    Gestión de Usuarios
+                    Control y Seguimiento de Hoja de Ruta
                 </a>
             </div>
 
@@ -56,6 +56,7 @@
                    6 8.388 6 11v3.159c0 .538-.214
                    1.055-.595 1.436L4 17h5m6 0v1
                    a3 3 0 11-6 0v-1m6 0H9" />
+
                         </svg>
 
                         <span class="badge badge-xs badge-primary indicator-item"></span>
@@ -88,8 +89,7 @@
                         </li>
 
                         <li>
-                            <a routerLink="/" (click)="authService.logout()">Cerrar sesión</a>
-
+                            <a>Cerrar sesión</a>
                         </li>
 
                     </ul>
@@ -100,9 +100,17 @@
 
         </div>
 
+        
+
         <!-- CONTENT -->
-        <!-- ROUTER -->
-        <router-outlet />
+        <main class="p-6 overflow-y-auto h-[calc(100vh-64px)]">
+
+           
+
+            <!-- ROUTER -->
+            <router-outlet />
+
+        </main>
 
     </div>
 
@@ -114,14 +122,13 @@
         </label>
 
         <!-- SIDEBAR -->
-        <aside class="w-72 min-h-full bg-base-100 border-r border-base-300 transition-all duration-300 overflow-y-auto">
+        <aside  class="w-72 min-h-full bg-base-100 border-r border-base-300 transition-all duration-300">
 
-            <!-- LOGO -->
-            <!-- LOGO -->
+           <!-- LOGO -->
             <div routerLink="/" class="btn btn-ghost h-16 flex items-center gap-3 px-4 border-b border-base-300">
 
                 <!-- ICONO / LOGO -->
-                <div class="flex-shrink-0">
+                <div class="shrink-0">
 
                     <img src="assets/images/otro.png" alt="Logo" class="w-12 h-12 object-contain" />
 
@@ -175,7 +182,7 @@
                 </li>
 
                 <li>
-                    <a routerLink="/" routerLinkActive="active">
+                    <a routerLink="/dd" routerLinkActive="active">
 
                         Dashboard
 
@@ -183,9 +190,9 @@
                 </li>
 
                 <li>
-                    <a routerLink="/users/list" routerLinkActive="active">
+                    <a routerLink="/" routerLinkActive="active">
 
-                        Usuarios
+                        Hojas de Ruta
 
                     </a>
                 </li>
@@ -200,13 +207,13 @@
                         <ul>
 
                             <li>
-                                <a routerLink="/users/roles-list" routerLinkActive="active">
+                                <a>
                                     Roles
                                 </a>
                             </li>
 
                             <li>
-                                <a routerLink="/users/permisos-list" routerLinkActive="active">
+                                <a>
                                     Permisos
                                 </a>
                             </li>
@@ -230,60 +237,7 @@
 
             </ul>
 
-            <div id="nav" class="w-full px-6">
-                <a routerLink="/admin/dashboard"
-                    class="w-full px-2 inline-flex space-x-2 items-center border-b border-slate-700 py-3 hover:bg-white/5 transition ease-linear duration-150">
-                    <div>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="w-6 h-6 text-white">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
-                        </svg>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="text-lg font-bold leading-5 text-white">Dashboard</span>
-                        <span class="text-sm text-white/50 hidden md:block">Data Overview</span>
-                    </div>
-                </a>
-                <a routerLink="/users/list" routerLinkActive="bg-blue-800"
-                    class="w-full px-2 inline-flex space-x-2 items-center border-b border-slate-700 py-3 hover:bg-white/5 transition ease-linear duration-150 text-accent text-lg hover:underline cursor-pointer">
-                    <div>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
-                        </svg>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="text-lg text-slate-300 font-bold leading-5">Usuarios</span>
-                        <span class="text-sm text-slate-500 hidden md:block">Listado de usuarios</span>
-                    </div>
-                </a>
-                <a routerLink="/users/roles-list" routerLinkActive="bg-blue-800"
-                    class="w-full px-2 inline-flex space-x-2 items-center border-b border-slate-700 py-3 hover:bg-white/5 transition ease-linear duration-150 text-accent text-lg hover:underline cursor-pointer">
-                    <div>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
-                        </svg>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="text-lg text-slate-300 font-bold leading-5">Roles</span>
-                        <span class="text-sm text-slate-500 hidden md:block">Listado de roles</span>
-                    </div>
-                </a>
-                <!-- Menu Item End -->
-
-                <div class="divider my-2"></div>
-
-                <button routerLink="/" class="btn btn-ghost text-accent w-full" (click)="authService.logout()">
-                    Cerrar sesión
-                </button>
-            </div>
-
         </aside>
-
 
     </div>
 
