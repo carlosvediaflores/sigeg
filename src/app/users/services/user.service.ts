@@ -24,7 +24,9 @@ const emptyUser: User = {
   password: '',
   foto: '',
   isActive: true,
-  idCargo: '',
+  idUnidadOrg:'',
+  idUnidadFuncional:'',
+  idSubUnidad:'',
   roles: [],
 };
 
@@ -54,7 +56,7 @@ export class UserService {
         },
       })
       .pipe(
-        tap((resp) => console.log('resp', resp)),
+        tap((resp) => console.log('respUsers', resp)),
         tap((resp) => this.usersCache.set(key, resp))
       );
   }

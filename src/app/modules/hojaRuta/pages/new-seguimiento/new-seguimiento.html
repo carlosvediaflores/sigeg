@@ -1,0 +1,135 @@
+<div class="container mx-auto p-4">
+    <div class="card bg-base-100 shadow-lg max-w-4xl mx-auto">
+        <div class="card-body">
+            <form [formGroup]="seguiForm" (ngSubmit)="onSubmit()">
+
+                @if(destinoSeleccionado()) {
+
+                <div class="card bg-base-200 shadow-md mb-4">
+
+                    <div class="card-body items-center text-center py-4">
+
+                        <div class="badge badge-primary">
+                            Hoja de Ruta Nº {{ seguiForm.get('numeroHr')?.value }}
+                        </div>
+                        <div class="text-xs uppercase opacity-60">
+                            Derivar a:
+                        </div>
+
+                        <h2 class="card-title">
+                            {{ destinoSeleccionado()?.persona?.nombre ?? 'Sin Asignar al personal' }}
+                            {{ destinoSeleccionado()?.persona?.apellidos }}
+                        </h2>
+
+                        <p class="uppercase text-sm opacity-70">
+                            {{ destinoSeleccionado()?.cargo ?? 'Sin cargo' }}
+                        </p>
+                    </div>
+
+                </div>
+
+                }
+
+                <div class="my-2">
+
+                    <select class="select select-bordered w-full" (change)="onOrgChange($event)">
+
+                        <option value="">
+                            Seleccione Unidad Organizacional
+                        </option>
+
+                        @for (org of orgsResource.value(); track org._id) {
+
+                        <option [value]="org._id">
+                            {{ org.nombre }} ({{ org.sigla }})
+                        </option>
+
+                        }
+
+                    </select>
+
+                </div>
+
+                @if(selectedOrg()?.unidadFuncional?.length) {
+
+                <div class="my-2">
+
+                    <select class="select select-bordered w-full" (change)="onUnidadChange($event)">
+
+                        <option value="">
+                            Seleccione Unidad Funcional
+                        </option>
+
+                        @for (unidad of selectedOrg()?.unidadFuncional; track unidad._id) {
+
+                        <option [value]="unidad._id">
+                            {{ unidad.nombre }}
+                        </option>
+
+                        }
+
+                    </select>
+
+                </div>
+
+                }
+
+                @if(selectedUnidad()?.subUnidad?.length) {
+
+                <div class="my-2">
+
+                    <select class="select select-bordered w-full" (change)="onSubUnidadChange($event)">
+
+                        <option value="">
+                            Seleccione Sub Unidad
+                        </option>
+
+                        @for (sub of selectedUnidad()?.subUnidad; track sub._id) {
+
+                        <option [value]="sub._id">
+                            {{ sub.nombre }}
+                        </option>
+
+                        }
+                    </select>
+                </div>
+                }
+
+
+                <div class="w-full my-1">
+                    <textarea class="textarea textarea-bordered w-full min-h-20" placeholder="Detalle del Seguimiento"
+                        formControlName="detalle" [class.input-error]="getFieldError('detalle')"></textarea>
+                    <form-error-label [errorMessage]="getFieldError('detalle')" />
+                </div>
+
+
+                <div class="flex justify-end gap-2">
+
+                    <button routerLink="/hojaRuta/list" type="button" class="btn btn-secondary">
+                        Cancelar
+                    </button>
+
+                    <button type="submit" class="btn btn-success"  [disabled]="isPosting()">
+                         @if(isPosting()) {
+
+                    <span class="loading loading-spinner loading-sm">
+                    </span>
+
+                    Enviando...
+
+                    } @else {
+
+                    Enviar
+
+                    }
+                    </button>
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+<pre>
+    {{seguiForm.value | json }}
+</pre>

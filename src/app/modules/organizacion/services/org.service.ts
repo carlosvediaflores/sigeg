@@ -48,7 +48,7 @@ export class OrgService {
    private http = inject(HttpClient);
   getOrgs() {
     return this.http.get<Org[]>(`${baseUrl}/cargo/uni-org/all/get`)
-    .pipe(tap((resp) => console.log('orgs', resp)));
+    //.pipe(tap((resp) => console.log('orgs', resp)));
   }
 
   getOrgById(id: string) {

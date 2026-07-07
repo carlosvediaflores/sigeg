@@ -2,10 +2,13 @@ import { UpperCasePipe, TitleCasePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '@auth/services/auth.service';
+import { LogoNombre } from '@shared/components/logo-nombre/logo-nombre';
+import { Profile } from '@shared/components/profile/profile';
+
 
 @Component({
   selector: 'app-main-layout',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, UpperCasePipe, TitleCasePipe, ],
+  imports: [RouterOutlet, RouterLink,  LogoNombre, Profile ],
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

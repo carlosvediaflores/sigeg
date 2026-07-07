@@ -1,3 +1,5 @@
+import { Org, SubUnidad, UnidadFuncional } from "../../modules/organizacion/interfaces/org.interface";
+
 export interface User {
   _id: string;
   email: string;
@@ -10,7 +12,9 @@ export interface User {
   password?: string;
   foto?: string;
   isActive: boolean;
-  idCargo?: string;
+  idUnidadOrg?:Org | string;
+  idUnidadFuncional?: UnidadFuncional | string;
+  idSubUnidad?:SubUnidad | string;
   roles: Roles[];
 }
 

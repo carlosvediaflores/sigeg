@@ -1,28 +1,86 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { HojaRutaService } from '../../services/hojaRuta.service';
-import { HojaRutaResponse, Seguimientos } from '../../interfaces/hojaRuta';
+import { HojaRutaResponse, Seguimiento, HojaRutaSimple } from '../../interfaces/hojaRuta';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { rxResource, toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { combineLatest, firstValueFrom, map, switchMap, tap } from 'rxjs';
+import { combineLatest, firstValueFrom, map, of, switchMap, tap } from 'rxjs';
 import { Pagination } from '@shared/components/pagination/pagination';
 import { DatePipe, JsonPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Org } from '../../../organizacion/interfaces/org.interface';
 import { FormErrorLabel } from '@shared/components/form-error-label/form-error-label';
 import { UserService } from '../../../../users/services/user.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-hoja-ruta',
-  imports: [RouterLink, Pagination, DatePipe, FormErrorLabel, ReactiveFormsModule, JsonPipe],
+  imports: [RouterLink, Pagination, DatePipe, FormErrorLabel, ReactiveFormsModule],
   templateUrl: './hoja-ruta.html',
   styleUrl: './hoja-ruta.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HojaRuta {
 
+  constructor() {
+
+    // Cambio entre INTERNO y EXTERNO
+    this.hRutaForm.get('tipoOrigen')?.valueChanges.subscribe(tipo => {
+
+      const origenControl = this.hRutaForm.get('origen');
+
+      if (tipo === 'INTERNO') {
+
+        origenControl?.clearValidators();
+
+        this.hRutaForm.patchValue({
+          origen: '',
+          idOrigen: ''
+        });
+
+      } else {
+
+        origenControl?.setValidators([Validators.required]);
+
+        this.hRutaForm.patchValue({
+          idOrigen: ''
+        });
+
+      }
+
+      origenControl?.updateValueAndValidity();
+
+    });
+
+
+    // Cuando selecciona un funcionario
+    this.hRutaForm.get('idOrigen')?.valueChanges.subscribe(id => {
+
+      if (!id) return;
+
+      if (this.hRutaForm.get('tipoOrigen')?.value !== 'INTERNO') {
+        return;
+      }
+
+      const usuario = this.usersResource
+        .value()
+        ?.users
+        ?.find(user => user._id === id);
+
+      if (!usuario) return;
+
+      this.hRutaForm.patchValue({
+        origen: `${usuario.nombre} ${usuario.apellidos}`
+      });
+
+    });
+
+  }
+
   hojaRutaService = inject(HojaRutaService);
   userService = inject(UserService);
   public hojaRutas = signal<HojaRutaResponse[] | null>(null);
+  selectedHojaRuta = signal<HojaRutaSimple | null>(null);
+  selectedHrId = signal('');
   route = inject(ActivatedRoute);
   fb = inject(FormBuilder);
 
@@ -30,7 +88,9 @@ export class HojaRuta {
   successMessage = signal('');
   wasSaved = signal(false);
   isPosting = signal(false);
-  numeroHR = 3
+  selectedHrId$ = toObservable(this.selectedHrId);
+
+  numeroHR = 0;
 
   usersResource = rxResource({
     stream: () => this.userService.getUsers({ limit: 1000 })
@@ -81,6 +141,20 @@ export class HojaRuta {
         .pipe(tap((resp) => console.log('hojasRuta', resp))),
   });
 
+  selectedHrResource = rxResource({
+    stream: () =>
+      this.selectedHrId$.pipe(
+        switchMap(id =>
+          id
+            ? this.hojaRutaService.getHojaRuta(id)
+            : of(null)
+        )
+      )
+  });
+
+  private getToday(): string {
+    return new Date().toISOString().split('T')[0];
+  }
 
   hRutaForm = this.fb.nonNullable.group({
     origen: ['', Validators.required],
@@ -90,14 +164,16 @@ export class HojaRuta {
     prioridad: ['NORMAL'],
     beneficiarioPago: [''],
     contactoOrigen: [''],
-    referencia: ['',Validators.required],
+    referencia: ['', Validators.required],
     estado: ['REGISTRADO'],
     numero: [this.numeroHR, Validators.required],
     gestion: [0],
-    fechaDocumento: [new Date()],
+    fechaDocumento: [this.getToday()],
     fechaRecepcion: [new Date()],
-    seguimientos: [[] as Seguimientos[]],
+    seguimientos: [[] as Seguimiento[]],
   });
+
+
   openNewModal() {
     this.selectedHRId.set('new');
     this.hRutaForm.reset({
@@ -110,9 +186,9 @@ export class HojaRuta {
       contactoOrigen: '',
       referencia: '',
       estado: 'REGISTRADO',
-      numero: this.numeroHR +1,
+      numero: this.numeroHR + 1,
       gestion: 0,
-      fechaDocumento: new Date(),
+      fechaDocumento: this.getToday(),
       fechaRecepcion: new Date(),
       seguimientos: [],
     });
@@ -123,6 +199,20 @@ export class HojaRuta {
 
     modal?.showModal();
   }
+
+  getTiempoPendiente(fecha: string | Date): string {
+
+  const inicio = new Date(fecha).getTime();
+  const ahora = Date.now();
+
+  const diff = ahora - inicio;
+
+  const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const horas = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+  return `${dias}d ${horas}h ${minutos}m`;
+}
 
   async onSubmit() {
 
@@ -168,14 +258,14 @@ export class HojaRuta {
         estado: 'REGISTRADO',
         numero: 0,
         gestion: 0,
-        fechaDocumento: new Date(),
+        fechaDocumento: this.getToday(),
         fechaRecepcion: new Date(),
         seguimientos: [],
       });
 
 
       const modal = document.getElementById(
-        'org_modal'
+        'hRuta_modal'
       ) as HTMLDialogElement;
 
       if (this.selectedHRId() === 'new') {
@@ -186,7 +276,7 @@ export class HojaRuta {
 
       this.wasSaved.set(true);
 
-      modal.close();
+      // modal.close();
 
       setTimeout(() => {
         this.wasSaved.set(false);
@@ -197,9 +287,48 @@ export class HojaRuta {
     }
 
   }
-   async changeStatus(){
-    
-   }
+
+  async changeStatus(hr: HojaRutaSimple) {
+
+    const result = await Swal.fire({
+      title: '¿Recibir documento?',
+      text: `Hoja de Ruta Nº ${hr.numero}`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, recibir',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if (!result.isConfirmed) return;
+
+    await firstValueFrom(
+      this.hojaRutaService.updateHojaRuta(
+        hr._id,
+        { estado: 'RECIBIDO' }
+      )
+    );
+
+    this.hojaRutaResource.reload();
+
+    Swal.fire(
+      'Actualizado',
+      'La hoja de ruta fue marcada como RECIBIDO',
+      'success'
+    );
+  }
+
+  openSeguiModal(hojaRuta: HojaRutaSimple) {
+
+    console.log('Hoja de Ruta seleccionada', hojaRuta);
+
+    this.selectedHrId.set(hojaRuta._id);
+
+    const modal = document.getElementById(
+      'segui_modal'
+    ) as HTMLDialogElement;
+
+    modal.showModal();
+  }
 
   getFieldError(fieldName: string): string | null {
 
@@ -213,5 +342,23 @@ export class HojaRuta {
     }
 
     return null;
+  }
+
+  printHojaRuta(hr: HojaRutaSimple) {
+
+    this.hojaRutaService.printHojaRuta(hr._id)
+      .subscribe(blob => {
+
+        const url = window.URL.createObjectURL(blob);
+
+        window.open(url, '_blank');
+
+        // Liberar memoria después de unos segundos
+        setTimeout(() => {
+          window.URL.revokeObjectURL(url);
+        }, 1000);
+
+      });
+
   }
 }

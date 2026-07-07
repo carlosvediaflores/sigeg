@@ -1,94 +1,74 @@
-
-<div class="navbar bg-green-400">
+<div class="navbar bg-green-200">
   <div class="navbar-start">
     <div class="dropdown">
       <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-5 w-5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M4 6h16M4 12h8m-8 6h16"
-          />
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
         </svg>
       </div>
-      <ul
-        tabindex="0"
-        class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
-      >
+      <ul tabindex="0" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
         <li>
-          <a
-            routerLink="/gender/men"
-            class="btn btn-ghost"
-            routerLinkActive="text-secondary"
-          >
+          <a routerLink="/gender/men" class="btn btn-ghost" routerLinkActive="text-secondary">
             Inicio
           </a>
         </li>
         <li>
-          <a
-            routerLink="/gender/women"
-            class="btn btn-ghost"
-            routerLinkActive="text-secondary"
-          >
+          <a routerLink="/gender/women" class="btn btn-ghost" routerLinkActive="text-secondary">
             Institución
           </a>
         </li>
         <li>
-          <a
-            routerLink="/main"
-            class="btn btn-ghost"
-            routerLinkActive="text-secondary"
-          >
+          <a routerLink="/main" class="btn btn-ghost" routerLinkActive="text-secondary">
             Oficina Virtual
           </a>
         </li>
       </ul>
     </div>
-    <a routerLink="/" class="btn btn-ghost text-xl font-montserrat">
-      SIGEG
-      <span class="text-secondary">| Sistema Integrado de Gestión Gubernamental</span>
-    </a>
+    <div routerLink="/" class=" h-10 flex items-center gap-3 border-b border-base-300">
+
+      <!-- ICONO / LOGO -->
+      <div class="shrink-0">
+
+        <img src="assets/images/logo.png" alt="Logo" class="w-12 h-12 object-contain" />
+
+      </div>
+
+      <!-- TEXTOS -->
+      <div class="flex flex-col leading-tight">
+
+        <h1 class="text-1xl font-black p-0 m-0 text-primary">
+          Gobierno Autónomo Municipal de Ckochas<span class="text-primary"></span>
+        </h1>
+
+        <!-- <span class="text-2xl font-semibold text-secondary opacity-70 p-0 m-0">
+                        Betanzos
+                    </span> -->
+
+      </div>
+
+    </div>
   </div>
   <div class="navbar-center hidden lg:flex ">
     <ul class="menu menu-horizontal px-1">
       <li>
-        <a
-          routerLink="/gender/men"
-          class="btn btn-ghost"
-          routerLinkActive="text-secondary"
-        >
+        <a routerLink="/gender/men" class="btn btn-ghost" routerLinkActive="text-secondary">
           Inicio
         </a>
       </li>
       <li>
-        <a
-          routerLink="/gender/women"
-          class="btn btn-ghost"
-          routerLinkActive="text-secondary"
-        >
+        <a routerLink="/gender/women" class="btn btn-ghost" routerLinkActive="text-secondary">
           Institución
         </a>
       </li>
       <li>
-        <a
-          routerLink="/main"
-          class="btn btn-ghost"
-          routerLinkActive="text-secondary"
-        >
+        <a routerLink="/auth/login" class="btn btn-ghost" routerLinkActive="text-secondary">
           Oficina Virtual
         </a>
       </li>
     </ul>
   </div>
   <div class="navbar-end gap-4">
-    @if (authService.isAdmin()) {
+     @if (authService.isAdmin()) {
     <a routerLink="/main" class="btn text-accent">Admin Panel</a>
     }
     <!--  -->

@@ -30,7 +30,7 @@ export interface SubUnidad {
   sigla: string;
   codigo?:number;
   cargo: string;
-  persona?: User['_id'];
+  persona?:  User | string;
   unidadFuncional : UnidadFuncional['_id'];
   isActive?: boolean;
 }

@@ -13,7 +13,7 @@ import { rxResource, toObservable, toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-user-detalles',
-  imports: [ReactiveFormsModule, FormErrorLabel, JsonPipe],
+  imports: [ReactiveFormsModule, FormErrorLabel,],
   templateUrl: './user-detalles.html',
   styleUrl: './user-detalles.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -67,7 +67,6 @@ export class UserDetalles implements OnInit {
     password: [''],
     email: ['', [Validators.required, Validators.email]],
     isActive: [false, Validators.required],
-    idCargo: [''],
     roles: [[] as User['roles']],
   });
 

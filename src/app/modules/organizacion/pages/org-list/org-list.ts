@@ -12,7 +12,7 @@ import { UserService } from '../../../../users/services/user.service';
 
 @Component({
   selector: 'app-org-list',
-  imports: [ReactiveFormsModule, FormErrorLabel, JsonPipe],
+  imports: [ReactiveFormsModule, FormErrorLabel,],
   templateUrl: './org-list.html',
   styleUrl: './org-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

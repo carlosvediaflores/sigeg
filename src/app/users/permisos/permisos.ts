@@ -39,7 +39,7 @@ export class Permisos {
     }
   );
 
-  
+
   permisoId$ = toObservable(this.permisoId);
 
   permisoForm = this.fb.nonNullable.group({
@@ -50,19 +50,19 @@ export class Permisos {
   });
 
   getFieldError(fieldName: string): string | null {
-  
-      const control = this.permisoForm.get(fieldName);
-  
-      if (!control) return null;
-  
-      if (!control.touched) return null;
-  
-      const errors = control.errors ?? {};
-  
-      return Object.keys(errors).length > 0
-        ? FormUtils.getTextError(errors)
-        : null;
-    }
+
+    const control = this.permisoForm.get(fieldName);
+
+    if (!control) return null;
+
+    if (!control.touched) return null;
+
+    const errors = control.errors ?? {};
+
+    return Object.keys(errors).length > 0
+      ? FormUtils.getTextError(errors)
+      : null;
+  }
 
   permisoResource = rxResource({
     stream: () =>
@@ -93,26 +93,26 @@ export class Permisos {
 
   }
 
-  
+
   isNewPermiso(): boolean {
     return this.permisoId() === 'new';
   }
 
   async onSubmit() {
 
-      if (this.isPosting()) return;
+    if (this.isPosting()) return;
 
-  this.isPosting.set(true);
+    this.isPosting.set(true);
 
-  try {
+    try {
 
-    // guardar
+      // guardar
 
-  } finally {
+    } finally {
 
-    this.isPosting.set(false);
+      this.isPosting.set(false);
 
-  }
+    }
 
     if (this.permisoForm.invalid) {
       this.permisoForm.markAllAsTouched();

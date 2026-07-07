@@ -1,11 +1,20 @@
-export interface HojaRutaResponse{
+import { User } from "@auth/interfaces/user.interface";
+import { Org, SubUnidad, UnidadFuncional } from "../../organizacion/interfaces/org.interface";
+
+export interface HojaRutaResponse {
     total: number;
-      pages: number;
-      hojaRutas: HojaRuta[];
+    pages: number;
+    hojaRutas: HojaRutaSimple[];
 }
 
-export interface HojaRuta{
-     _id: string;
+export interface SeguimientosResponse {
+    total: number;
+    pages: number;
+    seguimientos: Seguimiento[];
+}
+
+export interface HojaRutaSimple {
+    _id: string;
     origen: string;
     idOrigen: string;
     tipoOrigen: string;
@@ -14,27 +23,58 @@ export interface HojaRuta{
     beneficiarioPago: string;
     contactoOrigrn: string;
     referencia: string;
-    estado:string;
-    fechaDocumento:Date | string;
-    fechaRecepcion:Date | string;
-    numero:number;
-    gestion:number;
-    seguimientos:Seguimientos[];
-    asociados:Asociados[];
-    archivos:Archivos[];
-    isActive:Boolean;
+    estado: string;
+    fechaDocumento: Date | string;
+    fechaRecepcion: Date | string;
+    numero: number;
+    gestion: number;
+    seguimientos: Seguimiento[];
+    asociados: Asociados[];
+    archivos: Archivos[];
+    isActive: Boolean;
 
 }
 
-export interface Seguimientos{
+export interface Seguimiento {
+    _id: string;
+    origenHr: string;
+    numeroHr: number;
+    idHojaRuta: HojaRutaSimple | string;
+    tipoEnvio: string;
+    detalle: string;
+    estado: string;
+    smsMaletin: string;
+    fechaDerivado: Date | string;
+    fechaRecepcion: Date | string;
+    numeroCopia: number;
+    gestion: number;
+    idUnidadOrgOrigen?: Org ;
+    idUnidadFuncOrigen?:UnidadFuncional;
+    idSubUnidadOrigen?: SubUnidad ;
+    idUnidadOrgDest?: Org ;
+    idUnidadFuncDest?: UnidadFuncional ;
+    idSubUnidadDest?: SubUnidad ;
+    origenUser: User;
+    destinoUser:  User;
+    isActive: Boolean;
+    archivosOficina: ArchivosOficina[];
+    carpetasOficina: CarpetasOficina[];
 
 }
 
-export interface Asociados{
+export interface Asociados {
 
 }
 
-export interface Archivos{
+export interface Archivos {
+
+}
+
+export interface ArchivosOficina {
+
+}
+
+export interface CarpetasOficina {
 
 }
 

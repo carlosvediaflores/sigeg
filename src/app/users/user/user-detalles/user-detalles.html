@@ -69,28 +69,67 @@
         <form-error-label [errorMessage]="getFieldError('fechaNac')" />
 
         <h2 class="text-lg font-bold">Datos del Cargo</h2>
+
+        @if(userResource.value()?.idUnidadOrg ) {
+        <div>
+            <div class="text-sm opacity-50">
+                {{ $any(userResource.value()?.idUnidadOrg)?.nombre ?? '' }}
+            </div>
+
+            <div class="font-bold hover:text-accent transition-colors duration-300 opacity-80">
+                {{ $any(userResource.value()?.idUnidadOrg)?.cargo ?? '' }}
+            </div>
+
+        </div>
+        } 
+
+        @if(userResource.value()?.idUnidadFuncional ) {
+        <div>
+            <div class="text-sm opacity-50">
+                {{ $any(userResource.value()?.idUnidadFuncional)?.nombre ?? '' }}
+            </div>
+
+            <div class="font-bold hover:text-accent transition-colors duration-300 opacity-80">
+                {{ $any(userResource.value()?.idUnidadFuncional)?.cargo ?? '' }}
+            </div>
+
+        </div>
+        }
+        @if(userResource.value()?.idSubUnidad ) {
+        <div>
+            <div class="text-sm opacity-50">
+                {{ $any(userResource.value()?.idSubUnidad)?.nombre ?? '' }}
+            </div>
+
+            <div class="font-bold hover:text-accent transition-colors duration-300 opacity-80">
+                {{ $any(userResource.value()?.idSubUnidad)?.cargo ?? '' }}
+            </div>
+
+        </div>
+        }
+
         <h2 class="text-lg font-bold">Roles y permisos</h2>
 
         <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
 
-       
 
-                @for (role of rolesResource.value() ?? []; track role._id) {
 
-                <label class="flex flex-col items-center gap-2">
+            @for (role of rolesResource.value() ?? []; track role._id) {
 
-                    <input type="checkbox" class="checkbox checkbox-primary" [checked]="hasRole(role._id)"
-                        (change)="toggleRoles(role)" />
+            <label class="flex flex-col items-center gap-2">
 
-                    <span class="text-sm text-center">
-                        {{ role.name }}
-                    </span>
+                <input type="checkbox" class="checkbox checkbox-primary" [checked]="hasRole(role._id)"
+                    (change)="toggleRoles(role)" />
 
-                </label>
+                <span class="text-sm text-center">
+                    {{ role.name }}
+                </span>
 
-                }
+            </label>
 
-        
+            }
+
+
 
         </div>
 
@@ -131,7 +170,7 @@
     </div>
 </form>
 
-<pre>{{ userForm.value | json }}</pre>
+<!-- <pre>{{ userForm.value | json }}</pre> -->
 
 @if (wasSaved()) {
 <div class="alert alert-success fixed bottom-4 right-4 w-80 animate-fadeIn">

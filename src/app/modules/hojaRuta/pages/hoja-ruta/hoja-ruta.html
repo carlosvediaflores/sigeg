@@ -7,10 +7,9 @@
             <span class="text-accent">{{ hojaRutaResource.value()?.total }}</span>
         </h3>
     </div>
-    <div class="divider p-0 m-0"></div>
 
     <div class="flex gap-2 items-center h-15 p-0 m-0">
-        <app-pagination [pages]="hojaRutaResource.value()?.pages ?? 0" [currentPage]="currentPage()" />
+
 
         <select class="select select-bordered w-20" (change)="hojaRutaPerPage.set(+selectPerPage.value)" #selectPerPage>
             <option value="10">10</option>
@@ -25,8 +24,9 @@
             + Registrar Nuevo
         </button>
     </div>
+    <div class="divider p-0 m-0"></div>
 
-    <div class="overflow-x-auto">
+    <div class="overflow-x-auto mt-0">
         <table class="table table-zebra ">
             <!-- head -->
             <thead>
@@ -47,7 +47,7 @@
             </thead>
             <tbody>
                 <!-- row 1 -->
-                @for (user of hojaRutaResource.value()?.hojaRutas; track user._id) {
+                @for (hr of hojaRutaResource.value()?.hojaRutas; track hr._id) {
 
                 <tr>
                     <!-- <th>
@@ -57,7 +57,7 @@
                     </th> -->
                     <td>
                         <div class="flex items-center gap-3">
-                            <div class="items-center">
+                            <div class="items-center cursor-pointer" (click)="openSeguiModal(hr)">
                                 <div class=" text-accent">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                         stroke-width="1.5" stroke="currentColor" class="size-10">
@@ -69,59 +69,98 @@
                                 </div>
                             </div>
                             <div class="text-center">
-                                <a [routerLink]="['/users', user._id]"
-                                    class="font-bold hover:text-accent transition-colors duration-300">{{ user.numero
+                                <a [routerLink]="['/hrs', hr._id]"
+                                    class="font-bold hover:text-accent transition-colors duration-300">{{ hr.numero
                                     }}</a>
-                                <div class="text-sm opacity-50">
-                                    {{ user.tipoOrigen }}
+                                <div class="text-xs opacity-50">
+                                    {{ hr.tipoOrigen }}
                                 </div>
                             </div>
                         </div>
                     </td>
                     <td>
-                        {{ user.origen }}
+                        {{ hr.origen }}
                     </td>
                     <td>
-                        {{ user.referencia }}
+                        {{ hr.referencia }}
                     </td>
                     <td class="w-10">
-                        {{ user.fechaRecepcion | date : 'medium' }}
+                        {{ hr.fechaRecepcion | date : 'medium' }}
                     </td>
                     <td>
-                        {{ user.prioridad}}
+                        {{ hr.prioridad}}
                     </td>
                     <td>
 
-                        @if(user.estado=="RECIBIDO") {
+                        @switch (hr.estado) {
 
+                        @case ('REGISTRADO') {
+                        <button class="btn btn-xs btn-warning" (click)="changeStatus(hr)">
+                            REGISTRADO
+                        </button>
+                        }
+
+                        @case ('RECIBIDO') {
                         <span class="badge badge-success">
                             RECIBIDO
                         </span>
+                        }
 
-                        } @else {
-
-                        <span class="badge badge-error">
-                            REGISTRADO
+                        @case ('ENVIADO') {
+                        <span class="badge badge-info">
+                            ENVIADO
                         </span>
+                        }
+
+                        @case ('ANULADO') {
+                        <span class="badge badge-error">
+                            ANULADO
+                        </span>
+                        }
+
+                        @default {
+                        <span class="badge">
+                            {{ hr.estado }}
+                        </span>
+                        }
 
                         }
 
                     </td>
                     <th>
-                        <a [routerLink]="['/users', user._id]" class="btn btn-ghost text-accent btn-xs">
-                            Detalles
+
+                        <a (click)="printHojaRuta(hr)" class="btn btn-ghost text-accent btn-xs">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Zm-3 0h.008v.008H15V10.5Z" />
+                            </svg>
                         </a>
+
+                        @if (hr.estado === 'RECIBIDO') {
+
+                        <a [routerLink]="['/hojaRuta/enviar', hr._id]" class="btn btn-ghost text-accent btn-xs">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
+                            </svg>
+                        </a>
+
+                        }
+
                     </th>
                 </tr>
                 }
             </tbody>
         </table>
+        <app-pagination [pages]="hojaRutaResource.value()?.pages ?? 0" [currentPage]="currentPage()" />
     </div>
 </div>
 
-<pre>
+<!-- <pre>
     {{hRutaForm.value | json }}
-</pre>
+</pre> -->
 
 <dialog id="hRuta_modal" class="modal">
 
@@ -134,7 +173,7 @@
 
             @if(selectedHRId() === 'new') {
 
-            Nuevo Hoja de Ruta Nº <samp class="text-2xl">{{numeroHR +1}}</samp>
+            Nuevo Hoja de Ruta Nº <samp class="text-2xl">{{ (hojaRutaResource.value()?.total ?? 0) + 1 }}</samp>
 
             } @else {
 
@@ -174,33 +213,37 @@
 
             </div>
 
+            @if(hRutaForm.get('tipoOrigen')?.value === 'INTERNO') {
+
             <div class="my-1">
-                <select class="select select-bordered w-full" formControlName="tipoOrigen">
+                <select class="select select-bordered w-full" formControlName="idOrigen">
                     <option value="" disabled>
                         Seleccione a un funcionario
                     </option>
 
-                     @for (user of usersResource.value()?.users; track user._id) {
-                        <option [value]="user._id">
-                            {{ user.nombre }} {{ user.apellidos }}
-                        </option>
-                        }
+                    @for (user of usersResource.value()?.users; track user._id) {
+                    <option [value]="user._id">
+                        {{ user.nombre }} {{ user.apellidos }}
+                    </option>
+                    }
                 </select>
-
-                <form-error-label [errorMessage]="getFieldError('persona')" />
             </div>
+
+            } @else {
+
             <div class="my-1">
                 <input type="text" placeholder="Orígen" class="input input-bordered w-full" formControlName="origen"
                     [class.input-error]="getFieldError('origen')" />
+
                 <form-error-label [errorMessage]="getFieldError('origen')" />
             </div>
+            }
 
 
             <div class="w-full my-1">
-                <textarea class="textarea textarea-bordered w-full min-h-20" placeholder="Descripción"
-                    formControlName="description" formControlName="referencia"
-                    [class.input-error]="getFieldError('referencia')"></textarea>
-                <form-error-label [errorMessage]="getFieldError('description')" />
+                <textarea class="textarea textarea-bordered w-full min-h-20" placeholder="Referencia"
+                    formControlName="referencia" [class.input-error]="getFieldError('referencia')"></textarea>
+                <form-error-label [errorMessage]="getFieldError('referencia')" />
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
@@ -210,7 +253,7 @@
                         formControlName="fechaDocumento" [class.input-error]="getFieldError('fechaDocumento')" />
 
 
-                    <form-error-label [errorMessage]="getFieldError('fechaNac')" />
+                    <form-error-label [errorMessage]="getFieldError('fechaDocumento')" />
                 </div>
 
                 <div>
@@ -234,13 +277,18 @@
 
                 </div>
 
+                @if(hRutaForm.get('tipoDocumento')?.value === 'PAGO') {
+
                 <div>
 
                     <input type="text" placeholder="Beneficiario" class="input input-bordered w-full"
                         formControlName="beneficiarioPago" [class.input-error]="getFieldError('beneficiarioPago')" />
+
                     <form-error-label [errorMessage]="getFieldError('beneficiarioPago')" />
 
                 </div>
+
+                }
 
             </div>
 
@@ -275,13 +323,387 @@
 
     </div>
 
-    <form method="dialog" class="modal-backdrop">
+    <!--  <form method="dialog" class="modal-backdrop">
 
         <button>
             cerrar
         </button>
 
-    </form>
+    </form> -->
 
 
+</dialog>
+
+<dialog id="segui_modal" class="modal">
+
+    <div class="modal-box max-w-5xl">
+        <form method="dialog">
+            <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+        </form>
+        @if(selectedHrResource.value(); as hr){
+
+        <h3 class="font-bold text-lg mb-4">
+            Hoja de Ruta Nº {{ hr.numero }}
+        </h3>
+
+        <div class="grid grid-cols-2 gap-4 mb-6">
+
+            <div>
+                <span class="font-semibold">Origen:</span>
+                {{ hr.origen }}
+            </div>
+
+            <div>
+                <span class="font-semibold">Estado:</span>
+                {{ hr.estado }}
+            </div>
+
+            <div>
+                <span class="font-semibold">Referencia:</span>
+                {{ hr.referencia }}
+            </div>
+
+            <div>
+                <span class="font-semibold">Prioridad:</span>
+                {{ hr.prioridad }}
+            </div>
+
+            <div>
+                <span class="font-semibold">Tipo Documento:</span>
+                {{ hr.tipoDocumento }}
+            </div>
+
+            <div>
+                <span class="font-semibold">Fecha:</span>
+                {{ hr.fechaRecepcion | date:'dd/MM/yyyy HH:mm' }}
+            </div>
+
+        </div>
+        <div class="divider"></div>
+        <h4 class="font-semibold mb-2">
+            Historial de Seguimientos
+        </h4>
+
+        <ul class="timeline timeline-snap-icon max-md:timeline-compact timeline-vertical timeline-vertical-reverse">
+
+            @for(segui of hr.seguimientos; track segui._id; let i = $index){
+
+            <li>
+
+                @if(i > 0){
+                <hr />
+                }
+
+                <div class="timeline-middle">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </div>
+
+                @if(i % 2 === 0){
+
+                <div class="timeline-start mb-10 md:text-end">
+                    <div class="badge badge-info">
+                        ENVIADO
+                    </div>
+                    <time class="font-mono italic">
+                        {{ segui.fechaDerivado | date:'dd/MM/yyyy HH:mm' }}
+                    </time>
+                    @if(segui.idSubUnidadOrigen) {
+                    <div>
+                        <div class="font-bold">{{segui.idSubUnidadOrigen.nombre}}</div>
+                        <div class="text-sm opacity-50">{{segui.origenUser.nombre}} {{segui.origenUser.apellidos}}</div>
+                        <div class="font-bold opacity-80">{{segui.idSubUnidadOrigen.cargo}}</div>
+                    </div>
+                    }
+                    @if(segui.idUnidadFuncOrigen) {
+                    <div>
+                        <div class="font-bold">{{segui.idUnidadFuncOrigen.nombre}}</div>
+                        <div class="text-sm opacity-50">{{segui.origenUser.nombre}} {{segui.origenUser.apellidos}}</div>
+                        <div class="font-bold opacity-80">{{segui.idUnidadFuncOrigen.cargo}}</div>
+                    </div>
+                    }
+                    @if(segui.idUnidadOrgOrigen) {
+                    <div>
+                        <div class="font-bold">{{segui.idUnidadOrgOrigen.nombre}}</div>
+                        <div class="text-sm opacity-50">{{segui.origenUser.nombre}} {{segui.origenUser.apellidos}}</div>
+                        <div class="font-bold opacity-80">{{segui.idUnidadOrgOrigen.cargo}}</div>
+                    </div>
+                    }
+
+                    <div class="card  shadow-md w-full p-0 bg-accent/10">
+
+                        <div class="card-body p-1">
+                            <div class="flex items-center gap-2 mb-2">
+
+
+
+                                @if(segui.estado === 'ENVIADO'){
+
+                                <div class="badge badge-error gap-2">
+                                    SIN RECIBIR
+                                </div>
+
+                                }
+
+                                @if(segui.estado !== 'ENVIADO' && segui.fechaRecepcion){
+
+                                <div class="badge badge-success gap-2">
+                                    RECIBIDO
+                                </div>
+
+                                <div class="badge badge-outline gap-2">
+
+                                    {{ segui.fechaRecepcion | date:'dd/MM/yyyy HH:mm' }}
+
+                                    |
+                                    {{ getTiempoPendiente(segui.fechaRecepcion) }}
+
+                                </div>
+                                }
+
+
+
+                            </div>
+
+                            @if(segui.idSubUnidadDest) {
+                            <div>
+                                <div class="font-bold">{{segui.idSubUnidadDest.nombre}}</div>
+                                <div class="text-sm opacity-50">{{segui.origenUser.nombre}}
+                                    {{segui.origenUser.apellidos}}</div>
+                                <div class="font-bold opacity-80">{{segui.idSubUnidadDest.cargo}}</div>
+                            </div>
+                            }
+                            @if(segui.idUnidadFuncDest) {
+                            <div>
+                                <div class="font-bold">{{segui.idUnidadFuncDest.nombre}}</div>
+                                <div class="text-sm opacity-50">{{segui.origenUser.nombre}}
+                                    {{segui.origenUser.apellidos}}</div>
+                                <div class="font-bold opacity-80">{{segui.idUnidadFuncDest.cargo}}</div>
+                            </div>
+                            }
+                            @if(segui.idUnidadOrgDest) {
+                            <div>
+                                <div class="font-bold">{{segui.idUnidadOrgDest.nombre}}</div>
+                                <div class="text-sm opacity-50">{{segui.origenUser.nombre}}
+                                    {{segui.origenUser.apellidos}}</div>
+                                <div class="font-bold opacity-80">{{segui.idUnidadOrgDest.cargo}}</div>
+                            </div>
+                            }
+
+                            <h2 class="font-bold">
+                                {{
+                                typeof segui.destinoUser === 'string'
+                                ? segui.destinoUser
+                                : segui.destinoUser.nombre + ' ' + segui.destinoUser.apellidos
+                                }}
+                            </h2>
+
+                            <p>{{ segui.detalle }}</p>
+
+                            <div class="flex-end items-center gap-2 mb-2">
+
+                                @switch(segui.estado){
+
+                                @case('ENVIADO'){
+
+                                <div class="badge badge-error gap-2">
+                                    SIN RECIBIR
+                                </div>
+                                }
+
+                                @case('RECIBIDO'){
+
+                                <div class="badge badge-success gap-2">
+                                    RECIBIDO
+                                </div>
+                                }
+
+                                @case('DERIVADO'){
+
+                                <div class="badge badge-warning gap-2">
+                                    DERIVADO
+                                </div>
+                                }
+
+                                @default{
+
+                                <div class="badge badge-neutral gap-2">
+                                    {{ segui.estado }}
+                                </div>
+
+                                }
+
+                                }
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                } @else {
+
+                <div class="timeline-end mb-3">
+                    <div class="badge badge-info">
+                        ENVIADO
+                    </div>
+                    <time class="font-mono italic">
+                        {{ segui.fechaDerivado | date:'dd/MM/yyyy HH:mm' }}
+                    </time>
+                    @if(segui.idSubUnidadOrigen) {
+                    <div>
+                        <div class="font-bold">{{segui.idSubUnidadOrigen.nombre}}</div>
+                        <div class="text-sm opacity-50">{{segui.origenUser.nombre}} {{segui.origenUser.apellidos}}</div>
+                        <div class="font-bold opacity-80">{{segui.idSubUnidadOrigen.cargo}}</div>
+                    </div>
+                    }
+                    @if(segui.idUnidadFuncOrigen) {
+                    <div>
+                        <div class="font-bold">{{segui.idUnidadFuncOrigen.nombre}}</div>
+                        <div class="text-sm opacity-50">{{segui.origenUser.nombre}} {{segui.origenUser.apellidos}}</div>
+                        <div class="font-bold opacity-80">{{segui.idUnidadFuncOrigen.cargo}}</div>
+                    </div>
+                    }
+                    @if(segui.idUnidadOrgOrigen) {
+                    <div>
+                        <div class="font-bold">{{segui.idUnidadOrgOrigen.nombre}}</div>
+                        <div class="text-sm opacity-50">{{segui.origenUser.nombre}} {{segui.origenUser.apellidos}}</div>
+                        <div class="font-bold opacity-80">{{segui.idUnidadOrgOrigen.cargo}}</div>
+                    </div>
+                    }
+
+                    <div class="card  shadow-md w-full p-0 bg-accent/10">
+
+                        <div class="card-body p-1">
+                            <div class="flex items-center gap-2 mb-2">
+
+
+                                @if(segui.estado === 'ENVIADO'){
+
+                                <div class="badge badge-error gap-2">
+                                    SIN RECIBIR
+                                </div>
+
+                                }
+
+                                @if(segui.estado !== 'ENVIADO' && segui.fechaRecepcion){
+
+                                <div class="badge badge-success gap-2">
+                                    RECIBIDO
+                                </div>
+
+                                <div class="badge badge-outline gap-2">
+
+                                    {{ segui.fechaRecepcion | date:'dd/MM/yyyy HH:mm' }}
+
+                                    |
+                                    {{ getTiempoPendiente(segui.fechaRecepcion) }}
+
+                                </div>
+                                }
+
+
+                            </div>
+
+                            @if(segui.idSubUnidadDest) {
+                            <div>
+                                <div class="font-bold">{{segui.idSubUnidadDest.nombre}}</div>
+                                <div class="text-sm opacity-50">{{segui.origenUser.nombre}}
+                                    {{segui.origenUser.apellidos}}</div>
+                                <div class="font-bold opacity-80">{{segui.idSubUnidadDest.cargo}}</div>
+                            </div>
+                            }
+                            @if(segui.idUnidadFuncDest) {
+                            <div>
+                                <div class="font-bold">{{segui.idUnidadFuncDest.nombre}}</div>
+                                <div class="text-sm opacity-50">{{segui.origenUser.nombre}}
+                                    {{segui.origenUser.apellidos}}</div>
+                                <div class="font-bold opacity-80">{{segui.idUnidadFuncDest.cargo}}</div>
+                            </div>
+                            }
+                            @if(segui.idUnidadOrgDest) {
+                            <div>
+                                <div class="font-bold">{{segui.idUnidadOrgDest.nombre}}</div>
+                                <div class="text-sm opacity-50">{{segui.origenUser.nombre}}
+                                    {{segui.origenUser.apellidos}}</div>
+                                <div class="font-bold opacity-80">{{segui.idUnidadOrgDest.cargo}}</div>
+                            </div>
+                            }
+
+                            <h2 class="font-bold">
+                                {{
+                                typeof segui.destinoUser === 'string'
+                                ? segui.destinoUser
+                                : segui.destinoUser.nombre + ' ' + segui.destinoUser.apellidos
+                                }}
+                            </h2>
+
+                            <p>{{ segui.detalle }}</p>
+
+                            <div class="flex-end items-center gap-2 mb-2">
+
+                                @switch(segui.estado){
+
+                                @case('ENVIADO'){
+
+                                <div class="badge badge-error gap-2">
+                                    SIN RECIBIR
+                                </div>
+                                }
+
+                                @case('RECIBIDO'){
+
+                                <div class="badge badge-success gap-2">
+                                    RECIBIDO
+                                </div>
+                                }
+
+                                @case('DERIVADO'){
+
+                                <div class="badge badge-warning gap-2">
+                                    DERIVADO
+                                </div>
+                                }
+
+                                @default{
+
+                                <div class="badge badge-neutral gap-2">
+                                    {{ segui.estado }}
+                                </div>
+
+                                }
+
+                                }
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                }
+
+                <hr />
+
+            </li>
+
+            }
+
+        </ul>
+        }
+
+        <div class="modal-action">
+            <form method="dialog">
+                <button class="btn">Cerrar</button>
+            </form>
+        </div>
+
+    </div>
 </dialog>

@@ -11,20 +11,6 @@ export const mainRoutes: Routes = [
         path: '',
         component: AppPage,
       },
-
-    //   {
-    //     path: 'gender/:gender',
-    //     component: GenderPage,
-    //   },
-    //   {
-    //     path: 'product/:idSlug',
-    //     component: ProductPage  ,
-    //   },
-
-    //   {
-    //     path: '**',
-    //     component: NotFountPage,
-    //   },
     ],
   },
 

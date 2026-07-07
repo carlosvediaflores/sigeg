@@ -2,10 +2,12 @@ import { UpperCasePipe, TitleCasePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '@auth/services/auth.service';
+import { LogoNombre } from '@shared/components/logo-nombre/logo-nombre';
+import { Profile } from '@shared/components/profile/profile';
 
 @Component({
   selector: 'app-org-layout',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, UpperCasePipe, TitleCasePipe,],
+  imports: [RouterOutlet, RouterLink, LogoNombre, Profile],
   templateUrl: './org-layout.html',
   styleUrl: './org-layout.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
