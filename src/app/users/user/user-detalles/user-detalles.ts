@@ -278,7 +278,7 @@ export class UserDetalles implements OnInit {
           this.userService.createUser(userLike)
         );
 
-        this.router.navigate(['/users', user._id]);
+        this.router.navigate(['/users/list']);
 
       } else {
 
@@ -288,6 +288,7 @@ export class UserDetalles implements OnInit {
             userLike
           )
         );
+         this.router.navigate(['/users/list']);
 
       }
       this.wasSaved.set(true);

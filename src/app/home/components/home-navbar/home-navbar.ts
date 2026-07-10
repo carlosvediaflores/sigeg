@@ -4,7 +4,7 @@ import { AuthService } from '@auth/services/auth.service';
 
 @Component({
   selector: 'app-home-navbar',
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink,],
   templateUrl: './home-navbar.html',
   styleUrl: './home-navbar.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

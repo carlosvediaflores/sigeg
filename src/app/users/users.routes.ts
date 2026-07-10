@@ -15,7 +15,7 @@ export const mainRoutes: Routes = [
     path: '',
     component: UserLayout, canMatch: [IsAdminGuard],
     children: [
-      { path: '', component: UserDashboard, },
+      { path: '', component: ListUsers, },
       {
         path: 'list',
         component: ListUsers,

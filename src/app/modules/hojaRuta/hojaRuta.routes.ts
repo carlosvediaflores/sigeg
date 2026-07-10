@@ -15,7 +15,7 @@ export const hojaRutaRoutes: Routes = [
         path: 'list',
         component: HojaRuta,
       },
-      { path: '', component: Dasboard, },
+      { path: '', component: HojaRuta, },
 
      {path: 'oficina', component: Oficina, },
 

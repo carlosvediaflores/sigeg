@@ -1,16 +1,50 @@
-<div class="join flex justify-center items-center">
+<!-- <div class="join flex justify-center items-center">
 
   @for (page of getPagesList(); track page) {
 
-    <button
-      class="join-item btn"
-      [class.btn-primary]="page === currentPage()"
-      [routerLink]="[]"
-      [queryParams]="{ page: page }"
-    >
-      {{ page }}
-    </button>
+  <button class="join-item btn" [class.btn-primary]="page === currentPage()" [routerLink]="[]"
+    [queryParams]="{ page: page }">
+    {{ page }}
+  </button>
 
   }
 
+</div>
+ -->
+<div class="join">
+  <a
+    class="join-item btn"
+    [class.btn-disabled]="currentPage() === 1"
+    [routerLink]="[]"
+    [queryParams]="{ page: previousPage() }"
+    queryParamsHandling="merge"
+  >
+    «
+  </a>
+
+  @for (page of getPagesList(); track $index) {
+    @if (page === 'ellipsis') {
+      <button class="join-item btn btn-disabled">...</button>
+    } @else {
+      <a
+        class="join-item btn"
+        [class.btn-primary]="page === currentPage()"
+        [routerLink]="[]"
+        [queryParams]="{ page }"
+        queryParamsHandling="merge"
+      >
+        {{ page }}
+      </a>
+    }
+  }
+
+  <a
+    class="join-item btn"
+    [class.btn-disabled]="currentPage() === pages()"
+    [routerLink]="[]"
+    [queryParams]="{ page: nextPage() }"
+    queryParamsHandling="merge"
+  >
+    »
+  </a>
 </div>

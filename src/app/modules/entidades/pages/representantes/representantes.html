@@ -1,1 +1,278 @@
-<p>representantes works!</p>,
+<div class="flex-1  ">
+
+    <div class="flex items-center gap-5 ">
+        <h1 class="text-1xl font-bold">Listado de entidads</h1>
+        <h3 class="text-lg">
+            Total
+            <span class="text-accent">{{ represResource.value()?.total}}</span>
+        </h3>
+    </div>
+    <div class="divider p-0 m-0"></div>
+
+    <div class="flex gap-2 items-center  p-0 m-0" [formGroup]="searchForm">
+        <h1>Mostrar</h1>
+        <select class="select select-bordered w-15" (change)="represPerPage.set(+selectPerPage.value)" #selectPerPage>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+
+       <!--  <label class="floating-label w-90">
+            <input type="text" placeholder="Búsqueda General" class="input select-xs sm:input-sm md:input-md "
+                formControlName="termino" />
+            <span>Búsqueda General</span>
+        </label>
+        <label class="floating-label w-40">
+            <select class="select select-xs sm:select-sm md:select-md" formControlName="tipoEntidad">
+                <option value="">Todas</option>
+                <option value="Pública">Pública</option>
+                <option value="Privada">Privada</option>
+                <option value="Comunidad">Comunidad</option>
+                <option value="ONG">ONG</option>
+                <option value="Otro">Otro</option>
+            </select>
+            <span>Seleccione Tipo</span>
+        </label>
+
+        <label class="floating-label w-40">
+            <select class="select select-xs sm:select-sm md:select-md" formControlName="isActive">
+                <option value="">Todas</option>
+                <option value=true>Activo</option>
+                <option value=false>Inactivo</option>
+            </select>
+            <span>Entidad Seleccionada</span>
+        </label>
+ -->
+        <div class="flex flex-1"></div>
+
+       <!--  <button type="button" class="btn btn-info btn-sm"
+            (click)="searchForm.reset({ termino: '', tipoEntidad: '', isActive: '' })">
+            Limpiar
+        </button> -->
+
+        <!-- <button class="btn btn-primary" (click)="openNewModal()">
+            Agregar entidad
+        </button> -->
+    </div>
+   <!--  <pre>{{ searchForm.getRawValue() | json }}</pre> -->
+
+
+    <div class="overflow-x-auto">
+        <table class="table table-sm">
+            <!-- head -->
+            <thead>
+                <tr>
+                    <!-- <th>
+                        <label>
+                            <input type="checkbox" class="checkbox" />
+                        </label>
+                    </th> -->
+                    <th>Nombre</th>
+                    <th>Apellidos</th>
+                    <th>Cargo</th>
+                    <th>Correo</th>
+                    <th>Estado</th>
+                    <th>Entidad</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- row 1 -->
+                @for (representante of represResource.value()?.representantes; track representante._id) {
+
+                <tr>
+                    <td>
+                        {{ representante.nombre }}
+                    </td>
+                    <td>
+                        {{ representante.apellidos }}
+                    </td>
+                    <td>
+                        {{ representante.cargo }}
+                    </td>
+                    <td>
+                        {{ representante.email }}
+                    </td>
+                    <td>
+                        @if (representante.isActive === true) {
+                        <span class="badge badge-success">Activo</span>
+                        } @else if (representante.isActive === false) {
+                        <span class="badge badge-error">Inactivo</span>
+                        }
+                    </td>
+                    <td>
+                        {{ representante.idEntidad?.denominacion }}
+                    </td>
+                    <th>
+
+                        <button class="btn btn-ghost btn-xs btn-circle text-accent">
+                            <div class="indicator">
+
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                    class="size-6">
+                                    <path
+                                        d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32l8.4-8.4Z" />
+                                    <path
+                                        d="M5.25 5.25a3 3 0 0 0-3 3v10.5a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3V13.5a.75.75 0 0 0-1.5 0v5.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5V8.25a1.5 1.5 0 0 1 1.5-1.5h5.25a.75.75 0 0 0 0-1.5H5.25Z" />
+                                </svg>
+                            </div>
+                        </button>
+                    </th>
+                </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="flex gap-2 text-center  p-0 m-0">
+            <app-pagination [pages]="represResource.value()?.pages ?? 0" [currentPage]="currentPage()" />
+        </div>
+    </div>
+</div>
+<!-- <pre>{{represResource.value()?.representantes | json }}</pre> -->
+
+<!-- <dialog id="entidad_modal" class="modal">
+
+    <div class="modal-box max-w-4xl">
+
+        <h3 class="font-bold text-2xl mb-4">
+
+            @if(selectedEntidadId() === 'new') {
+
+            Nuevo Entidad
+
+            } @else {
+
+            Editar Entidad
+
+            }
+
+        </h3>
+
+        <form [formGroup]="entidadForm" (ngSubmit)="onSubmit()">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <div>
+
+                    <input type="text" placeholder="Código" class="input input-bordered w-full" formControlName="codigo"
+                        [class.input-error]="getFieldError('codigo')" />
+                    <form-error-label [errorMessage]="getFieldError('codigo')" />
+
+                </div>
+
+                <div>
+
+                    <input type="text" placeholder="Nombre" class="input input-bordered w-full"
+                        formControlName="denominacion" [class.input-error]="getFieldError('denominacion')" />
+                    <form-error-label [errorMessage]="getFieldError('denominacion')" />
+
+                </div>
+
+                <div>
+
+                    <input type="text" placeholder="Sigla" class="input input-bordered w-full" formControlName="sigla"
+                        [class.input-error]="getFieldError('sigla')" />
+                    <form-error-label [errorMessage]="getFieldError('sigla')" />
+
+                </div>
+
+                <div>
+                    <select class="select select-bordered w-full" placeholder="Selecciona un método"
+                        formControlName="tipoEntidad" [class.input-error]="getFieldError('tipoEntidad')">
+                        <option value="" disabled selected>Selecciona Tipo de Entidad</option>
+                        <option value="Pública">Pública</option>
+                        <option value="Privada">Privada</option>
+                        <option value="Comunidad">Comunidad</option>
+                        <option value="ONG">ONG</option>
+                        <option value="Otro">Otro</option>
+
+                    </select>
+                    <form-error-label [errorMessage]="getFieldError('tipoEntidad')" />
+                </div>
+
+                <div>
+
+                    <input type="number" placeholder="Nit" class="input input-bordered w-full" formControlName="nit"
+                        [class.input-error]="getFieldError('nit')" />
+                    <form-error-label [errorMessage]="getFieldError('nit')" />
+
+                </div>
+
+                <div>
+
+                    <input type="number" placeholder="Cuenta Bancaria" class="input input-bordered w-full"
+                        formControlName="cuenta" [class.input-error]="getFieldError('cuenta')" />
+                    <form-error-label [errorMessage]="getFieldError('cuenta')" />
+
+                </div>
+
+                <div>
+
+                    <input type="text" placeholder="Teléfono" class="input input-bordered w-full"
+                        formControlName="telefono" [class.input-error]="getFieldError('telefono')" />
+                    <form-error-label [errorMessage]="getFieldError('telefono')" />
+
+                </div>
+
+                <label class="flex items-center gap-3">
+                    <span class="font-semibold">Estado:</span>
+
+                    <span class="badge" [class.badge-success]="entidadForm.controls.estado.value"
+                        [class.badge-error]="!entidadForm.controls.estado.value">
+                        {{ entidadForm.controls.estado.value ? 'Activo' : 'Inactivo' }}
+                    </span>
+
+                    <input type="checkbox" class="toggle toggle-success" formControlName="estado" />
+                </label>
+            </div>
+
+            <div class="modal-action">
+
+                <button type="button" class="btn btn-secondary" onclick="entidad_modal.close()">
+
+                    Cancelar
+
+                </button>
+
+                <button type="submit" class="btn btn-success" [disabled]="isPosting()">
+
+                    @if(isPosting()) {
+
+                    <span class="loading loading-spinner loading-sm">
+                    </span>
+
+                    Guardando...
+
+                    } @else {
+
+                    Guardar
+
+                    }
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <form method="dialog" class="modal-backdrop">
+
+        <button>
+            cerrar
+        </button>
+
+    </form>
+
+
+    <pre>{{ entidadForm.value | json }}</pre>
+</dialog> -->
+
+@if (wasSaved()) {
+<div class="toast toast-end toast-top z-50">
+    <div class="alert alert-success">
+        <span>{{ successMessage() }}</span>
+    </div>
+</div>
+}

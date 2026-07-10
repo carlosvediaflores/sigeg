@@ -15,9 +15,9 @@ export const routes: Routes = [
     { path: 'main', loadChildren: () => import('./main/main.routes'),
          canMatch: [AuthenticatedGuard],
     },
-    { path: 'users', loadChildren: () => import('./users/users.routes') },
-    { path: 'organizacion', loadChildren: () => import('./modules/organizacion/org.routes') },
-    { path: 'hojaRuta', loadChildren: () => import('./modules/hojaRuta/hojaRuta.routes') },
-    { path: 'entidades', loadChildren: () => import('./modules/entidades/entidad.routes') },
+    { path: 'users', loadChildren: () => import('./users/users.routes'), canMatch: [AuthenticatedGuard] },
+    { path: 'organizacion', loadChildren: () => import('./modules/organizacion/org.routes'), canMatch: [AuthenticatedGuard] },
+    { path: 'hojaRuta', loadChildren: () => import('./modules/hojaRuta/hojaRuta.routes'), canMatch: [AuthenticatedGuard] },
+    { path: 'entidades', loadChildren: () => import('./modules/entidades/entidad.routes'), canMatch: [AuthenticatedGuard] },
     { path: '', loadChildren: () => import('./home/home.routes') },
 ];
