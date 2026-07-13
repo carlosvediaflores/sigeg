@@ -1,6 +1,6 @@
 <div class="flex-1">
 
-    <div class="flex items-center gap-5 ">
+    <div class="flex items-center gap-5 pb-2">
         <h1 class="text-1xl font-bold">Registro Hojas de Ruta</h1>
         <h3 class="text-lg">
             Total
@@ -8,26 +8,86 @@
         </h3>
     </div>
 
-    <div class="flex gap-2 items-center h-15 p-0 m-0">
+    <div class="flex gap-2 items-center p-0 m-0" [formGroup]="searchFormHR">
 
+        <label class="floating-label">
+            <select class="select select-bordered w-20" (change)="hojaRutaPerPage.set(+selectPerPage.value)"
+                #selectPerPage>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+            <span>Mostrar</span>
+        </label>
 
-        <select class="select select-bordered w-20" (change)="hojaRutaPerPage.set(+selectPerPage.value)" #selectPerPage>
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-        </select>
+        <label class="floating-label">
+            <select formControlName="gestion" class="select select-bordered w-20" #selectPerPage>
+                <option value="2026">2026</option>
+                <option value="2027">2027</option>
+                <option value="2028">2028</option>
+                <option value="2029">2029</option>
+                <option value="2030">2030</option>
+                <option value="2031">2031</option>
+            </select>
+            <span>Gestión</span>
+        </label>
+        <div class="flex flex-1"></div>
+        <div class="indicator mr-2">
+            <span class="indicator-item badge badge-sm">{{ hojaRutaResource.value()?.total }}</span>
+            <button type="button" class="btn btn-info btn-sm" (click)="searchFormHR.get('estado')?.setValue('')">
+                Todos
+            </button>
+        </div>
+
+        <div class="indicator mr-2">
+            <span class="indicator-item badge badge-sm badge-accent">{{ hojaRutaResource.value()?.totalEnviado }}</span>
+            <button type="button" class="btn btn-info btn-sm" (click)="searchFormHR.get('estado')?.setValue('ENVIADO')">
+                Enviados
+            </button>
+        </div>
+
+        <div class="indicator mr-2">
+            <span class="indicator-item badge badge-sm badge-success">{{ hojaRutaResource.value()?.totalRecibido }}</span>
+            <button type="button" class="btn btn-info btn-sm" (click)="searchFormHR.get('estado')?.setValue('RECIBIDO')">
+                Recibidos
+            </button>
+        </div>
+        <div class="indicator mr-2">
+            <span class="indicator-item badge badge-sm badge-secondary">{{ hojaRutaResource.value()?.totalRegistrado }}</span>
+            <button type="radio" class="btn btn-info btn-sm"  (click)="searchFormHR.get('estado')?.setValue('REGISTRADO')">Registrados</button>
+        </div>
+        <div class="indicator ">
+            <span class="indicator-item badge badge-sm badge-error">{{ hojaRutaResource.value()?.totalAnulado }}</span>
+            <button type="radio" class="btn btn-info btn-sm"  (click)="searchFormHR.get('estado')?.setValue('ANULADO')">Anulados</button>
+        </div>
 
         <div class="flex flex-1"></div>
 
-        <button class="btn btn-info text-cyan-50 p-1" (click)="openNewModal()">
+        <label class="floating-label w-25">
+            <input type="number" placeholder="N° Hoja ruta" class="input select-xs sm:input-sm md:input-md "
+                formControlName="numero" />
+            <span>N° Hoja de ruta</span>
+        </label>
+
+        <label class="floating-label w-50">
+            <input type="text" placeholder="Búsqueda General" class="input select-xs sm:input-sm md:input-md "
+                formControlName="termino" />
+            <span>Búsqueda General</span>
+        </label>
+        <button type="button" class="btn btn-info btn-sm"
+            (click)="searchFormHR.reset({ termino: '', numero: '', estado: '', gestion: year })">
+            Limpiar
+        </button>
+
+        <button class="btn btn-info text-cyan-50 p-1 " (click)="openNewModal()">
             + Registrar Nuevo
         </button>
     </div>
     <div class="divider p-0 m-0"></div>
 
     <div class="overflow-x-auto mt-0">
-        <table class="table table-zebra ">
+        <table class="table table-zebra btn-xs">
             <!-- head -->
             <thead>
                 <tr class="text-center">
@@ -88,7 +148,7 @@
                         {{ hr.fechaRecepcion | date : 'medium' }}
                     </td>
                     <td>
-                        {{ hr.prioridad}}
+                        {{ hr?.cite || 'S/C' }}
                     </td>
                     <td>
 
@@ -139,7 +199,8 @@
 
                         @if (hr.estado === 'RECIBIDO') {
 
-                        <a [routerLink]="['/hojaRuta/enviar', hr._id]" class="btn btn-ghost text-accent btn-xs">
+                        <a [routerLink]="['/hojaRuta/enviar', hr._id, undefined]"
+                            class="btn btn-ghost text-accent btn-xs">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor" class="size-6">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -192,6 +253,9 @@
 
                     <input class="join-item btn" type="radio" formControlName="tipoOrigen" value="EXTERNO"
                         aria-label="Externo" />
+
+                    <input class="join-item btn" type="radio" formControlName="tipoOrigen" value="OTRO"
+                        aria-label="Otro" />
                 </div>
                 <div>
                     <fieldset class="fieldset flex gap-4">
@@ -216,29 +280,64 @@
             @if(hRutaForm.get('tipoOrigen')?.value === 'INTERNO') {
 
             <div class="my-1">
-                <select class="select select-bordered w-full" formControlName="idOrigen">
-                    <option value="" disabled>
-                        Seleccione a un funcionario
-                    </option>
+                <label class="floating-label">
+                    <select class="select select-bordered w-full " formControlName="idOrigen">
+                        <option value="" disabled>
+                            Seleccione a un funcionario
+                        </option>
 
-                    @for (user of usersResource.value()?.users; track user._id) {
-                    <option [value]="user._id">
-                        {{ user.nombre }} {{ user.apellidos }}
-                    </option>
-                    }
-                </select>
+                        @for (user of usersResource.value()?.users; track user._id) {
+                        <option [value]="user._id">
+                            {{ user.nombre }} {{ user.apellidos }}
+                        </option>
+                        }
+                    </select>
+                    <span>Seleccione Funcionario</span>
+                </label>
             </div>
 
-            } @else {
+            } @else if (hRutaForm.get('tipoOrigen')?.value === 'EXTERNO') {
+            <div class="my-1">
+                <label class="floating-label">
+                    <select class="select select-bordered w-full" formControlName="entidad">
+                        <option value="" disabled>
+                            Seleccione Entidad
+                        </option>
+
+                        @for (entidad of entidadResource.value()?.entidades; track entidad._id) {
+                        <option [value]="entidad._id">
+                            {{ entidad.codigo }} - {{ entidad.denominacion }}
+                        </option>
+                        }
+                    </select>
+                    <span>Seleccione Entidad</span>
+                </label>
+            </div>
+            }
+            @else {
 
             <div class="my-1">
-                <input type="text" placeholder="Orígen" class="input input-bordered w-full" formControlName="origen"
-                    [class.input-error]="getFieldError('origen')" />
+                <label class="floating-label">
+                    <input type="text" placeholder="Orígen" class="input input-bordered w-full" formControlName="origen"
+                        [class.input-error]="getFieldError('origen')" />
 
-                <form-error-label [errorMessage]="getFieldError('origen')" />
+                    <form-error-label [errorMessage]="getFieldError('origen')" />
+                    <span>Orígen</span>
+                </label>
             </div>
             }
 
+            @if (hRutaForm.get('tipoOrigen')?.value != 'INTERNO') {
+            <div class="my-1">
+                <label class="floating-label">
+                    <input type="text" placeholder="Firma la Nota" class="input input-bordered w-full"
+                        formControlName="representante" [class.input-error]="getFieldError('representante')" />
+
+                    <form-error-label [errorMessage]="getFieldError('representante')" />
+                    <span>Firma la Nota</span>
+                </label>
+            </div>
+            }
 
             <div class="w-full my-1">
                 <textarea class="textarea textarea-bordered w-full min-h-20" placeholder="Referencia"
@@ -289,6 +388,14 @@
                 </div>
 
                 }
+
+                <div>
+
+                    <input type="text" placeholder="Cite" class="input input-bordered w-full" formControlName="cite"
+                        [class.input-error]="getFieldError('cite')" />
+                    <form-error-label [errorMessage]="getFieldError('cite')" />
+
+                </div>
 
             </div>
 
@@ -707,3 +814,11 @@
 
     </div>
 </dialog>
+
+@if (wasSaved()) {
+<div class="toast toast-end toast-top z-50">
+    <div class="alert alert-success">
+        <span>{{ successMessage() }}</span>
+    </div>
+</div>
+}

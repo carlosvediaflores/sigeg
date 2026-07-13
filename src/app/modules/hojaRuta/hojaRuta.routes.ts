@@ -9,7 +9,7 @@ import { Oficina } from "./pages/oficina/oficina";
 export const hojaRutaRoutes: Routes = [
   {
     path: '',
-    component: HojaRutaLayout, canMatch: [IsAdminGuard],
+    component: HojaRutaLayout,
     children: [
       {
         path: 'list',
@@ -21,6 +21,7 @@ export const hojaRutaRoutes: Routes = [
 
     /*  {path: 'roles-list', component: RolesList, }, */
 
+     /*  {path: 'enviar/:id', component: NewSeguimiento, }, */
       {path: 'enviar/:id/:idSeg', component: NewSeguimiento, },
 
       /* { path: 'permisos/:id', component: Permisos, }, */

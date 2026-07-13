@@ -12,9 +12,9 @@ export interface User {
   password?: string;
   foto?: string;
   isActive: boolean;
-  idUnidadOrg?:Org | string;
-  idUnidadFuncional?: UnidadFuncional | string;
-  idSubUnidad?:SubUnidad | string;
+  idUnidadOrg?:Org ;
+  idUnidadFuncional?: UnidadFuncional ;
+  idSubUnidad?:SubUnidad;
   roles: Roles[];
 }
 

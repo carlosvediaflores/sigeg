@@ -9,7 +9,7 @@ import { Representantes } from "./pages/representantes/representantes";
 export const entidadRoutes: Routes = [
   {
     path: '',
-    component: EntidadesLayout, canMatch: [IsAdminGuard],
+    component: EntidadesLayout,
     children: [
       {
         path: '',

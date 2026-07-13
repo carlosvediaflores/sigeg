@@ -1,15 +1,26 @@
 import { User } from "@auth/interfaces/user.interface";
 import { Org, SubUnidad, UnidadFuncional } from "../../organizacion/interfaces/org.interface";
+import { Entidad } from "../../entidades/interfaces/entidad.interface";
 
 export interface HojaRutaResponse {
     total: number;
     pages: number;
+    totalAnulado: number;
+    totalEnviado: number
+    totalFinalizado: number
+    totalRecibido: number
+    totalRegistrado: number
     hojaRutas: HojaRutaSimple[];
 }
 
 export interface SeguimientosResponse {
     total: number;
     pages: number;
+    totalArchivados: number;
+    totalEnviados: number
+    totalFinalizados: number
+    totalRecibidos: number
+    totalDerivados: number
     seguimientos: Seguimiento[];
 }
 
@@ -32,6 +43,9 @@ export interface HojaRutaSimple {
     asociados: Asociados[];
     archivos: Archivos[];
     isActive: Boolean;
+    entidad: string;
+    representante: string;
+    cite: string;
 
 }
 
@@ -39,7 +53,7 @@ export interface Seguimiento {
     _id: string;
     origenHr: string;
     numeroHr: number;
-    idHojaRuta: HojaRutaSimple | string;
+    idHojaRuta: HojaRutaSimple;
     tipoEnvio: string;
     detalle: string;
     estado: string;
@@ -48,14 +62,14 @@ export interface Seguimiento {
     fechaRecepcion: Date | string;
     numeroCopia: number;
     gestion: number;
-    idUnidadOrgOrigen?: Org ;
-    idUnidadFuncOrigen?:UnidadFuncional;
-    idSubUnidadOrigen?: SubUnidad ;
-    idUnidadOrgDest?: Org ;
-    idUnidadFuncDest?: UnidadFuncional ;
-    idSubUnidadDest?: SubUnidad ;
+    idUnidadOrgOrigen?: Org;
+    idUnidadFuncOrigen?: UnidadFuncional;
+    idSubUnidadOrigen?: SubUnidad;
+    idUnidadOrgDest?: Org;
+    idUnidadFuncDest?: UnidadFuncional;
+    idSubUnidadDest?: SubUnidad;
     origenUser: User;
-    destinoUser:  User;
+    destinoUser: User;
     isActive: Boolean;
     archivosOficina: ArchivosOficina[];
     carpetasOficina: CarpetasOficina[];

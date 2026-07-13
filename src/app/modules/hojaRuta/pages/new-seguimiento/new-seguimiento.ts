@@ -25,7 +25,8 @@ export class NewSeguimiento {
 
   hrId = toSignal(
     this.activatedRoute.params.pipe(
-      map((params) => params['id'])
+      map((params) => params['id']),
+      tap((resp) => console.log('idHojaRuta', resp))
     ),
     {
       initialValue: '',
@@ -34,7 +35,8 @@ export class NewSeguimiento {
 
   seguiId = toSignal(
     this.activatedRoute.params.pipe(
-      map((params) => params['idSeg'])
+      map((params) => params['idSeg']),
+      tap((resp) => console.log('idSeg', resp))
     ),
     {
       initialValue: '',

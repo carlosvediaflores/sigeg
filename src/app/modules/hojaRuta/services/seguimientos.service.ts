@@ -19,6 +19,22 @@ export class SeguimientosService {
   private seguimientoCache = new Map<string, Seguimiento>();
 
   getSeguimientos(options: Options): Observable<SeguimientosResponse> {
+        console.log('optionsSegui', options)
+        const params = Object.fromEntries(
+          Object.entries(options).filter(([_, value]) =>
+            value !== null && value !== undefined && value !== ''
+          )
+        );
+    
+        return this.http.get<SeguimientosResponse>(`${baseUrl}/seguimientos`, {
+          params,
+          
+        }).pipe(
+          tap((resp) => console.log('PARAMS', params)),
+          tap((resp) => console.log('Segui', resp)),
+        );
+      }
+ /*  getSeguimientos(options: Options): Observable<SeguimientosResponse> {
     const { limit = 9, offset = 0 } = options;
 
     const key = `${limit}-${offset}`; // 9-0-''
@@ -37,7 +53,7 @@ export class SeguimientosService {
         tap((resp) => console.log('respSegui', resp)),
         tap((resp) => this.seguimientosCache.set(key, resp))
       );
-  }
+  } */
   createSeguimiento(seguimiento: Partial<Seguimiento>) {
     console.log('createSeguimiento', seguimiento);
     return this.http.post<Seguimiento>(`${baseUrl}/seguimientos`, seguimiento)
@@ -49,21 +65,31 @@ export class SeguimientosService {
       )
   }
 
-   updateSeguimiento(
-      id: string,
-      segui: Partial<Seguimiento>
-    ) {
-      console.log('createSeguimiento', segui);
-      return this.http.patch<Seguimiento>(
-        `${baseUrl}/seguimientos/${id}`,
-        segui
-      )
-        .pipe(
-          tap(seguim => {
-           this.seguimientoCache.set(seguim._id, seguim);
+  updateSeguimiento(
+    id: string,
+    segui: Partial<Seguimiento>
+  ) {
+    console.log('createSeguimiento', segui);
+    return this.http.patch<Seguimiento>(
+      `${baseUrl}/seguimientos/${id}`,
+      segui
+    )
+      .pipe(
+        tap(seguim => {
+          this.seguimientoCache.set(seguim._id, seguim);
           this.seguimientosCache.clear();
-          })
-        );
-    }
- 
+        })
+      );
+  }
+
+  getSegui(id: string): Observable<Seguimiento> {
+  
+    return this.http
+      .get<Seguimiento>(`${baseUrl}/seguimientos/${id}`)
+      .pipe(
+        tap((resp) => console.log('respSegui', resp)),
+    
+      );
+  }
+
 }

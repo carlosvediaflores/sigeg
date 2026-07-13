@@ -4,6 +4,7 @@ import { User, } from '@auth/interfaces/user.interface';
 import { Observable, of, tap } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
 import { UsersResponse } from '../interfaces/user.interface';
+import { Org, UnidadFuncional, SubUnidad } from '../../modules/organizacion/interfaces/org.interface';
 
 const baseUrl = environment.baseUrl;
 
@@ -24,9 +25,9 @@ const emptyUser: User = {
   password: '',
   foto: '',
   isActive: true,
-  idUnidadOrg:'',
-  idUnidadFuncional:'',
-  idSubUnidad:'',
+  idUnidadOrg: {} as Org,
+  idUnidadFuncional: {} as UnidadFuncional,
+  idSubUnidad: {} as SubUnidad,
   roles: [],
 };
 

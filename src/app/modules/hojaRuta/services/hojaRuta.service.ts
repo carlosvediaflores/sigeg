@@ -27,7 +27,22 @@ export class HojaRutaService {
     this.hojaRutasCache.clear();
   }
 
-  getHojaRutas(options: Options): Observable<HojaRutaResponse> {
+   getHojaRutas(options: Options): Observable<HojaRutaResponse> {
+      console.log('optionsHR', options)
+      const params = Object.fromEntries(
+        Object.entries(options).filter(([_, value]) =>
+          value !== null && value !== undefined && value !== ''
+        )
+      );
+  
+      return this.http.get<HojaRutaResponse>(`${baseUrl}/hojarutas`, {
+        params,
+      }).pipe(
+        tap((resp) => console.log('HR', resp)),
+      );
+    }
+
+  /* getHojaRutas(options: Options): Observable<HojaRutaResponse> {
     const { limit = 9, offset = 0 } = options;
 
     const key = `${limit}-${offset}`; // 9-0-''
@@ -46,7 +61,7 @@ export class HojaRutaService {
        // tap((resp) => console.log('resp', resp)),
         tap((resp) => this.hojaRutasCache.set(key, resp))
       );
-  }
+  } */
   getHojaRuta(id: string): Observable<HojaRutaSimple> {
     if (this.hojaRutaCache.has(id)) {
       return of(this.hojaRutaCache.get(id)!);

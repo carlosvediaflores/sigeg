@@ -1,4 +1,4 @@
-import { UpperCasePipe, TitleCasePipe } from '@angular/common';
+import { UpperCasePipe, TitleCasePipe, JsonPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { AuthService } from '@auth/services/auth.service';
 

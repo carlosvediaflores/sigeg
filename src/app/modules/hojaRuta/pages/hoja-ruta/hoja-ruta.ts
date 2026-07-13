@@ -3,7 +3,7 @@ import { HojaRutaService } from '../../services/hojaRuta.service';
 import { HojaRutaResponse, Seguimiento, HojaRutaSimple } from '../../interfaces/hojaRuta';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { rxResource, toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { combineLatest, firstValueFrom, map, of, switchMap, tap } from 'rxjs';
+import { combineLatest, debounceTime, distinctUntilChanged, firstValueFrom, map, of, startWith, switchMap, tap } from 'rxjs';
 import { Pagination } from '@shared/components/pagination/pagination';
 import { DatePipe, JsonPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -11,10 +11,11 @@ import { Org } from '../../../organizacion/interfaces/org.interface';
 import { FormErrorLabel } from '@shared/components/form-error-label/form-error-label';
 import { UserService } from '../../../../users/services/user.service';
 import Swal from 'sweetalert2';
+import { EntidadService } from '../../../entidades/services/entidad.service';
 
 @Component({
   selector: 'app-hoja-ruta',
-  imports: [RouterLink, Pagination, DatePipe, FormErrorLabel, ReactiveFormsModule],
+  imports: [RouterLink, Pagination, DatePipe, FormErrorLabel, ReactiveFormsModule,],
   templateUrl: './hoja-ruta.html',
   styleUrl: './hoja-ruta.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,10 +35,21 @@ export class HojaRuta {
 
         this.hRutaForm.patchValue({
           origen: '',
-          idOrigen: ''
+          idOrigen: '',
+          entidad:''
+
         });
 
-      } else {
+      } else if (tipo === 'EXTERNO') {
+        origenControl?.clearValidators();
+
+        this.hRutaForm.patchValue({
+          origen: '',
+          idOrigen: '',
+          entidad:''
+        });
+      }
+      else {
 
         origenControl?.setValidators([Validators.required]);
 
@@ -74,10 +86,49 @@ export class HojaRuta {
 
     });
 
+    // Cuando selecciona un entidad
+    this.hRutaForm.get('entidad')?.valueChanges.subscribe(id => {
+
+      if (!id) return;
+
+      if (this.hRutaForm.get('tipoOrigen')?.value !== 'EXTERNO') {
+        return;
+      }
+
+      const entidad = this.entidadResource
+        .value()
+        ?.entidades
+        ?.find(entidad => entidad._id === id);
+
+      if (!entidad) return;
+
+      this.hRutaForm.patchValue({
+        origen: `${entidad.denominacion} - ${entidad.codigo}`,
+        representante: entidad.representante ? `${entidad.representante.nombre} ${entidad.representante.apellidos}` : ''
+      });
+
+    });
+
+    // Cuando selecciona un OTRO
+    this.hRutaForm.get('origen')?.valueChanges.subscribe(id => {
+
+      if (!id) return;
+
+      if (this.hRutaForm.get('tipoOrigen')?.value !== 'OTRO') {
+        return;
+      }
+
+      this.hRutaForm.patchValue({
+        representante:  this.hRutaForm.get('origen')?.value || ''
+      });
+
+    });
+
   }
 
   hojaRutaService = inject(HojaRutaService);
   userService = inject(UserService);
+  entidadService = inject(EntidadService);
   public hojaRutas = signal<HojaRutaResponse[] | null>(null);
   selectedHojaRuta = signal<HojaRutaSimple | null>(null);
   selectedHrId = signal('');
@@ -89,8 +140,23 @@ export class HojaRuta {
   wasSaved = signal(false);
   isPosting = signal(false);
   selectedHrId$ = toObservable(this.selectedHrId);
-
+  
+  year = new Date().getFullYear();
   numeroHR = 0;
+
+  searchFormHR = this.fb.group({
+    gestion: [this.year],
+    termino: [''],
+    estado: [''],
+    numero: [''],
+  });
+
+  searchFormHR$ = this.searchFormHR.valueChanges.pipe(
+      startWith(this.searchFormHR.value),
+      debounceTime(300),
+      distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b))
+    );
+
 
   usersResource = rxResource({
     stream: () => this.userService.getUsers({ limit: 1000 })
@@ -128,13 +194,15 @@ export class HojaRuta {
       combineLatest([
         this.currentPage$,
         this.hojaRutaPerPage$,
+        this.searchFormHR$,
       ]).pipe(
 
-        switchMap(([page, limit]) =>
+        switchMap(([page, limit, filters]) =>
           this.hojaRutaService.getHojaRutas({
 
             offset: (page - 1) * limit,
             limit,
+            ...filters,
           })
         )
       )
@@ -156,6 +224,21 @@ export class HojaRuta {
     return new Date().toISOString().split('T')[0];
   }
 
+  searchForm = this.fb.group({
+    estado: ['true'],
+  });
+
+  entidadResource = rxResource({
+    stream: () =>
+      combineLatest([
+        this.searchForm.valueChanges.pipe(startWith(this.searchForm.value)),
+      ]).pipe(
+        switchMap(([formValue]) =>
+          this.entidadService.getEntidad(formValue)
+        )
+      ),
+  });
+
   hRutaForm = this.fb.nonNullable.group({
     origen: ['', Validators.required],
     idOrigen: [''],
@@ -167,13 +250,15 @@ export class HojaRuta {
     referencia: ['', Validators.required],
     estado: ['REGISTRADO'],
     numero: [this.numeroHR, Validators.required],
-    gestion: [0],
     fechaDocumento: [this.getToday()],
     fechaRecepcion: [new Date()],
     seguimientos: [[] as Seguimiento[]],
+    entidad: [''],
+    representante: [''],
+    cite: [''],
   });
 
-
+  
   openNewModal() {
     this.selectedHRId.set('new');
     this.hRutaForm.reset({
@@ -187,10 +272,13 @@ export class HojaRuta {
       referencia: '',
       estado: 'REGISTRADO',
       numero: this.numeroHR + 1,
-      gestion: 0,
       fechaDocumento: this.getToday(),
       fechaRecepcion: new Date(),
       seguimientos: [],
+      entidad: '',
+      representante: '',
+      cite: '',
+
     });
 
     const modal = document.getElementById(
@@ -202,17 +290,17 @@ export class HojaRuta {
 
   getTiempoPendiente(fecha: string | Date): string {
 
-  const inicio = new Date(fecha).getTime();
-  const ahora = Date.now();
+    const inicio = new Date(fecha).getTime();
+    const ahora = Date.now();
 
-  const diff = ahora - inicio;
+    const diff = ahora - inicio;
 
-  const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const horas = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const horas = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
 
-  return `${dias}d ${horas}h ${minutos}m`;
-}
+    return `${dias}d ${horas}h ${minutos}m`;
+  }
 
   async onSubmit() {
 
@@ -257,12 +345,14 @@ export class HojaRuta {
         referencia: '',
         estado: 'REGISTRADO',
         numero: 0,
-        gestion: 0,
         fechaDocumento: this.getToday(),
         fechaRecepcion: new Date(),
         seguimientos: [],
+        entidad: '',
+        representante: '',
+        cite: '',
       });
-
+        
 
       const modal = document.getElementById(
         'hRuta_modal'
