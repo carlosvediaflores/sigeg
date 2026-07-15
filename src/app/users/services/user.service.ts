@@ -24,6 +24,7 @@ const emptyUser: User = {
   email: '',
   password: '',
   foto: '',
+  genero:'',
   isActive: true,
   idUnidadOrg: {} as Org,
   idUnidadFuncional: {} as UnidadFuncional,

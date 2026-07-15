@@ -13,7 +13,7 @@ import { OrgService } from '../../../organizacion/services/org.service';
 
 @Component({
   selector: 'app-new-seguimiento',
-  imports: [ReactiveFormsModule, FormErrorLabel, RouterLink, JsonPipe],
+  imports: [ReactiveFormsModule, FormErrorLabel, RouterLink, ],
   templateUrl: './new-seguimiento.html',
   styleUrl: './new-seguimiento.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

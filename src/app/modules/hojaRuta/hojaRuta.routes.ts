@@ -11,11 +11,11 @@ export const hojaRutaRoutes: Routes = [
     path: '',
     component: HojaRutaLayout,
     children: [
+      { path: '', component: Dasboard, },
       {
         path: 'list',
         component: HojaRuta,
       },
-      { path: '', component: HojaRuta, },
 
      {path: 'oficina', component: Oficina, },
 

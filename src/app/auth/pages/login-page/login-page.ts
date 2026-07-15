@@ -17,6 +17,12 @@ export class LoginPage {
   isPosting = signal(false);
   router = inject(Router);
 
+   showPassword = false;
+  isChecked = false;
+   togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
+
   authService = inject(AuthService);
 
   loginForm = this.fb.group({

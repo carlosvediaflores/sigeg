@@ -13,7 +13,7 @@ import { rxResource, toObservable, toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-user-detalles',
-  imports: [ReactiveFormsModule, FormErrorLabel,],
+  imports: [ReactiveFormsModule, FormErrorLabel,JsonPipe, ],
   templateUrl: './user-detalles.html',
   styleUrl: './user-detalles.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -65,6 +65,7 @@ export class UserDetalles implements OnInit {
     direccion: ['', Validators.required],
     telefono: ['', Validators.required],
     password: [''],
+    genero: ['MASCULINO', Validators.required],
     email: ['', [Validators.required, Validators.email]],
     isActive: [false, Validators.required],
     roles: [[] as User['roles']],
@@ -113,6 +114,13 @@ export class UserDetalles implements OnInit {
     });
 
   }
+
+   showPassword = false;
+  isChecked = false;
+   togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
+  
 
   setFormValue(user: Partial<User>) {
 

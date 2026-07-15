@@ -16,6 +16,7 @@ export interface User {
   idUnidadFuncional?: UnidadFuncional ;
   idSubUnidad?:SubUnidad;
   roles: Roles[];
+  genero:string;
 }
 
 export interface Roles {

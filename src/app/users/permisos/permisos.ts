@@ -12,7 +12,8 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { PermisosService } from '../services/permisos.service';
 import { FormErrorLabel } from '@shared/components/form-error-label/form-error-label';
-import { FormUtils } from '../../utils copy/form-utils';
+import { FormUtils } from '@utils/form-utils';
+
 
 @Component({
   selector: 'app-permisos',
