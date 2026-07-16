@@ -756,38 +756,45 @@
 
                             </div>
 
-                            @if(segui.idSubUnidadDest) {
+                           @if(segui.idSubUnidadDest) {
                             <div>
                                 <div class="font-bold">{{segui.idSubUnidadDest.nombre}}</div>
-                                <div class="text-sm opacity-50">{{segui.origenUser.nombre}}
-                                    {{segui.origenUser.apellidos}}</div>
+                                <h2 class="font-bold">
+                                    {{
+                                    typeof segui.destinoUser === 'string'
+                                    ? segui.destinoUser
+                                    : segui.destinoUser.nombre + ' ' + segui.destinoUser.apellidos
+                                    }}
+                                </h2>
                                 <div class="font-bold opacity-80">{{segui.idSubUnidadDest.cargo}}</div>
                             </div>
                             }
                             @if(segui.idUnidadFuncDest) {
                             <div>
                                 <div class="font-bold">{{segui.idUnidadFuncDest.nombre}}</div>
-                                <div class="text-sm opacity-50">{{segui.origenUser.nombre}}
-                                    {{segui.origenUser.apellidos}}</div>
+                                <h2 class="font-bold">
+                                    {{
+                                    typeof segui.destinoUser === 'string'
+                                    ? segui.destinoUser
+                                    : segui.destinoUser.nombre + ' ' + segui.destinoUser.apellidos
+                                    }}
+                                </h2>
                                 <div class="font-bold opacity-80">{{segui.idUnidadFuncDest.cargo}}</div>
                             </div>
                             }
                             @if(segui.idUnidadOrgDest) {
                             <div>
                                 <div class="font-bold">{{segui.idUnidadOrgDest.nombre}}</div>
-                                <div class="text-sm opacity-50">{{segui.origenUser.nombre}}
-                                    {{segui.origenUser.apellidos}}</div>
+                                <h2 class="font-bold">
+                                    {{
+                                    typeof segui.destinoUser === 'string'
+                                    ? segui.destinoUser
+                                    : segui.destinoUser.nombre + ' ' + segui.destinoUser.apellidos
+                                    }}
+                                </h2>
                                 <div class="font-bold opacity-80">{{segui.idUnidadOrgDest.cargo}}</div>
                             </div>
                             }
-
-                            <h2 class="font-bold">
-                                {{
-                                typeof segui.destinoUser === 'string'
-                                ? segui.destinoUser
-                                : segui.destinoUser.nombre + ' ' + segui.destinoUser.apellidos
-                                }}
-                            </h2>
 
                             <p>{{ segui.detalle }}</p>
 

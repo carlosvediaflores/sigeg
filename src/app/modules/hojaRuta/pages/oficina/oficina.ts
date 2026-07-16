@@ -160,6 +160,47 @@ export class Oficina {
 
     modal.showModal();
   }
+
+   anularEnvio(segui: Seguimiento) {
+      console.log('Anular envío de Hoja de Ruta', segui);
+      Swal.fire({
+        title: '¿Anular envío?',
+        text: `Hoja de Ruta Nº ${segui.numeroHr}`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, anular',
+        cancelButtonText: 'Cancelar'
+      }).then(async result => {
+  
+        if (!result.isConfirmed) return;
+  
+        try {
+  
+          await firstValueFrom(
+            this.seguimientosService.anularEnvio(segui._id)
+          );
+  
+          this.seguimientosResource.reload();
+  
+          Swal.fire(
+            'Correcto',
+            'El envío fue anulado.',
+            'success'
+          );
+  
+        } catch (e: any) {
+  
+          Swal.fire(
+            'No se puede anular',
+            e.error?.message ?? 'La hoja de ruta ya fue recibida.',
+            'warning'
+          );
+  
+        }
+  
+      });
+  
+    }
   async changeStatus(segui: Seguimiento) {
 
     const result = await Swal.fire({

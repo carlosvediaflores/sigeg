@@ -92,4 +92,12 @@ export class SeguimientosService {
       );
   }
 
+  anularEnvio(id: string) {
+    console.log('Anular envío de Hoja de Ruta', id);
+    return this.http.patch(
+      `${environment.baseUrl}/seguimientos/${id}/anular-envio`,
+      {}
+    );
+  }
+
 }

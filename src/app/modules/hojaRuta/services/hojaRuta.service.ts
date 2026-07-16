@@ -27,20 +27,20 @@ export class HojaRutaService {
     this.hojaRutasCache.clear();
   }
 
-   getHojaRutas(options: Options): Observable<HojaRutaResponse> {
-      console.log('optionsHR', options)
-      const params = Object.fromEntries(
-        Object.entries(options).filter(([_, value]) =>
-          value !== null && value !== undefined && value !== ''
-        )
-      );
-  
-      return this.http.get<HojaRutaResponse>(`${baseUrl}/hojarutas`, {
-        params,
-      }).pipe(
-        tap((resp) => console.log('HR', resp)),
-      );
-    }
+  getHojaRutas(options: Options): Observable<HojaRutaResponse> {
+    console.log('optionsHR', options)
+    const params = Object.fromEntries(
+      Object.entries(options).filter(([_, value]) =>
+        value !== null && value !== undefined && value !== ''
+      )
+    );
+
+    return this.http.get<HojaRutaResponse>(`${baseUrl}/hojarutas`, {
+      params,
+    }).pipe(
+      tap((resp) => console.log('HR', resp)),
+    );
+  }
 
   /* getHojaRutas(options: Options): Observable<HojaRutaResponse> {
     const { limit = 9, offset = 0 } = options;
@@ -106,11 +106,12 @@ export class HojaRutaService {
   }
 
   anularEnvio(id: string) {
-  return this.http.patch(
-    `${environment.baseUrl}/hojarutas/${id}/anular-envio`,
-    {}
-  );
-}
+    console.log('Anular envío de Hoja de Ruta', id);
+    return this.http.patch(
+      `${environment.baseUrl}/hojarutas/${id}/anular-envio`,
+      {}
+    );
+  }
 
   printHojaRuta(id: string) {
     return this.http.get(`${baseUrl}/hojarutas/printHR/${id}`, {

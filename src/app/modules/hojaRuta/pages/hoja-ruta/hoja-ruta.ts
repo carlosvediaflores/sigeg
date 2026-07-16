@@ -37,7 +37,7 @@ export class HojaRuta {
         this.hRutaForm.patchValue({
           origen: '',
           idOrigen: '',
-          entidad:''
+          entidad: ''
 
         });
 
@@ -47,7 +47,7 @@ export class HojaRuta {
         this.hRutaForm.patchValue({
           origen: '',
           idOrigen: '',
-          entidad:''
+          entidad: ''
         });
       }
       else {
@@ -120,7 +120,7 @@ export class HojaRuta {
       }
 
       this.hRutaForm.patchValue({
-        representante:  this.hRutaForm.get('origen')?.value || ''
+        representante: this.hRutaForm.get('origen')?.value || ''
       });
 
     });
@@ -142,7 +142,7 @@ export class HojaRuta {
   wasSaved = signal(false);
   isPosting = signal(false);
   selectedHrId$ = toObservable(this.selectedHrId);
-  
+
   year = new Date().getFullYear();
   numeroHR = 0;
 
@@ -154,10 +154,10 @@ export class HojaRuta {
   });
 
   searchFormHR$ = this.searchFormHR.valueChanges.pipe(
-      startWith(this.searchFormHR.value),
-      debounceTime(300),
-      distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b))
-    );
+    startWith(this.searchFormHR.value),
+    debounceTime(300),
+    distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b))
+  );
 
 
   usersResource = rxResource({
@@ -260,7 +260,7 @@ export class HojaRuta {
     cite: [''],
   });
 
-  
+
   openNewModal() {
     this.selectedHRId.set('new');
     this.hRutaForm.reset({
@@ -354,7 +354,7 @@ export class HojaRuta {
         representante: '',
         cite: '',
       });
-        
+
 
       const modal = document.getElementById(
         'hRuta_modal'
@@ -410,45 +410,45 @@ export class HojaRuta {
   }
 
   anularEnvio(hr: HojaRutaSimple) {
+     //console.log('Anular envío de Hoja de Ruta', hr);
+    Swal.fire({
+      title: '¿Anular envío?',
+      text: `Hoja de Ruta Nº ${hr.numero}`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, anular',
+      cancelButtonText: 'Cancelar'
+    }).then(async result => {
 
-  Swal.fire({
-    title: '¿Anular envío?',
-    text: `Hoja de Ruta Nº ${hr.numero}`,
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonText: 'Sí, anular',
-    cancelButtonText: 'Cancelar'
-  }).then(async result => {
+      if (!result.isConfirmed) return;
 
-    if (!result.isConfirmed) return;
+      try {
 
-    try {
+        await firstValueFrom(
+          this.hojaRutaService.anularEnvio(hr._id)
+        );
 
-      await firstValueFrom(
-        this.hojaRutaService.anularEnvio(hr._id)
-      );
+        this.hojaRutaResource.reload();
 
-      this.hojaRutaResource.reload();
+        Swal.fire(
+          'Correcto',
+          'El envío fue anulado.',
+          'success'
+        );
 
-      Swal.fire(
-        'Correcto',
-        'El envío fue anulado.',
-        'success'
-      );
+      } catch (e: any) {
 
-    } catch (e: any) {
+        Swal.fire(
+          'No se puede anular',
+          e.error?.message ?? 'La hoja de ruta ya fue recibida.',
+          'warning'
+        );
 
-      Swal.fire(
-        'No se puede anular',
-        e.error?.message ?? 'La hoja de ruta ya fue recibida.',
-        'warning'
-      );
+      }
 
-    }
+    });
 
-  });
-
-}
+  }
 
   openSeguiModal(hojaRuta: HojaRutaSimple) {
 
