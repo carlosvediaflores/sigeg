@@ -105,6 +105,13 @@ export class HojaRutaService {
       );
   }
 
+  anularEnvio(id: string) {
+  return this.http.patch(
+    `${environment.baseUrl}/hojarutas/${id}/anular-envio`,
+    {}
+  );
+}
+
   printHojaRuta(id: string) {
     return this.http.get(`${baseUrl}/hojarutas/printHR/${id}`, {
       responseType: 'blob',

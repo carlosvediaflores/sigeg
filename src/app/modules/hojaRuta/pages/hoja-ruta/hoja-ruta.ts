@@ -12,6 +12,7 @@ import { FormErrorLabel } from '@shared/components/form-error-label/form-error-l
 import { UserService } from '../../../../users/services/user.service';
 import Swal from 'sweetalert2';
 import { EntidadService } from '../../../entidades/services/entidad.service';
+import { SeguimientosService } from '../../services/seguimientos.service';
 
 @Component({
   selector: 'app-hoja-ruta',
@@ -127,6 +128,7 @@ export class HojaRuta {
   }
 
   hojaRutaService = inject(HojaRutaService);
+  seguimientosService = inject(SeguimientosService);
   userService = inject(UserService);
   entidadService = inject(EntidadService);
   public hojaRutas = signal<HojaRutaResponse[] | null>(null);
@@ -406,6 +408,47 @@ export class HojaRuta {
       'success'
     );
   }
+
+  anularEnvio(hr: HojaRutaSimple) {
+
+  Swal.fire({
+    title: '¿Anular envío?',
+    text: `Hoja de Ruta Nº ${hr.numero}`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, anular',
+    cancelButtonText: 'Cancelar'
+  }).then(async result => {
+
+    if (!result.isConfirmed) return;
+
+    try {
+
+      await firstValueFrom(
+        this.hojaRutaService.anularEnvio(hr._id)
+      );
+
+      this.hojaRutaResource.reload();
+
+      Swal.fire(
+        'Correcto',
+        'El envío fue anulado.',
+        'success'
+      );
+
+    } catch (e: any) {
+
+      Swal.fire(
+        'No se puede anular',
+        e.error?.message ?? 'La hoja de ruta ya fue recibida.',
+        'warning'
+      );
+
+    }
+
+  });
+
+}
 
   openSeguiModal(hojaRuta: HojaRutaSimple) {
 
