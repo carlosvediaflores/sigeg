@@ -204,8 +204,7 @@
 
                         @if (hr.estado === 'RECIBIDO') {
 
-                        <a [routerLink]="['/hojaRuta/enviar', hr._id, undefined]"
-                            class="btn btn-ghost text-accent btn-xs">
+                        <a (click)="openNewModalSeg(hr)" class="btn btn-ghost text-accent btn-xs">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor" class="size-6">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -216,8 +215,7 @@
                         }
                         @if (hr.estado === 'ENVIADO') {
 
-                        <a (click)="anularEnvio(hr)"
-                            class="btn btn-ghost text-accent btn-xs">
+                        <a (click)="anularEnvio(hr)" class="btn btn-ghost text-accent btn-xs">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                 class="size-6">
                                 <path fill-rule="evenodd"
@@ -241,7 +239,7 @@
 </div>
 
 <!-- <pre>
-    {{hRutaForm.value | json }}
+    {{seguiForm.value | json }}
 </pre> -->
 
 <dialog id="hRuta_modal" class="modal">
@@ -265,7 +263,7 @@
 
         </h3>
 
-        <form [formGroup]="hRutaForm" (ngSubmit)="onSubmit()"  class="space-y-4">
+        <form [formGroup]="hRutaForm" (ngSubmit)="onSubmit()" class="space-y-4">
 
             <div class="flex items-center justify-evenly">
                 <div class="join mb-1">
@@ -362,8 +360,8 @@
 
             <div class="w-full my-3">
                 <label class="floating-label">
-                <textarea class="textarea textarea-bordered w-full min-h-20" placeholder="Referencia"
-                    formControlName="referencia" [class.input-error]="getFieldError('referencia')"></textarea>
+                    <textarea class="textarea textarea-bordered w-full min-h-20" placeholder="Referencia"
+                        formControlName="referencia" [class.input-error]="getFieldError('referencia')"></textarea>
                     <span>Referencia</span>
                 </label>
                 <form-error-label [errorMessage]="getFieldError('referencia')" />
@@ -380,8 +378,8 @@
 
                 <div>
                     <label class="floating-label">
-                    <input type="text" placeholder="Contacto" class="input input-bordered w-full"
-                        formControlName="contactoOrigen" [class.input-error]="getFieldError('contactoOrigen')" />
+                        <input type="text" placeholder="Contacto" class="input input-bordered w-full"
+                            formControlName="contactoOrigen" [class.input-error]="getFieldError('contactoOrigen')" />
                         <span>Contacto</span>
                     </label>
                     <form-error-label [errorMessage]="getFieldError('contactoOrigen')" />
@@ -408,8 +406,9 @@
 
                 <div>
                     <label class="floating-label">
-                    <input type="text" placeholder="Beneficiario" class="input input-bordered w-full"
-                        formControlName="beneficiarioPago" [class.input-error]="getFieldError('beneficiarioPago')" />
+                        <input type="text" placeholder="Beneficiario" class="input input-bordered w-full"
+                            formControlName="beneficiarioPago"
+                            [class.input-error]="getFieldError('beneficiarioPago')" />
                         <span>Beneficiario de Pago</span>
                     </label>
 
@@ -420,11 +419,11 @@
                 }
 
                 <div>
-                     <label class="floating-label">
-                    <input type="text" placeholder="Cite" class="input input-bordered w-full" formControlName="cite"
-                        [class.input-error]="getFieldError('cite')" />
+                    <label class="floating-label">
+                        <input type="text" placeholder="Cite" class="input input-bordered w-full" formControlName="cite"
+                            [class.input-error]="getFieldError('cite')" />
                         <span>Cite</span>
-                     </label>    
+                    </label>
                     <form-error-label [errorMessage]="getFieldError('cite')" />
 
                 </div>
@@ -461,16 +460,164 @@
         </form>
 
     </div>
+</dialog>
 
-    <!--  <form method="dialog" class="modal-backdrop">
+<dialog id="newSeg_modal" class="modal">
+
+    <div class="modal-box max-w-5xl p-8">
+        <form method="dialog">
+            <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+        </form>
+
+        <h3 class="font-bold text-2xl mb-6">
+
+            @if(selectedHRId() === 'new') {
+
+            Nuevo Hoja de Ruta Nº <samp class="text-2xl">{{ (hojaRutaResource.value()?.total ?? 0) + 1 }}</samp>
+
+            } @else {
+
+            Editar Registro
+
+            }
+
+        </h3>
+
+        <form [formGroup]="seguiForm" (ngSubmit)="onSubmitSeg()">
+
+            @if(destinoSeleccionado()) {
+
+            <div class="card bg-base-200 shadow-md mb-4">
+
+                <div class="card-body items-center text-center py-4">
+
+                    <div class="badge badge-primary">
+                        Hoja de Ruta Nº {{ seguiForm.get('numeroHr')?.value }}
+                    </div>
+                    <div class="text-xs uppercase opacity-60">
+                        Derivar a:
+                    </div>
+
+                    <h2 class="card-title">
+                        {{ destinoSeleccionado()?.persona?.nombre ?? 'Sin Asignar al personal' }}
+                        {{ destinoSeleccionado()?.persona?.apellidos }}
+                    </h2>
+
+                    <p class="uppercase text-sm opacity-70">
+                        {{ destinoSeleccionado()?.cargo ?? 'Sin cargo' }}
+                    </p>
+                </div>
+
+            </div>
+
+            }
+
+            <div class="my-2">
+
+                <select class="select select-bordered w-full" (change)="onOrgChange($event)">
+
+                    <option value="">
+                        Seleccione Unidad Organizacional
+                    </option>
+
+                    @for (org of orgsResource.value(); track org._id) {
+
+                    <option [value]="org._id">
+                        {{ org.nombre }} ({{ org.sigla }})
+                    </option>
+
+                    }
+
+                </select>
+
+            </div>
+
+            @if(selectedOrg()?.unidadFuncional?.length) {
+
+            <div class="my-2">
+
+                <select class="select select-bordered w-full" (change)="onUnidadChange($event)">
+
+                    <option value="">
+                        Seleccione Unidad Funcional
+                    </option>
+
+                    @for (unidad of selectedOrg()?.unidadFuncional; track unidad._id) {
+
+                    <option [value]="unidad._id">
+                        {{ unidad.nombre }}
+                    </option>
+
+                    }
+
+                </select>
+
+            </div>
+
+            }
+
+            @if(selectedUnidad()?.subUnidad?.length) {
+
+            <div class="my-2">
+
+                <select class="select select-bordered w-full" (change)="onSubUnidadChange($event)">
+
+                    <option value="">
+                        Seleccione Sub Unidad
+                    </option>
+
+                    @for (sub of selectedUnidad()?.subUnidad; track sub._id) {
+
+                    <option [value]="sub._id">
+                        {{ sub.nombre }}
+                    </option>
+
+                    }
+                </select>
+            </div>
+            }
+
+
+            <div class="w-full my-1">
+                <textarea class="textarea textarea-bordered w-full min-h-20" placeholder="Detalle del Seguimiento"
+                    formControlName="detalle" [class.input-error]="getFieldError('detalle')"></textarea>
+                <form-error-label [errorMessage]="getFieldError('detalle')" />
+            </div>
+
+
+            <div class="flex justify-end gap-2">
+
+                <button type="button" class="btn btn-secondary" onclick="newSeg_modal.close()">
+                    Cancelar
+                </button>
+
+                <button type="submit" class="btn btn-success" [disabled]="isPosting()">
+                    @if(isPosting()) {
+
+                    <span class="loading loading-spinner loading-sm">
+                    </span>
+
+                    Enviando...
+
+                    } @else {
+
+                    Enviar
+
+                    }
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+    <form method="dialog" class="modal-backdrop">
 
         <button>
             cerrar
         </button>
 
-    </form> -->
-
-
+    </form>
 </dialog>
 
 <dialog id="segui_modal" class="modal">
@@ -756,7 +903,7 @@
 
                             </div>
 
-                           @if(segui.idSubUnidadDest) {
+                            @if(segui.idSubUnidadDest) {
                             <div>
                                 <div class="font-bold">{{segui.idSubUnidadDest.nombre}}</div>
                                 <h2 class="font-bold">

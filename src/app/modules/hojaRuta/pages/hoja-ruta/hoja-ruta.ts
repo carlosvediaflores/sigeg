@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { HojaRutaService } from '../../services/hojaRuta.service';
 import { HojaRutaResponse, Seguimiento, HojaRutaSimple } from '../../interfaces/hojaRuta';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { rxResource, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { combineLatest, debounceTime, distinctUntilChanged, firstValueFrom, map, of, startWith, switchMap, tap } from 'rxjs';
 import { Pagination } from '@shared/components/pagination/pagination';
@@ -13,15 +13,18 @@ import { UserService } from '../../../../users/services/user.service';
 import Swal from 'sweetalert2';
 import { EntidadService } from '../../../entidades/services/entidad.service';
 import { SeguimientosService } from '../../services/seguimientos.service';
+import { OrgService } from '../../../organizacion/services/org.service';
+import { AuthService } from '@auth/services/auth.service';
 
 @Component({
   selector: 'app-hoja-ruta',
-  imports: [RouterLink, Pagination, DatePipe, FormErrorLabel, ReactiveFormsModule,],
+  imports: [RouterLink, Pagination, DatePipe, FormErrorLabel, ReactiveFormsModule, ],
   templateUrl: './hoja-ruta.html',
   styleUrl: './hoja-ruta.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HojaRuta {
+
 
   constructor() {
 
@@ -130,18 +133,28 @@ export class HojaRuta {
   hojaRutaService = inject(HojaRutaService);
   seguimientosService = inject(SeguimientosService);
   userService = inject(UserService);
+  private orgService = inject(OrgService);
   entidadService = inject(EntidadService);
   public hojaRutas = signal<HojaRutaResponse[] | null>(null);
   selectedHojaRuta = signal<HojaRutaSimple | null>(null);
   selectedHrId = signal('');
   route = inject(ActivatedRoute);
   fb = inject(FormBuilder);
+  router = inject(Router);
+
+  authService = inject(AuthService);
+
+  user = computed(() => this.authService.user());
+
 
   selectedHRId = signal<string>('new');
   successMessage = signal('');
   wasSaved = signal(false);
   isPosting = signal(false);
   selectedHrId$ = toObservable(this.selectedHrId);
+  selectedOrg = signal<any | null>(null);
+  selectedUnidad = signal<any | null>(null);
+  selectedSubUnidad = signal<any | null>(null);
 
   year = new Date().getFullYear();
   numeroHR = 0;
@@ -410,7 +423,7 @@ export class HojaRuta {
   }
 
   anularEnvio(hr: HojaRutaSimple) {
-     //console.log('Anular envío de Hoja de Ruta', hr);
+    //console.log('Anular envío de Hoja de Ruta', hr);
     Swal.fire({
       title: '¿Anular envío?',
       text: `Hoja de Ruta Nº ${hr.numero}`,
@@ -450,6 +463,217 @@ export class HojaRuta {
 
   }
 
+  // ...existing code...
+  seguiForm = this.fb.nonNullable.group({
+    origenHr: ['', Validators.required],
+    idHojaRuta: ['', Validators.required],
+    numeroHr: [0, Validators.required],
+    tipoEnvio: ['OFICIAL'],
+    detalle: ['', Validators.required],
+    fechaDerivado: [new Date()],
+    numeroCopia: [0],
+    idUnidadOrgOrigen: [''],
+    idUnidadFuncOrigen: [''],
+    idSubUnidadOrigen: [''],
+    idUnidadFuncDest: [''],
+    idUnidadOrgDest: [''],
+    idSubUnidadDest: [''],
+    origenUser: ['', Validators.required],
+    destinoUser: ['', Validators.required],
+    archivosOficina: [[]],
+    carpetasOficina: [[]],
+  });
+
+  orgsResource = rxResource({
+    stream: () => this.orgService.getOrgs()
+      .pipe(tap((resp) => console.log('orgs', resp))),
+  });
+
+  onOrgChange(event: Event) {
+
+    const id = (event.target as HTMLSelectElement).value;
+
+    const org = this.orgsResource.value()
+      ?.find(o => o._id === id);
+
+    if (!org) return;
+
+    this.selectedOrg.set(org);
+    this.selectedUnidad.set(null);
+    this.selectedSubUnidad.set(null);
+
+    this.seguiForm.patchValue({
+      idUnidadOrgDest: org._id,
+      idUnidadFuncDest: '',
+      idSubUnidadDest: '',
+      destinoUser:
+        typeof org.persona === 'string'
+          ? org.persona
+          : (org.persona?._id ?? '')
+    });
+  }
+
+  onUnidadChange(event: Event) {
+
+    const id = (event.target as HTMLSelectElement).value;
+
+    const unidad = this.selectedOrg()
+      ?.unidadFuncional
+      ?.find((u: any) => u._id === id);
+
+    if (!unidad) return;
+
+    this.selectedUnidad.set(unidad);
+    this.selectedSubUnidad.set(null);
+
+    this.seguiForm.patchValue({
+      idUnidadFuncDest: unidad._id,
+      destinoUser: unidad.persona?._id ?? '',
+      idUnidadOrgDest: '',
+      idSubUnidadDest: '',
+    });
+  }
+
+  onSubUnidadChange(event: Event) {
+
+    const id = (event.target as HTMLSelectElement).value;
+
+    const subUnidad = this.selectedUnidad()
+      ?.subUnidad
+      ?.find((s: any) => s._id === id);
+
+    console.log('SubUnidad seleccionada', subUnidad);
+    if (!subUnidad) return;
+
+    this.selectedSubUnidad.set(subUnidad);
+
+    this.seguiForm.patchValue({
+      destinoUser: subUnidad.persona?._id ?? '',
+      idSubUnidadDest: subUnidad._id,
+      idUnidadFuncDest: '',
+      idUnidadOrgDest: '',
+    });
+
+  }
+
+  destinoSeleccionado = computed(() => {
+
+    if (this.selectedSubUnidad()) {
+      return this.selectedSubUnidad();
+    }
+
+    if (this.selectedUnidad()) {
+      return this.selectedUnidad();
+    }
+
+    if (this.selectedOrg()) {
+      return this.selectedOrg();
+    }
+
+    return null;
+
+  });
+
+  openNewModalSeg(hojaRuta: HojaRutaSimple) {
+    const user = this.user();
+    console.log('Hoja de Ruta seleccionada para Seg', hojaRuta);
+    this.selectedHRId.set('new');
+    this.seguiForm.reset({
+      origenHr: hojaRuta.origen,
+      idHojaRuta: hojaRuta._id,
+      numeroHr: hojaRuta.numero,
+      tipoEnvio: 'OFICIAL',
+      detalle: '',
+      fechaDerivado: new Date(),
+      numeroCopia: 0,
+      idUnidadOrgOrigen: user?.idUnidadOrg ? (typeof user.idUnidadOrg === 'string' ? user.idUnidadOrg : user.idUnidadOrg._id) : '',
+      idUnidadFuncOrigen: user?.idUnidadFuncional ? (typeof user.idUnidadFuncional === 'string' ? user.idUnidadFuncional : user.idUnidadFuncional._id) : '',
+      idSubUnidadOrigen: user?.idSubUnidad ? (typeof user.idSubUnidad === 'string' ? user.idSubUnidad : user.idSubUnidad._id) : '',
+      idUnidadFuncDest: '',
+      idUnidadOrgDest: '',
+      idSubUnidadDest: '',
+      origenUser: user?._id,
+      destinoUser: '',
+    });
+
+    const modal = document.getElementById(
+      'newSeg_modal'
+    ) as HTMLDialogElement | null;
+
+    modal?.showModal();
+  }
+
+  onSubmitSeg() {
+    if (this.seguiForm.invalid) {
+      this.seguiForm.markAllAsTouched();
+      return;
+    }
+
+    const seguimientoData = this.seguiForm.getRawValue() as any;
+
+    this.isPosting.set(true);
+    const modal = document.getElementById(
+      'newSeg_modal'
+    ) as HTMLDialogElement;
+    this.seguimientosService
+      .createSeguimiento(seguimientoData)
+      .subscribe({
+        next: (resp) => {
+             // Actualizar estado de la hoja de ruta
+          this.hojaRutaService
+            .updateHojaRuta(resp.idHojaRuta._id, { estado: 'ENVIADO' })
+            .subscribe();
+
+          // Limpiar formulario
+          this.seguiForm.reset({
+            origenHr: '',
+            idHojaRuta: '',
+            numeroHr: 0,
+            tipoEnvio: 'OFICIAL',
+            detalle: '',
+            fechaDerivado: new Date(),
+            numeroCopia: 0,
+            idUnidadFuncOrigen: '',
+            idUnidadOrgOrigen: '',
+            idSubUnidadOrigen: '',
+            idUnidadFuncDest: '',
+            idUnidadOrgDest: '',
+            idSubUnidadDest: '',
+            origenUser: '',
+            destinoUser: '',
+          });
+
+
+
+          Swal.fire(
+            'Correcto',
+            'El seguimiento fue creado exitosamente.',
+            'success'
+          ).then(() => {
+            this.hojaRutaResource.reload();
+          });
+        },
+
+        error: (err) => {
+          console.error('Error al crear seguimiento', err);
+
+          this.isPosting.set(false);
+
+          Swal.fire(
+            'Error',
+            err.error?.message ?? 'No se pudo registrar el seguimiento.',
+            'error'
+          );
+        },
+
+
+      });
+
+    this.hojaRutaService.clearCache();
+    modal.close();
+    this.isPosting.set(false);
+  }
+
   openSeguiModal(hojaRuta: HojaRutaSimple) {
 
     console.log('Hoja de Ruta seleccionada', hojaRuta);
@@ -458,9 +682,9 @@ export class HojaRuta {
 
     const modal = document.getElementById(
       'segui_modal'
-    ) as HTMLDialogElement;
+    ) as HTMLDialogElement | null;
 
-    modal.showModal();
+    modal?.showModal();
   }
 
   getFieldError(fieldName: string): string | null {

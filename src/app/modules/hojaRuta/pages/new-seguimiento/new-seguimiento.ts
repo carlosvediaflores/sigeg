@@ -10,6 +10,7 @@ import { AuthService } from '@auth/services/auth.service';
 import { JsonPipe } from '@angular/common';
 import { FormErrorLabel } from '@shared/components/form-error-label/form-error-label';
 import { OrgService } from '../../../organizacion/services/org.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-new-seguimiento',
@@ -211,61 +212,74 @@ export class NewSeguimiento {
 
   // ...existing code...
 
-  onSubmit() {
-
-    if (this.seguiForm.invalid) {
-      this.seguiForm.markAllAsTouched();
-      return;
-    }
-
-    const seguimientoData = this.seguiForm.getRawValue() as any;
-
-    this.isPosting.set(true);
-
-    this.seguimientosService
-      .createSeguimiento(seguimientoData)
-      .subscribe({
-        next: (resp) => {
-
-          console.log('Seguimiento creado', this.seguiId(),);
-
-          this.wasSaved.set(true);
-          this.successMessage.set('Seguimiento creado exitosamente.');
-
-          this.seguiForm.reset({
-            origenHr: '',
-            idHojaRuta: '',
-            numeroHr: 0,
-            tipoEnvio: 'OFICIAL',
-            detalle: '',
-            fechaDerivado: new Date(),
-            numeroCopia: 0,
-            idUnidadFuncOrigen: '',
-            idUnidadOrgOrigen: '',
-            idSubUnidadOrigen: '',
-            idUnidadFuncDest: '',
-            idUnidadOrgDest: '',
-            idSubUnidadDest: '',
-            origenUser: '',
-            destinoUser: '',
-
-          });
-          this.seguimientosService
-            .updateSeguimiento(this.seguiId(), { estado: 'DERIVADO' })
-            .subscribe();
-          this.router.navigate(['/hojaRuta/list']);
-          this.hojaRutaService.clearCache();
-          this.isPosting.set(false);
-        },
-        error: (err) => {
-
-          console.error('Error al crear seguimiento', err);
-
-          this.isPosting.set(false);
-
-        }
-      });
+ onSubmit() {
+  if (this.seguiForm.invalid) {
+    this.seguiForm.markAllAsTouched();
+    return;
   }
+
+  const seguimientoData = this.seguiForm.getRawValue() as any;
+
+  this.isPosting.set(true);
+
+  this.seguimientosService
+    .createSeguimiento(seguimientoData)
+    .subscribe({
+      next: (resp) => {
+        console.log('Seguimiento creado', resp);
+
+        this.wasSaved.set(true);
+        this.successMessage.set('Seguimiento creado exitosamente.');
+
+        // Actualizar estado de la hoja de ruta
+        this.hojaRutaService
+          .updateHojaRuta(this.seguiId(), { estado: 'ENVIADO' })
+          .subscribe();
+
+        // Limpiar formulario
+        this.seguiForm.reset({
+          origenHr: '',
+          idHojaRuta: '',
+          numeroHr: 0,
+          tipoEnvio: 'OFICIAL',
+          detalle: '',
+          fechaDerivado: new Date(),
+          numeroCopia: 0,
+          idUnidadFuncOrigen: '',
+          idUnidadOrgOrigen: '',
+          idSubUnidadOrigen: '',
+          idUnidadFuncDest: '',
+          idUnidadOrgDest: '',
+          idSubUnidadDest: '',
+          origenUser: '',
+          destinoUser: '',
+        });
+
+        this.hojaRutaService.clearCache();
+        this.isPosting.set(false);
+
+        Swal.fire(
+          'Correcto',
+          'El seguimiento fue creado exitosamente.',
+          'success'
+        ).then(() => {
+          this.router.navigate(['/hojaRuta/oficina']);
+        });
+      },
+
+      error: (err) => {
+        console.error('Error al crear seguimiento', err);
+
+        this.isPosting.set(false);
+
+        Swal.fire(
+          'Error',
+          err.error?.message ?? 'No se pudo registrar el seguimiento.',
+          'error'
+        );
+      },
+    });
+}
 
   orgsResource = rxResource({
     stream: () => this.orgService.getOrgs()
