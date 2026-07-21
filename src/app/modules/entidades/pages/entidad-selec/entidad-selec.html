@@ -257,8 +257,16 @@
     </form>
 
 
-    <pre>{{ repesentanteForm.value | json }}</pre>
+
 </dialog>
+
+@if (wasError()) {
+<div class="toast toast-end toast-top z-50">
+    <div class="alert alert-error">
+        <span>{{ errorMessage() }}</span>
+    </div>
+</div>
+}
 
 @if (wasSaved()) {
 <div class="toast toast-end toast-top z-50">

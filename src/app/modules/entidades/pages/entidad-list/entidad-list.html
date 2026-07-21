@@ -149,25 +149,32 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
                 <div>
-
-                    <input type="text" placeholder="Código" class="input input-bordered w-full" formControlName="codigo"
-                        [class.input-error]="getFieldError('codigo')" />
+                    <label class="floating-label">
+                        <span class="label-text">Código</span>
+                        <input type="text" placeholder="Código" class="input input-bordered w-full" formControlName="codigo"
+                            [class.input-error]="getFieldError('codigo')" />
+                    </label>
                     <form-error-label [errorMessage]="getFieldError('codigo')" />
 
                 </div>
 
                 <div>
-
-                    <input type="text" placeholder="Nombre" class="input input-bordered w-full"
-                        formControlName="denominacion" [class.input-error]="getFieldError('denominacion')" />
+                    <label class="floating-label">
+                        <span class="label-text">Nombre</span>
+                        <input type="text" placeholder="Nombre" class="input input-bordered w-full"
+                            formControlName="denominacion" [class.input-error]="getFieldError('denominacion')" />
+                    </label>
                     <form-error-label [errorMessage]="getFieldError('denominacion')" />
 
                 </div>
 
                 <div>
 
-                    <input type="text" placeholder="Sigla" class="input input-bordered w-full" formControlName="sigla"
-                        [class.input-error]="getFieldError('sigla')" />
+                    <label class="floating-label">
+                        <span class="label-text">Sigla</span>
+                        <input type="text" placeholder="Sigla" class="input input-bordered w-full" formControlName="sigla"
+                            [class.input-error]="getFieldError('sigla')" />
+                    </label>
                     <form-error-label [errorMessage]="getFieldError('sigla')" />
 
                 </div>
@@ -187,25 +194,33 @@
                 </div>
 
                 <div>
-
-                    <input type="number" placeholder="Nit" class="input input-bordered w-full" formControlName="nit"
-                        [class.input-error]="getFieldError('nit')" />
+                    <label class="floating-label">
+                        <span class="label-text">Nit</span>
+                        <input type="number" placeholder="Nit" class="input input-bordered w-full" formControlName="nit"
+                            [class.input-error]="getFieldError('nit')" />
+                    </label>
                     <form-error-label [errorMessage]="getFieldError('nit')" />
 
                 </div>
 
                 <div>
 
-                    <input type="number" placeholder="Cuenta Bancaria" class="input input-bordered w-full"
-                        formControlName="cuenta" [class.input-error]="getFieldError('cuenta')" />
+                    <label class="floating-label">
+                        <span class="label-text">Cuenta Bancaria</span>
+                        <input type="number" placeholder="Cuenta Bancaria" class="input input-bordered w-full"
+                            formControlName="cuenta" [class.input-error]="getFieldError('cuenta')" />
+                    </label>
                     <form-error-label [errorMessage]="getFieldError('cuenta')" />
 
                 </div>
 
                 <div>
 
-                    <input type="text" placeholder="Teléfono" class="input input-bordered w-full"
-                        formControlName="telefono" [class.input-error]="getFieldError('telefono')" />
+                    <label class="floating-label">
+                        <span class="label-text">Teléfono</span>
+                        <input type="text" placeholder="Teléfono" class="input input-bordered w-full"
+                            formControlName="telefono" [class.input-error]="getFieldError('telefono')" />
+                    </label>
                     <form-error-label [errorMessage]="getFieldError('telefono')" />
 
                 </div>
@@ -264,6 +279,14 @@
 
     <!-- <pre>{{ entidadForm.value | json }}</pre> -->
 </dialog>
+
+@if (wasError()) {
+<div class="toast toast-end toast-top z-50">
+    <div class="alert alert-error">
+        <span>{{ errorMessage() }}</span>
+    </div>
+</div>
+}
 
 @if (wasSaved()) {
 <div class="toast toast-end toast-top z-50">

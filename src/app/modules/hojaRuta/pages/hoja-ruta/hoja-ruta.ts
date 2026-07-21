@@ -18,7 +18,7 @@ import { AuthService } from '@auth/services/auth.service';
 
 @Component({
   selector: 'app-hoja-ruta',
-  imports: [RouterLink, Pagination, DatePipe, FormErrorLabel, ReactiveFormsModule, ],
+  imports: [RouterLink, Pagination, DatePipe, FormErrorLabel, ReactiveFormsModule,],
   templateUrl: './hoja-ruta.html',
   styleUrl: './hoja-ruta.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -294,6 +294,36 @@ export class HojaRuta {
       representante: '',
       cite: '',
 
+    });
+
+    const modal = document.getElementById(
+      'hRuta_modal'
+    ) as HTMLDialogElement | null;
+
+    modal?.showModal();
+  }
+
+  openEditModal(hr: HojaRutaSimple) {
+    console.log('openEditModal', hr);
+
+    this.selectedHRId.set(hr._id);
+    this.hRutaForm.patchValue({
+      origen: hr.origen,
+      idOrigen: hr.idOrigen,
+      tipoOrigen: hr.tipoOrigen,
+      tipoDocumento: hr.tipoDocumento,
+      prioridad: hr.prioridad,
+      beneficiarioPago: hr.beneficiarioPago,
+      contactoOrigen: hr.contactoOrigen,
+      referencia: hr.referencia,
+      estado: hr.estado,
+      numero: hr.numero,
+      fechaDocumento: hr.fechaDocumento instanceof Date ? hr.fechaDocumento.toISOString() : hr.fechaDocumento,
+      fechaRecepcion: hr.fechaRecepcion ,
+      seguimientos: hr.seguimientos,
+      entidad: hr.entidad,
+      representante: hr.representante,
+      cite: hr.cite,
     });
 
     const modal = document.getElementById(

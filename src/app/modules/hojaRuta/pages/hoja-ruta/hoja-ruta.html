@@ -90,7 +90,9 @@
         </button>
     </div>
     <div class="divider p-0 m-0"></div>
-
+<!-- <pre>
+    {{hRutaForm.value | json }}
+</pre> -->
     <div class="overflow-x-auto mt-0">
         <table class="table table-zebra btn-xs">
             <!-- head -->
@@ -215,19 +217,27 @@
                         }
                         @if (hr.estado === 'ENVIADO') {
 
-                        <a (click)="anularEnvio(hr)" class="btn btn-ghost text-accent btn-xs">
+                        <a (click)="anularEnvio(hr)" class="btn btn-ghost text-success btn-xs">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                 class="size-6">
                                 <path fill-rule="evenodd"
                                     d="M2.515 10.674a1.875 1.875 0 0 0 0 2.652L8.89 19.7c.352.351.829.549 1.326.549H19.5a3 3 0 0 0 3-3V6.75a3 3 0 0 0-3-3h-9.284c-.497 0-.974.198-1.326.55l-6.375 6.374ZM12.53 9.22a.75.75 0 1 0-1.06 1.06L13.19 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06l1.72-1.72 1.72 1.72a.75.75 0 1 0 1.06-1.06L15.31 12l1.72-1.72a.75.75 0 1 0-1.06-1.06l-1.72 1.72-1.72-1.72Z"
                                     clip-rule="evenodd" />
                             </svg>
-
-
                         </a>
-
                         }
 
+                        <button class="btn btn-ghost btn-circle  btn-xs text-info" (click)="openEditModal(hr)">
+                            <div class="indicator">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                    class="size-6">
+                                    <path
+                                        d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32l8.4-8.4Z" />
+                                    <path
+                                        d="M5.25 5.25a3 3 0 0 0-3 3v10.5a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3V13.5a.75.75 0 0 0-1.5 0v5.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5V8.25a1.5 1.5 0 0 1 1.5-1.5h5.25a.75.75 0 0 0 0-1.5H5.25Z" />
+                                </svg>
+                            </div>
+                        </button>
 
                     </th>
                 </tr>
@@ -237,10 +247,6 @@
         <app-pagination [pages]="hojaRutaResource.value()?.pages ?? 0" [currentPage]="currentPage()" />
     </div>
 </div>
-
-<!-- <pre>
-    {{seguiForm.value | json }}
-</pre> -->
 
 <dialog id="hRuta_modal" class="modal">
 

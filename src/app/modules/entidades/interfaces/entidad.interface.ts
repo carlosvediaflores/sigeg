@@ -8,8 +8,8 @@ export interface EntidadResponse {
 
 export interface Entidad{
     _id: string;
-    nit: number;
-    cuenta: number;
+    nit: number | null;
+    cuenta: number | null;
     denominacion: string;
     codigo: string;
     sigla: string;

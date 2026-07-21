@@ -9,6 +9,7 @@ import { FormErrorLabel } from '@shared/components/form-error-label/form-error-l
 import { JsonPipe } from '@angular/common';
 import Swal from 'sweetalert2'
 import { UserService } from '../../../../users/services/user.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-org-list',
@@ -30,9 +31,11 @@ export class OrgList {
   org = signal<Org | null>(null);
   unidadFuncional = signal<UnidadFuncional | null>(null);
   cargo = signal<SubUnidad | null>(null);
-  
+
   successMessage = signal('');
+  errorMessage = signal('');
   wasSaved = signal(false);
+  wasError = signal(false);
   isPosting = signal(false);
   isPostingUni = signal(false);
   isPostingCargo = signal(false);
@@ -164,11 +167,11 @@ export class OrgList {
         'org_modal'
       ) as HTMLDialogElement;
 
-      if (this.selectedOrgId() === 'new') {
-        this.successMessage.set('Organización creada correctamente');
-      } else {
-        this.successMessage.set('Organización actualizada correctamente');
-      }
+      this.successMessage.set(
+        this.selectedOrgId() === 'new'
+          ? 'Organización creada correctamente'
+          : 'Organización actualizada correctamente'
+      );
 
       this.wasSaved.set(true);
 
@@ -177,7 +180,24 @@ export class OrgList {
       setTimeout(() => {
         this.wasSaved.set(false);
       }, 3000);
-    } finally {
+    }catch (error) {
+
+      const err = error as HttpErrorResponse;
+
+      this.errorMessage.set(
+        err.error?.message ??
+        err.message ??
+        'Ocurrió un error inesperado.'
+      );
+
+      this.wasError.set(true);
+
+      setTimeout(() => {
+        this.wasError.set(false);
+      }, 5000);
+
+    }
+     finally {
 
       this.isPosting.set(false);
     }
@@ -306,18 +326,15 @@ export class OrgList {
   async onSubmitUnidad() {
 
     if (this.unitForm.invalid) {
-
       this.unitForm.markAllAsTouched();
       return;
-
     }
 
     this.isPostingUni.set(true);
 
     try {
 
-      const uniLike =
-        this.unitForm.getRawValue();
+      const uniLike = this.unitForm.getRawValue();
 
       if (this.selectedUniOrgId() === 'new') {
 
@@ -333,7 +350,9 @@ export class OrgList {
             uniLike
           )
         );
+
       }
+
       this.orgsResource.reload();
 
       this.unitForm.reset({
@@ -346,16 +365,15 @@ export class OrgList {
         subUnidad: [],
       });
 
-
       const modal = document.getElementById(
         'unidad_modal'
       ) as HTMLDialogElement;
 
-      if (this.selectedUniOrgId() === 'new') {
-        this.successMessage.set('Unidad Funcional creada correctamente');
-      } else {
-        this.successMessage.set('Unidad Funcional actualizada correctamente');
-      }
+      this.successMessage.set(
+        this.selectedUniOrgId() === 'new'
+          ? 'Unidad Funcional creada correctamente'
+          : 'Unidad Funcional actualizada correctamente'
+      );
 
       this.wasSaved.set(true);
 
@@ -364,11 +382,28 @@ export class OrgList {
       setTimeout(() => {
         this.wasSaved.set(false);
       }, 3000);
+
+    } catch (error) {
+
+      const err = error as HttpErrorResponse;
+
+      this.errorMessage.set(
+        err.error?.message ??
+        err.message ??
+        'Ocurrió un error inesperado.'
+      );
+
+      this.wasError.set(true);
+
+      setTimeout(() => {
+        this.wasError.set(false);
+      }, 5000);
+
     } finally {
 
       this.isPostingUni.set(false);
-    }
 
+    }
   }
 
   deleteUnidad(uni: UnidadFuncional) {
@@ -461,11 +496,11 @@ export class OrgList {
         'cargo_modal'
       ) as HTMLDialogElement;
 
-      if (this.selectedCargoId() === 'new') {
-        this.successMessage.set('Cargo creado correctamente');
-      } else {
-        this.successMessage.set('Cargo actualizado correctamente');
-      }
+       this.successMessage.set(
+        this.selectedCargoId() === 'new'
+          ? 'Sub Unidad creada correctamente'
+          : 'Sub Unidad actualizada correctamente'
+      );
 
       this.wasSaved.set(true);
 
@@ -474,7 +509,24 @@ export class OrgList {
       setTimeout(() => {
         this.wasSaved.set(false);
       }, 3000);
-    } finally {
+    }  catch (error) {
+
+      const err = error as HttpErrorResponse;
+
+      this.errorMessage.set(
+        err.error?.message ??
+        err.message ??
+        'Ocurrió un error inesperado.'
+      );
+
+      this.wasError.set(true);
+
+      setTimeout(() => {
+        this.wasError.set(false);
+      }, 5000);
+
+    }
+    finally {
 
       this.isPostingCargo.set(false);
     }

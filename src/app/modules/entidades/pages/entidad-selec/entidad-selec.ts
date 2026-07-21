@@ -9,10 +9,11 @@ import { FormErrorLabel } from '@shared/components/form-error-label/form-error-l
 import { Pagination } from '@shared/components/pagination/pagination';
 import { Entidad } from '../../interfaces/entidad.interface';
 import { RepresentanteService } from '../../services/representante.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-entidad-selec',
-  imports: [Pagination, ReactiveFormsModule, FormErrorLabel, JsonPipe,],
+  imports: [Pagination, ReactiveFormsModule, FormErrorLabel, ],
   templateUrl: './entidad-selec.html',
   styleUrl: './entidad-selec.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -23,6 +24,8 @@ export class EntidadSelec {
   route = inject(ActivatedRoute);
   private fb = inject(FormBuilder);
   wasSaved = signal(false);
+  wasError = signal(false);
+  errorMessage = signal('');
   isPosting = signal(false);
 
   searchForm = this.fb.group({
@@ -162,7 +165,23 @@ export class EntidadSelec {
         this.wasSaved.set(false);
       }, 3000);
 
-    } finally {
+    }catch (error) {
+
+      const err = error as HttpErrorResponse;
+
+      this.errorMessage.set(
+        err.error?.message ??
+        err.message ??
+        'Ocurrió un error inesperado.'
+      );
+
+      this.wasError.set(true);
+
+      setTimeout(() => {
+        this.wasError.set(false);
+      }, 5000);
+
+    }  finally {
 
       this.isPosting.set(false);
 

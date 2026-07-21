@@ -32,11 +32,11 @@ export interface HojaRutaSimple {
     tipoDocumento: string;
     prioridad: string;
     beneficiarioPago: string;
-    contactoOrigrn: string;
+    contactoOrigen: string;
     referencia: string;
     estado: string;
     fechaDocumento: Date | string;
-    fechaRecepcion: Date | string;
+    fechaRecepcion: Date ;
     numero: number;
     gestion: number;
     seguimientos: Seguimiento[];

@@ -8,6 +8,7 @@ import { FormErrorLabel } from '@shared/components/form-error-label/form-error-l
 import { Pagination } from '@shared/components/pagination/pagination';
 import { Entidad } from '../../interfaces/entidad.interface';
 import { JsonPipe } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-entidad-list',
@@ -24,12 +25,14 @@ export class EntidadList {
   private fb = inject(FormBuilder);
 
   wasSaved = signal(false);
+  wasError = signal(false);
+  errorMessage = signal('');
   isPosting = signal(false);
   selectedEntidadId = signal<string>('new');
 
   entidadForm = this.fb.nonNullable.group({
-    nit: [0,],
-    cuenta: [0,],
+    nit: [null as number | null],
+    cuenta: [null as number | null],
     denominacion: ['', Validators.required],
     codigo: ['', Validators.required],
     sigla: ['', Validators.required],
@@ -114,8 +117,8 @@ export class EntidadList {
     this.selectedEntidadId.set('new');
 
     this.entidadForm.reset({
-      nit: 0,
-      cuenta: 0,
+      nit: null,
+      cuenta: null,
       denominacion: '',
       codigo: '',
       sigla: '',
@@ -187,8 +190,8 @@ export class EntidadList {
       this.entidadResource.reload();
 
       this.entidadForm.reset({
-        nit: 0,
-        cuenta: 0,
+        nit: null,
+        cuenta: null,
         denominacion: '',
         codigo: '',
         sigla: '',
@@ -202,11 +205,11 @@ export class EntidadList {
         'entidad_modal'
       ) as HTMLDialogElement;
 
-      if (this.selectedEntidadId() === 'new') {
-        this.successMessage.set('Entidad creado correctamente');
-      } else {
-        this.successMessage.set('Entidad actualizado correctamente');
-      }
+      this.successMessage.set(
+        this.selectedEntidadId() === 'new'
+          ? 'Entidad creada correctamente'
+          : 'Entidad actualizada correctamente'
+      );
 
       this.wasSaved.set(true);
 
@@ -215,11 +218,22 @@ export class EntidadList {
       setTimeout(() => {
         this.wasSaved.set(false);
       }, 3000);
-      /* this.wasSaved.set(true);
-      modal.close();
+
+    }catch (error) {
+
+      const err = error as HttpErrorResponse;
+
+      this.errorMessage.set(
+        err.error?.message ??
+        err.message ??
+        'Ocurrió un error inesperado.'
+      );
+
+      this.wasError.set(true);
+
       setTimeout(() => {
-        this.wasSaved.set(false);
-      }, 3000); */
+        this.wasError.set(false);
+      }, 5000);
 
     } finally {
 
