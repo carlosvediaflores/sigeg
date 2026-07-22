@@ -7,7 +7,7 @@ export interface Org {
   sigla: string;
   codigo?:number;
   cargo: string;
-  persona?: User | string;
+  persona: User ;
   isActive?: boolean;
   unidadFuncional: UnidadFuncional[];
 }

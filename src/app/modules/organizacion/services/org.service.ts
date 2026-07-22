@@ -12,7 +12,7 @@ const emptyOrg: Org = {
   sigla: '',
   codigo: 0,
   cargo: '',
-  persona:'',
+  persona: {} as any,
   isActive: true,
   unidadFuncional: []
 };

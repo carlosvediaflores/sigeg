@@ -137,10 +137,12 @@ export class OrgList {
       const orgLike =
         this.orgForm.getRawValue();
 
+      const { persona, ...orgPayload } = orgLike;
+
       if (this.selectedOrgId() === 'new') {
 
         await firstValueFrom(
-          this.orgService.createOrg(orgLike)
+          this.orgService.createOrg(orgPayload)
         );
 
       } else {
@@ -148,7 +150,7 @@ export class OrgList {
         await firstValueFrom(
           this.orgService.updateOrg(
             this.selectedOrgId(),
-            orgLike
+            orgPayload
           )
         );
       }
@@ -302,6 +304,8 @@ export class OrgList {
   openEditUnidad(UnidadFunional: UnidadFuncional) {
 
     this.selectedUniOrgId.set(UnidadFunional._id);
+
+    console.log('Unidad Funcional:', UnidadFunional);
 
     this.unitForm.reset({
       nombre: UnidadFunional.nombre,

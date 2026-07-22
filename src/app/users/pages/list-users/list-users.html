@@ -1,11 +1,11 @@
 <div class="flex-1  pt-5 px-5">
 
     <div class="flex items-center gap-5 ">
-    <h1 class="text-1xl font-bold">Listado de usuarios</h1>
-    <h3 class="text-lg">
-        Total
-        <span class="text-accent">{{ usersResource.value()?.count }}</span>
-    </h3>
+        <h1 class="text-1xl font-bold">Listado de usuarios</h1>
+        <h3 class="text-lg">
+            Total
+            <span class="text-accent">{{ usersResource.value()?.count }}</span>
+        </h3>
     </div>
     <div class="divider p-0 m-0"></div>
 
@@ -39,6 +39,7 @@
                     <th>Usuario</th>
                     <th>Email</th>
                     <th>CI</th>
+                    <th>Unidad</th>
                     <th>Estado</th>
                     <th>...</th>
                 </tr>
@@ -77,6 +78,46 @@
                     </td>
                     <td>
                         {{ user.ci }}
+                    </td>
+                    <td>
+                        @if(user?.idUnidadOrg ) {
+                        <div>
+                            <div class="text-sm opacity-50">
+                                {{ $any(user?.idUnidadOrg)?.nombre ?? 'Sin Asignar' }}
+                            </div>
+
+                            <div class="font-bold hover:text-accent transition-colors duration-300 opacity-80">
+                                {{ $any(user?.idUnidadOrg)?.cargo ?? '' }}
+                            </div>
+
+                        </div>
+                        }
+
+                        @if(user?.idUnidadFuncional ) {
+                        <div>
+                            <div class="text-sm opacity-50">
+                                {{ $any(user?.idUnidadFuncional)?.nombre ?? 'Sin Asignar' }}
+                            </div>
+
+                            <div class="font-bold hover:text-accent transition-colors duration-300 opacity-80">
+                                {{ $any(user?.idUnidadFuncional)?.cargo ?? '' }}
+                            </div>
+
+                        </div>
+                        }
+                        @if(user?.idSubUnidad ) {
+                        <div>
+                            <div class="text-sm opacity-50">
+                                {{ $any(user?.idSubUnidad)?.nombre ?? 'Sin Asignar' }}
+                            </div>
+
+                            <div class="font-bold hover:text-accent transition-colors duration-300 opacity-80">
+                                {{ $any(user?.idSubUnidad)?.cargo ?? '' }}
+                            </div>
+
+                        </div>
+                        }
+
                     </td>
                     <td>
 
