@@ -18,7 +18,7 @@ import { AuthService } from '@auth/services/auth.service';
 
 @Component({
   selector: 'app-hoja-ruta',
-  imports: [RouterLink, Pagination, DatePipe, FormErrorLabel, ReactiveFormsModule, JsonPipe],
+  imports: [RouterLink, Pagination, DatePipe, FormErrorLabel, ReactiveFormsModule, ],
   templateUrl: './hoja-ruta.html',
   styleUrl: './hoja-ruta.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

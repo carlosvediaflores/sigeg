@@ -137,12 +137,10 @@ export class OrgList {
       const orgLike =
         this.orgForm.getRawValue();
 
-      const { persona, ...orgPayload } = orgLike;
-
       if (this.selectedOrgId() === 'new') {
 
         await firstValueFrom(
-          this.orgService.createOrg(orgPayload)
+          this.orgService.createOrg(orgLike)
         );
 
       } else {
@@ -150,7 +148,7 @@ export class OrgList {
         await firstValueFrom(
           this.orgService.updateOrg(
             this.selectedOrgId(),
-            orgPayload
+            orgLike
           )
         );
       }
@@ -444,6 +442,31 @@ export class OrgList {
       cargo: '',
       persona: '',
       unidadFuncional: unidad._id,
+    });
+
+    const modal = document.getElementById(
+      'cargo_modal'
+    ) as HTMLDialogElement | null;
+
+    modal?.showModal();
+  }
+
+  openEditCargo(cargo: SubUnidad) {
+
+    this.selectedCargoId.set(cargo._id);
+
+    console.log('Cargo:', cargo);
+
+    this.subForm.reset({
+      nombre: cargo.nombre,
+      sigla: cargo.sigla,
+      codigo: cargo.codigo,
+      cargo: cargo.cargo,
+      persona:
+        typeof cargo.persona === 'string'
+          ? cargo.persona
+          : cargo.persona?._id,
+      unidadFuncional: cargo.unidadFuncional,
     });
 
     const modal = document.getElementById(

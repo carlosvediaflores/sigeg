@@ -41,12 +41,12 @@
                                 <span class="font-semibold">Código:</span> {{ org.codigo }}
                             </p>
                         </div>
-                        <div>
+                       <!--  <div>
                             funcionario responsable:
                             <span class="font-semibold">
                                 {{ org.persona.nombre }} {{ org.persona.apellidos }}
                             </span>
-                        </div>
+                        </div> -->
                     </div>
 
                     <div class="badge badge-primary badge-lg">
@@ -161,7 +161,7 @@
 
                                         @for (sub of unidad.subUnidad; track sub._id) {
 
-                                        <div class="badge badge-info badge-outline gap-1 py-3 px-3">
+                                        <div class="btn badge badge-info badge-outline gap-1 py-3 px-3" (click)="openEditCargo(sub)">
                                             <span class="opacity-70">
                                                 ({{ sub.codigo }})
                                             </span>
@@ -260,7 +260,7 @@
 </div>
 
 <!-- <pre>
-{{unitForm.value | json }}
+{{subForm.value | json }}
 </pre> -->
 
 <dialog id="org_modal" class="modal">
