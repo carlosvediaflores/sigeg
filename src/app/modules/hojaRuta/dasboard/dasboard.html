@@ -1,22 +1,678 @@
-<div class="stats shadow bg-base-100 w-full">
+@if (dashboard(); as data) {
+<div class="mt-8 mb-4">
 
-    <div class="stat">
-        <div class="stat-figure text-primary">
-            <i class="fa-solid fa-folder-open text-4xl"></i>
-        </div>
+    <h2 class="text-xl font-bold">
+        Dashboard de Hojas de Ruta
+    </h2>
 
-        <div class="stat-title">
-            Registrados
-        </div>
+    <p class="text-sm text-base-content/60">
+        Estado actual de los documentos en el sistema
+    </p>
 
-        <div class="stat-value text-primary">
-            <!-- {{dashboard().totalRegistrado}} -->
-        </div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mb-6">
 
-        <div class="stat-desc">
-            Documentos registrados
+
+    <!-- TOTAL HOJAS RUTA -->
+    <div class="card bg-base-100 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-base-200">
+
+        <div class="flex">
+
+            <div class="w-2 bg-primary rounded-l-lg"></div>
+
+            <div class="stat">
+
+                <div class="stat-figure">
+
+                    <div class="bg-primary/10 p-3 rounded-full">
+
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            class="size-10 text-primary">
+
+                            <path d="M19.5 21a3 3 0 0 0 3-3v-4.5a3 3 0 0 0-3-3h-15a3 3 0 0 0-3 3V18a3 3 0 0 0 3 3h15ZM1.5 10.146V6a3 3 0 0 1 3-3h5.379a2.25 2.25 0 0 1 1.59.659l2.122 2.121c.14.141.331.22.53.22H19.5a3 3 0 0 1 3 3v1.146A4.483 4.483 0 0 0 19.5 9h-15a4.483 4.483 0 0 0-3 1.146Z"/>
+
+                        </svg>
+
+                    </div>
+
+                </div>
+
+
+                <div class="stat-title">
+                    Total Hojas Ruta
+                </div>
+
+
+                <div class="stat-value text-primary">
+                    {{data.total}}
+                </div>
+
+
+                <div class="stat-desc">
+                    Gestión {{data.hojaRutas[0]?.gestion}}
+                </div>
+
+            </div>
+
         </div>
 
     </div>
 
+
+
+
+
+    <!-- RECIBIDOS -->
+    <div class="card bg-base-100 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-base-200">
+
+        <div class="flex">
+
+            <div class="w-2 bg-info rounded-l-lg"></div>
+
+            <div class="stat">
+
+                <div class="stat-figure">
+
+                    <div class="bg-info/10 p-3 rounded-full">
+
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            class="size-10 text-info">
+
+                            <path fill-rule="evenodd"
+                            d="M12 2.25a.75.75 0 0 1 .75.75v9.69l2.47-2.47a.75.75 0 1 1 1.06 1.06l-3.75 3.75a.75.75 0 0 1-1.06 0l-3.75-3.75a.75.75 0 1 1 1.06-1.06l2.47 2.47V3a.75.75 0 0 1 .75-.75Z"
+                            clip-rule="evenodd"/>
+
+                            <path d="M6.75 7.5A2.25 2.25 0 0 0 4.5 9.75v8.5A2.25 2.25 0 0 0 6.75 20.5h10.5a2.25 2.25 0 0 0 2.25-2.25v-8.5a2.25 2.25 0 0 0-2.25-2.25H15v1.5h2.25a.75.75 0 0 1 .75.75v8.5a.75.75 0 0 1-.75.75H6.75a.75.75 0 0 1-.75-.75v-8.5a.75.75 0 0 1 .75-.75H9V7.5H6.75Z"/>
+
+                        </svg>
+
+                    </div>
+
+                </div>
+
+
+                <div class="stat-title">
+                    Recibidos
+                </div>
+
+
+                <div class="stat-value text-info">
+                    {{data.totalRecibido}}
+                </div>
+
+
+                <div class="stat-desc">
+                    Documentos recibidos
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+
+
+    <!-- REGISTRADOS -->
+    <div class="card bg-base-100 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-base-200">
+
+        <div class="flex">
+
+            <div class="w-2 bg-success rounded-l-lg"></div>
+
+
+            <div class="stat">
+
+
+                <div class="stat-figure">
+
+                    <div class="bg-success/10 p-3 rounded-full">
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            class="size-10 text-success">
+
+                            <path d="M5.25 3A2.25 2.25 0 0 0 3 5.25v13.5A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V8.25L15.75 3H5.25ZM15 4.5v4.5h4.5L15 4.5ZM7.5 12a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5h-7.5A.75.75 0 0 1 7.5 12Zm0 3a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5h-7.5A.75.75 0 0 1 7.5 15Z"/>
+
+                        </svg>
+
+                    </div>
+
+                </div>
+
+
+                <div class="stat-title">
+                    Registrados
+                </div>
+
+
+                <div class="stat-value text-success">
+                    {{data.totalRegistrado}}
+                </div>
+
+
+                <div class="stat-desc">
+                    Nuevos documentos
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+
+
+    <!-- ENVIADOS -->
+    <div class="card bg-base-100 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-base-200">
+
+        <div class="flex">
+
+            <div class="w-2 bg-warning rounded-l-lg"></div>
+
+
+            <div class="stat">
+
+                <div class="stat-figure">
+
+                    <div class="bg-warning/10 p-3 rounded-full">
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            class="size-10 text-warning">
+
+                            <path d="M3.478 2.405a.75.75 0 0 0-.926.94l2.432 7.905h8.116a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94l17.5-8.75a.75.75 0 0 0 0-1.34l-17.5-8.75Z"/>
+
+                        </svg>
+
+
+                    </div>
+
+                </div>
+
+
+                <div class="stat-title">
+                    Enviados
+                </div>
+
+
+                <div class="stat-value text-warning">
+                    {{data.totalEnviado}}
+                </div>
+
+
+                <div class="stat-desc">
+                    En proceso de atención
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+
+    <!-- FINALIZADOS -->
+    <div class="card bg-base-100 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-base-200">
+
+        <div class="flex">
+
+            <div class="w-2 bg-success rounded-l-lg"></div>
+
+
+            <div class="stat">
+
+
+                <div class="stat-figure">
+
+                    <div class="bg-success/10 p-3 rounded-full">
+
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            class="size-10 text-success">
+
+                            <path fill-rule="evenodd"
+                            d="M2.25 12a9.75 9.75 0 1 1 19.5 0 9.75 9.75 0 0 1-19.5 0Zm13.36-2.47a.75.75 0 0 0-1.22-.86l-3.48 4.94-1.72-1.72a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.1l4.09-5.57Z"
+                            clip-rule="evenodd"/>
+
+                        </svg>
+
+
+                    </div>
+
+                </div>
+
+
+                <div class="stat-title">
+                    Finalizados
+                </div>
+
+
+                <div class="stat-value text-success">
+                    {{data.totalFinalizado}}
+                </div>
+
+
+                <div class="stat-desc">
+                    Procesos concluidos
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+
+
+    <!-- ANULADOS -->
+    <div class="card bg-base-100 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-base-200">
+
+        <div class="flex">
+
+
+            <div class="w-2 bg-error rounded-l-lg"></div>
+
+
+            <div class="stat">
+
+
+                <div class="stat-figure">
+
+                    <div class="bg-error/10 p-3 rounded-full">
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            class="size-10 text-error">
+
+
+                            <path fill-rule="evenodd"
+                            d="M9.75 9.75a.75.75 0 0 1 1.06 0L12 10.94l1.19-1.19a.75.75 0 1 1 1.06 1.06L13.06 12l1.19 1.19a.75.75 0 1 1-1.06 1.06L12 13.06l-1.19 1.19a.75.75 0 1 1-1.06-1.06L10.94 12 9.75 10.81a.75.75 0 0 1 0-1.06Z"
+                            clip-rule="evenodd"/>
+
+
+                            <path fill-rule="evenodd"
+                            d="M12 2.25a9.75 9.75 0 1 0 0 19.5 9.75 9.75 0 0 0 0-19.5Z"
+                            clip-rule="evenodd"/>
+
+                        </svg>
+
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="stat-title">
+                    Anulados
+                </div>
+
+
+                <div class="stat-value text-error">
+                    {{data.totalAnulado}}
+                </div>
+
+
+                <div class="stat-desc">
+                    Documentos anulados
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
 </div>
+
+}
+
+@if (seguimientoDashboard(); as segui) {
+
+
+<div class="mt-8 mb-4">
+
+    <h2 class="text-xl font-bold">
+        Dashboard de Seguimientos
+    </h2>
+
+    <p class="text-sm text-base-content/60">
+        Estado actual de los movimientos documentales
+    </p>
+
+</div>
+
+
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+
+
+
+    <!-- ENVIADOS -->
+
+    <div class="card bg-base-100 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-base-200">
+
+        <div class="flex">
+
+            <div class="w-2 bg-warning rounded-l-lg"></div>
+
+
+            <div class="stat">
+
+
+                <div class="stat-figure">
+
+                    <div class="bg-warning/10 p-3 rounded-full">
+
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            class="size-10 text-warning">
+
+                            <path d="M3.478 2.405a.75.75 0 0 0-.926.94l2.432 7.905h8.116a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94l17.5-8.75a.75.75 0 0 0 0-1.34l-17.5-8.75Z"/>
+
+                        </svg>
+
+                    </div>
+
+                </div>
+
+
+                <div class="stat-title">
+                    Enviados
+                </div>
+
+
+                <div class="stat-value text-warning">
+                    {{segui.totalEnviados}}
+                </div>
+
+
+                <div class="stat-desc">
+                    Seguimientos enviados
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+
+    <!-- RECIBIDOS -->
+
+    <div class="card bg-base-100 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-base-200">
+
+        <div class="flex">
+
+
+            <div class="w-2 bg-info rounded-l-lg"></div>
+
+
+            <div class="stat">
+
+
+                <div class="stat-figure">
+
+                    <div class="bg-info/10 p-3 rounded-full">
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            class="size-10 text-info">
+
+
+                            <path d="M12 2.25a.75.75 0 0 1 .75.75v9.69l2.47-2.47a.75.75 0 1 1 1.06 1.06l-3.75 3.75a.75.75 0 0 1-1.06 0l-3.75-3.75a.75.75 0 1 1 1.06-1.06l2.47 2.47V3a.75.75 0 0 1 .75-.75Z"/>
+
+
+                        </svg>
+
+
+                    </div>
+
+                </div>
+
+
+                <div class="stat-title">
+                    Recibidos
+                </div>
+
+
+                <div class="stat-value text-info">
+                    {{segui.totalRecibidos}}
+                </div>
+
+
+                <div class="stat-desc">
+                    Pendientes recepción
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+
+    <!-- DERIVADOS -->
+
+    <div class="card bg-base-100 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-base-200">
+
+        <div class="flex">
+
+
+            <div class="w-2 bg-primary rounded-l-lg"></div>
+
+
+            <div class="stat">
+
+
+                <div class="stat-figure">
+
+                    <div class="bg-primary/10 p-3 rounded-full">
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            class="size-10 text-primary">
+
+                            <path d="M8.25 6.75 12 3l3.75 3.75a.75.75 0 0 1-1.06 1.06L12.75 5.81V15a.75.75 0 0 1-1.5 0V5.81L9.31 7.81a.75.75 0 0 1-1.06-1.06Z"/>
+
+                        </svg>
+
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="stat-title">
+                    Derivados
+                </div>
+
+
+                <div class="stat-value text-primary">
+                    {{segui.totalDerivados}}
+                </div>
+
+
+                <div class="stat-desc">
+                    Transferidos
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+    <!-- ARCHIVADOS -->
+
+    <div class="card bg-base-100 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-base-200">
+
+
+        <div class="flex">
+
+
+            <div class="w-2 bg-neutral rounded-l-lg"></div>
+
+
+            <div class="stat">
+
+
+                <div class="stat-figure">
+
+                    <div class="bg-neutral/10 p-3 rounded-full">
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            class="size-10">
+
+                            <path d="M3.75 6.75A2.25 2.25 0 0 1 6 4.5h12a2.25 2.25 0 0 1 2.25 2.25v10.5A2.25 2.25 0 0 1 18 19.5H6a2.25 2.25 0 0 1-2.25-2.25V6.75Z"/>
+
+                        </svg>
+
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="stat-title">
+                    Archivados
+                </div>
+
+
+                <div class="stat-value">
+                    {{segui.totalArchivados}}
+                </div>
+
+
+                <div class="stat-desc">
+                    Documentos archivados
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+    <!-- FINALIZADOS -->
+
+    <div class="card bg-base-100 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-base-200">
+
+
+        <div class="flex">
+
+
+            <div class="w-2 bg-success rounded-l-lg"></div>
+
+
+            <div class="stat">
+
+
+                <div class="stat-figure">
+
+                    <div class="bg-success/10 p-3 rounded-full">
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            class="size-10 text-success">
+
+                            <path fill-rule="evenodd"
+                            d="M2.25 12a9.75 9.75 0 1 1 19.5 0 9.75 9.75 0 0 1-19.5 0Zm13.36-2.47a.75.75 0 0 0-1.22-.86l-3.48 4.94-1.72-1.72a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.1l4.09-5.57Z"
+                            clip-rule="evenodd"/>
+
+                        </svg>
+
+
+                    </div>
+
+                </div>
+
+
+                <div class="stat-title">
+                    Finalizados
+                </div>
+
+
+                <div class="stat-value text-success">
+                    {{segui.totalFinalizados}}
+                </div>
+
+
+                <div class="stat-desc">
+                    Procesos cerrados
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+
+</div>
+
+}
