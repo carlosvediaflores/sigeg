@@ -18,7 +18,7 @@ import { AuthService } from '@auth/services/auth.service';
 
 @Component({
   selector: 'app-hoja-ruta',
-  imports: [RouterLink, Pagination, DatePipe, FormErrorLabel, ReactiveFormsModule, ],
+  imports: [RouterLink, Pagination, DatePipe, FormErrorLabel, ReactiveFormsModule, JsonPipe],
   templateUrl: './hoja-ruta.html',
   styleUrl: './hoja-ruta.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -307,9 +307,9 @@ export class HojaRuta {
     console.log('openEditModal', hr);
 
     this.selectedHRId.set(hr._id);
-    this.hRutaForm.patchValue({
-      origen: hr.origen,
-      idOrigen: hr.idOrigen,
+    this.hRutaForm.reset({
+      origen: hr?.origen || '',
+      idOrigen: typeof hr.idOrigen === 'string' ? hr.idOrigen : hr.idOrigen?._id,
       tipoOrigen: hr.tipoOrigen,
       tipoDocumento: hr.tipoDocumento,
       prioridad: hr.prioridad,
@@ -411,7 +411,7 @@ export class HojaRuta {
 
       this.wasSaved.set(true);
 
-      // modal.close();
+       modal.close();
 
       setTimeout(() => {
         this.wasSaved.set(false);

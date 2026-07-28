@@ -27,7 +27,7 @@ export interface SeguimientosResponse {
 export interface HojaRutaSimple {
     _id: string;
     origen: string;
-    idOrigen: string;
+    idOrigen: User | string;
     tipoOrigen: string;
     tipoDocumento: string;
     prioridad: string;
