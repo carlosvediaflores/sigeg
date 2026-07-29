@@ -117,12 +117,12 @@
 
         </div>
 
-        
+
 
         <!-- CONTENT -->
         <main class="p-3 overflow-y-auto h-[calc(100vh-64px)]">
 
-           
+
 
             <!-- ROUTER -->
             <router-outlet />
@@ -139,14 +139,14 @@
         </label>
 
         <!-- SIDEBAR -->
-        <aside  class="w-72 min-h-full bg-base-100 border-r border-base-300 transition-all duration-300">
+        <aside class="w-72 min-h-full bg-base-100 border-r border-base-300 transition-all duration-300">
 
-           <!-- LOGO -->
+            <!-- LOGO -->
             <app-logo-nombre />
-            
+
 
             <!-- PROFILE -->
-             <app-profile />
+            <app-profile />
 
             <!-- MENU -->
             <ul class="menu p-4 w-full text-base-content">
@@ -155,29 +155,7 @@
                     <span>GENERAL</span>
                 </li>
 
-                <li>
-                    <a routerLink="/hojaRuta" routerLinkActive="active">
 
-                        Dashboard
-
-                    </a>
-                </li>
-
-                <li>
-                    <a routerLink="/hojaRuta/list" routerLinkActive="active">
-
-                        Hojas de Ruta
-
-                    </a>
-                </li>
-
-                <li>
-                    <a routerLink="/hojaRuta/oficina" routerLinkActive="active">
-
-                        Oficina
-
-                    </a>
-                </li>
 
                 <!-- <li>
                     <details open>
@@ -218,6 +196,81 @@
                 </li> -->
 
             </ul>
+
+            <div id="nav" class="w-full px-6">
+                <a routerLink="/hojaRuta" routerLinkActive=" active bg-slate-700"
+                    class="w-full px-2 inline-flex space-x-2 items-center border-b border-slate-700 py-3 hover:bg-white/5 transition ease-linear duration-150 text-accent text-lg hover:underline cursor-pointer">
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+                        </svg>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-lg font-bold leading-5 text-white">Dashboard</span>
+                        <span class="text-sm text-white/50 hidden md:block">Panel de Control</span>
+                    </div>
+                </a>
+                @if (user()?.roles?.[0]?.name === 'secretario' || user()?.roles?.[0]?.name === 'admin'){ 
+                <a routerLink="/hojaRuta/list" routerLinkActive=" active bg-slate-800"
+                    class="w-full px-2 inline-flex space-x-2 items-center border-b border-slate-700 py-3 hover:bg-white/5 transition ease-linear duration-150 text-accent text-lg hover:underline cursor-pointer">
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+                            <path fill-rule="evenodd"
+                                d="M7.502 6h7.128A3.375 3.375 0 0 1 18 9.375v9.375a3 3 0 0 0 3-3V6.108c0-1.505-1.125-2.811-2.664-2.94a48.972 48.972 0 0 0-.673-.05A3 3 0 0 0 15 1.5h-1.5a3 3 0 0 0-2.663 1.618c-.225.015-.45.032-.673.05C8.662 3.295 7.554 4.542 7.502 6ZM13.5 3A1.5 1.5 0 0 0 12 4.5h4.5A1.5 1.5 0 0 0 15 3h-1.5Z"
+                                clip-rule="evenodd" />
+                            <path fill-rule="evenodd"
+                                d="M3 9.375C3 8.339 3.84 7.5 4.875 7.5h9.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-9.75A1.875 1.875 0 0 1 3 20.625V9.375ZM6 12a.75.75 0 0 1 .75-.75h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H6.75a.75.75 0 0 1-.75-.75V12Zm2.25 0a.75.75 0 0 1 .75-.75h3.75a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75ZM6 15a.75.75 0 0 1 .75-.75h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H6.75a.75.75 0 0 1-.75-.75V15Zm2.25 0a.75.75 0 0 1 .75-.75h3.75a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75ZM6 18a.75.75 0 0 1 .75-.75h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H6.75a.75.75 0 0 1-.75-.75V18Zm2.25 0a.75.75 0 0 1 .75-.75h3.75a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75Z"
+                                clip-rule="evenodd" />
+                        </svg>
+
+
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-lg text-slate-300 font-bold leading-5">Hojas de Ruta</span>
+                        <span class="text-sm text-slate-500 hidden md:block">Listado de hojas de ruta</span>
+                    </div>
+                </a>}
+                <a routerLink="/hojaRuta/oficina" routerLinkActive=" active bg-slate-800"
+                    class="w-full px-2 inline-flex space-x-2 items-center border-b border-slate-700 py-3 hover:bg-white/5 transition ease-linear duration-150 text-accent text-lg hover:underline cursor-pointer">
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+                            <path fill-rule="evenodd"
+                                d="M1.5 9.832v1.793c0 1.036.84 1.875 1.875 1.875h17.25c1.035 0 1.875-.84 1.875-1.875V9.832a3 3 0 0 0-.722-1.952l-3.285-3.832A3 3 0 0 0 16.215 3h-8.43a3 3 0 0 0-2.278 1.048L2.222 7.88A3 3 0 0 0 1.5 9.832ZM7.785 4.5a1.5 1.5 0 0 0-1.139.524L3.881 8.25h3.165a3 3 0 0 1 2.496 1.336l.164.246a1.5 1.5 0 0 0 1.248.668h2.092a1.5 1.5 0 0 0 1.248-.668l.164-.246a3 3 0 0 1 2.496-1.336h3.165l-2.765-3.226a1.5 1.5 0 0 0-1.139-.524h-8.43Z"
+                                clip-rule="evenodd" />
+                            <path
+                                d="M2.813 15c-.725 0-1.313.588-1.313 1.313V18a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3v-1.688c0-.724-.588-1.312-1.313-1.312h-4.233a3 3 0 0 0-2.496 1.336l-.164.246a1.5 1.5 0 0 1-1.248.668h-2.092a1.5 1.5 0 0 1-1.248-.668l-.164-.246A3 3 0 0 0 7.046 15H2.812Z" />
+                        </svg>
+
+
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-lg text-slate-300 font-bold leading-5">Mi Oficina</span>
+                        <span class="text-sm text-slate-500 hidden md:block">Listado de Seguimientos</span>
+                    </div>
+                </a>
+                <a routerLink="/hojaRuta/oficina" routerLinkActive=" active bg-slate-800"
+                    class="w-full px-2 inline-flex space-x-2 items-center border-b border-slate-700 py-3 hover:bg-white/5 transition ease-linear duration-150 text-accent text-lg hover:underline cursor-pointer">
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+                            <path
+                                d="M18.375 2.25c-1.035 0-1.875.84-1.875 1.875v15.75c0 1.035.84 1.875 1.875 1.875h.75c1.035 0 1.875-.84 1.875-1.875V4.125c0-1.036-.84-1.875-1.875-1.875h-.75ZM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-.75a1.875 1.875 0 0 1-1.875-1.875V8.625ZM3 13.125c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v6.75c0 1.035-.84 1.875-1.875 1.875h-.75A1.875 1.875 0 0 1 3 19.875v-6.75Z" />
+                        </svg>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-lg text-slate-300 font-bold leading-5">Reportes</span>
+                        <span class="text-sm text-slate-500 hidden md:block">Reportes</span>
+                    </div>
+                </a>
+                <!-- Menu Item End -->
+
+                <div class="divider my-2"></div>
+
+                <button routerLink="/" class="btn btn-ghost text-accent w-full" (click)="authService.logout()">
+                    Cerrar sesión
+                </button>
+            </div>
 
         </aside>
 

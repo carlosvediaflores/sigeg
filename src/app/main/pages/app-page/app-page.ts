@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '@auth/services/auth.service';
 
 @Component({
   selector: 'app-app-page',
@@ -8,4 +9,8 @@ import { RouterLink } from '@angular/router';
   styleUrl: './app-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppPage {}
+export class AppPage {
+  authService = inject(AuthService);
+
+  user = computed(() => this.authService.user());
+}

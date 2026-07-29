@@ -8,6 +8,9 @@
 @plugin "daisyui" {
   themes: dark --default, dark, corporate;
 }
+/* @plugin "daisyui" {
+  themes: sunset --default, dark, corporate;
+} */
 @theme {
   --font-montserrat: "Montserrat", sans-serif;
 }
