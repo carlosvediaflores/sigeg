@@ -90,7 +90,7 @@
         </button>
     </div>
     <div class="divider p-0 m-0"></div>
-<!-- <pre>
+    <!-- <pre>
     {{hRutaForm.value | json }}
 </pre> -->
     <div class="overflow-x-auto mt-0">
@@ -125,7 +125,8 @@
                     </th> -->
                     <td>
                         <div class="flex items-center gap-3">
-                            <div class="items-center cursor-pointer lg:tooltip" data-tip="Ver Seguimientos" (click)="openSeguiModal(hr)">
+                            <div class="items-center cursor-pointer lg:tooltip" data-tip="Ver Seguimientos"
+                                (click)="openSeguiModal(hr)">
                                 <div class=" text-accent ">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                         stroke-width="1.5" stroke="currentColor" class="size-10">
@@ -197,7 +198,8 @@
                     </td>
                     <td class="text-center">
 
-                        <a (click)="printHojaRuta(hr)" class="btn btn-ghost text-accent btn-xs lg:tooltip" data-tip="Imprimir">
+                        <a (click)="printHojaRuta(hr)" class="btn btn-ghost text-accent btn-xs lg:tooltip"
+                            data-tip="Imprimir">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor" class="size-6">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -210,7 +212,8 @@
 
                         @if (hr.estado === 'RECIBIDO') {
 
-                        <a (click)="openNewModalSeg(hr)" class="btn btn-ghost text-accent btn-xs lg:tooltip" data-tip="Nuevo Seguimiento">
+                        <a (click)="openNewModalSeg(hr)" class="btn btn-ghost text-accent btn-xs lg:tooltip"
+                            data-tip="Derivar">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor" class="size-6">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -219,9 +222,25 @@
                         </a>
 
                         }
+
+                        @if (hr.estado != 'RECIBIDO') {
+
+                        <a (click)="openNewModalSeg(hr)" class="btn btn-ghost text-accent btn-xs lg:tooltip"
+                            data-tip="Derivar Copia">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                class="size-6">
+                                <path fill-rule="evenodd"
+                                    d="M7.5 3.75A1.5 1.5 0 0 0 6 5.25v13.5a1.5 1.5 0 0 0 1.5 1.5h6a1.5 1.5 0 0 0 1.5-1.5V15a.75.75 0 0 1 1.5 0v3.75a3 3 0 0 1-3 3h-6a3 3 0 0 1-3-3V5.25a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3V9A.75.75 0 0 1 15 9V5.25a1.5 1.5 0 0 0-1.5-1.5h-6Zm10.72 4.72a.75.75 0 0 1 1.06 0l3 3a.75.75 0 0 1 0 1.06l-3 3a.75.75 0 1 1-1.06-1.06l1.72-1.72H9a.75.75 0 0 1 0-1.5h10.94l-1.72-1.72a.75.75 0 0 1 0-1.06Z"
+                                    clip-rule="evenodd" />
+                            </svg>
+
+                        </a>
+
+                        }
                         @if (hr.estado === 'ENVIADO') {
 
-                        <a (click)="anularEnvio(hr)" class="btn btn-ghost text-error btn-xs lg:tooltip" data-tip="Anular Envío">
+                        <a (click)="anularEnvio(hr)" class="btn btn-ghost text-error btn-xs lg:tooltip"
+                            data-tip="Anular Envío">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                 class="size-6">
                                 <path fill-rule="evenodd"
@@ -231,7 +250,8 @@
                         </a>
                         }
 
-                        <button class="btn btn-ghost btn-circle  btn-xs text-info lg:tooltip" data-tip="Editar" (click)="openEditModal(hr)">
+                        <button class="btn btn-ghost btn-circle  btn-xs text-info lg:tooltip" data-tip="Editar"
+                            (click)="openEditModal(hr)">
                             <div class="indicator">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                     class="size-6">
@@ -479,21 +499,48 @@
             <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
         </form>
 
+      <!--   <pre>
+        {{ seguiForm.value| json }}
+        </pre> -->
         <h3 class="font-bold text-2xl mb-6">
 
-            @if(selectedHRId() === 'new') {
+            @if(hojaRuta()) {
 
-            Nuevo Hoja de Ruta Nº <samp class="text-2xl">{{ (hojaRutaResource.value()?.total ?? 0) + 1 }}</samp>
+            Derivar H. R. Nº <samp class="text-2xl">{{ (hojaRuta()?.numero) }}</samp>
 
             } @else {
 
-            Editar Registro
+            Debe seleccionar una Hoja de Ruta para poder derivar
 
             }
 
         </h3>
 
         <form [formGroup]="seguiForm" (ngSubmit)="onSubmitSeg()">
+
+            <div class="flex items-center justify-evenly">
+
+                <div>
+
+                    <fieldset class="fieldset flex gap-4">
+                        @if(hojaRuta()?.estado=='RECIBIDO') {
+                        <label class="cursor-pointer flex items-center gap-2">
+                            <input type="radio" class="radio radio-sm radio-success" formControlName="tipoEnvio"
+                                value="OFICIAL">
+                            <span class="text-success font-medium">Oficial</span>
+                        </label> 
+                        } @else {
+                       
+                        <label class="cursor-pointer flex items-center gap-2">
+                            <input type="radio" class="radio radio-sm radio-error" formControlName="tipoEnvio"
+                                value="COPIA">
+                            <span class="text-error font-medium">Copia {{ seguiForm.get('numeroCopia')?.value }}</span>
+                        </label>
+                        } 
+                    </fieldset>
+                </div>
+
+            </div>
 
             @if(destinoSeleccionado()) {
 
@@ -524,20 +571,16 @@
 
             <div class="my-2">
 
-                <select class="select select-bordered w-full" (change)="onOrgChange($event)">
+                <select class="select select-bordered w-full" formControlName="idUnidadOrgDest"
+                    (change)="onOrgChange($event)">
 
-                    <option value="">
-                        Seleccione Unidad Organizacional
-                    </option>
+                    <option value="">Seleccione Unidad Organizacional</option>
 
                     @for (org of orgsResource.value(); track org._id) {
-
                     <option [value]="org._id">
                         {{ org.nombre }} ({{ org.sigla }})
                     </option>
-
                     }
-
                 </select>
 
             </div>

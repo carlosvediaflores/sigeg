@@ -18,7 +18,7 @@ import { AuthService } from '@auth/services/auth.service';
 
 @Component({
   selector: 'app-hoja-ruta',
-  imports: [RouterLink, Pagination, DatePipe, FormErrorLabel, ReactiveFormsModule,],
+  imports: [RouterLink, Pagination, DatePipe, FormErrorLabel, ReactiveFormsModule, ],
   templateUrl: './hoja-ruta.html',
   styleUrl: './hoja-ruta.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -138,6 +138,7 @@ export class HojaRuta {
   public hojaRutas = signal<HojaRutaResponse[] | null>(null);
   selectedHojaRuta = signal<HojaRutaSimple | null>(null);
   selectedHrId = signal('');
+  hojaRuta = signal<HojaRutaSimple | null>(null);
   route = inject(ActivatedRoute);
   fb = inject(FormBuilder);
   router = inject(Router);
@@ -319,7 +320,7 @@ export class HojaRuta {
       estado: hr.estado,
       numero: hr.numero,
       fechaDocumento: hr.fechaDocumento instanceof Date ? hr.fechaDocumento.toISOString() : hr.fechaDocumento,
-      fechaRecepcion: hr.fechaRecepcion ,
+      fechaRecepcion: hr.fechaRecepcion,
       seguimientos: hr.seguimientos,
       entidad: hr.entidad,
       representante: hr.representante,
@@ -411,7 +412,7 @@ export class HojaRuta {
 
       this.wasSaved.set(true);
 
-       modal.close();
+      modal.close();
 
       setTimeout(() => {
         this.wasSaved.set(false);
@@ -502,14 +503,20 @@ export class HojaRuta {
     detalle: ['', Validators.required],
     fechaDerivado: [new Date()],
     numeroCopia: [0],
+
     idUnidadOrgOrigen: [''],
     idUnidadFuncOrigen: [''],
     idSubUnidadOrigen: [''],
-    idUnidadFuncDest: [''],
+
     idUnidadOrgDest: [''],
+    idUnidadFuncDest: [''],
     idSubUnidadDest: [''],
+
+
+
     origenUser: ['', Validators.required],
     destinoUser: ['', Validators.required],
+
     archivosOficina: [[]],
     carpetasOficina: [[]],
   });
@@ -604,18 +611,55 @@ export class HojaRuta {
 
   });
 
+  private resetDestinoSeleccionado() {
+
+    this.selectedOrg.set(null);
+    this.selectedUnidad.set(null);
+    this.selectedSubUnidad.set(null);
+
+    this.seguiForm.patchValue({
+
+
+      idUnidadOrgDest: '',
+      idUnidadFuncDest: '',
+      idSubUnidadDest: '',
+      destinoUser: '',
+    });
+
+  }
+
+
+
   openNewModalSeg(hojaRuta: HojaRutaSimple) {
+    this.resetDestinoSeleccionado();
     const user = this.user();
+    this.hojaRuta.set(hojaRuta);
     console.log('Hoja de Ruta seleccionada para Seg', hojaRuta);
+
+    const maxNumeroCopia =
+      hojaRuta.seguimientos?.reduce(
+        (max, seg) => Math.max(max, seg.numeroCopia ?? 0),
+        0
+      ) ?? 0;
+
+    const siguienteNumeroCopia = maxNumeroCopia + 1;
+
+    let tipoEnvio = 'OFICIAL';
+    let numeroCopia = 0;
+
+    if (hojaRuta.estado === 'ENVIADO') {
+      tipoEnvio = 'COPIA';
+      numeroCopia = siguienteNumeroCopia;
+    }
     this.selectedHRId.set('new');
     this.seguiForm.reset({
       origenHr: hojaRuta.origen,
       idHojaRuta: hojaRuta._id,
       numeroHr: hojaRuta.numero,
-      tipoEnvio: 'OFICIAL',
+      tipoEnvio: tipoEnvio,
       detalle: '',
       fechaDerivado: new Date(),
-      numeroCopia: 0,
+      numeroCopia: siguienteNumeroCopia,
       idUnidadOrgOrigen: user?.idUnidadOrg ? (typeof user.idUnidadOrg === 'string' ? user.idUnidadOrg : user.idUnidadOrg._id) : '',
       idUnidadFuncOrigen: user?.idUnidadFuncional ? (typeof user.idUnidadFuncional === 'string' ? user.idUnidadFuncional : user.idUnidadFuncional._id) : '',
       idSubUnidadOrigen: user?.idSubUnidad ? (typeof user.idSubUnidad === 'string' ? user.idSubUnidad : user.idSubUnidad._id) : '',
@@ -634,57 +678,90 @@ export class HojaRuta {
   }
 
   onSubmitSeg() {
+
     if (this.seguiForm.invalid) {
       this.seguiForm.markAllAsTouched();
       return;
     }
 
+    this.isPosting.set(true);
+
     const seguimientoData = this.seguiForm.getRawValue() as any;
 
-    this.isPosting.set(true);
     const modal = document.getElementById(
       'newSeg_modal'
     ) as HTMLDialogElement;
+
     this.seguimientosService
       .createSeguimiento(seguimientoData)
       .subscribe({
+
         next: (resp) => {
-             // Actualizar estado de la hoja de ruta
+
+          // Actualizar estado de la Hoja de Ruta
           this.hojaRutaService
-            .updateHojaRuta(resp.idHojaRuta._id, { estado: 'ENVIADO' })
-            .subscribe();
+            .updateHojaRuta(seguimientoData.idHojaRuta, {
+              estado: 'ENVIADO'
+            })
+            .subscribe({
 
-          // Limpiar formulario
-          this.seguiForm.reset({
-            origenHr: '',
-            idHojaRuta: '',
-            numeroHr: 0,
-            tipoEnvio: 'OFICIAL',
-            detalle: '',
-            fechaDerivado: new Date(),
-            numeroCopia: 0,
-            idUnidadFuncOrigen: '',
-            idUnidadOrgOrigen: '',
-            idSubUnidadOrigen: '',
-            idUnidadFuncDest: '',
-            idUnidadOrgDest: '',
-            idSubUnidadDest: '',
-            origenUser: '',
-            destinoUser: '',
-          });
+              next: () => {
 
+                this.resetDestinoSeleccionado();
 
+                this.seguiForm.reset({
+                  origenHr: '',
+                  idHojaRuta: '',
+                  numeroHr: 0,
+                  tipoEnvio: 'OFICIAL',
+                  detalle: '',
+                  fechaDerivado: new Date(),
+                  numeroCopia: 0,
+                  idUnidadFuncOrigen: '',
+                  idUnidadOrgOrigen: '',
+                  idSubUnidadOrigen: '',
+                  idUnidadFuncDest: '',
+                  idUnidadOrgDest: '',
+                  idSubUnidadDest: '',
+                  origenUser: '',
+                  destinoUser: '',
+                });
 
-          Swal.fire(
-            'Correcto',
-            'El seguimiento fue creado exitosamente.',
-            'success'
-          ).then(() => {
-            this.hojaRutaResource.reload();
-          });
+                this.hojaRutaService.clearCache();
+                this.hojaRutaResource.reload();
+
+                this.isPosting.set(false);
+
+                modal.close();
+
+                Swal.fire(
+                  'Correcto',
+                  'El seguimiento fue creado exitosamente.',
+                  'success'
+                );
+
+              },
+
+              error: (err) => {
+
+                console.error('Error al actualizar la Hoja de Ruta', err);
+
+                this.isPosting.set(false);
+
+                Swal.fire(
+                  'Advertencia',
+                  'El seguimiento fue creado, pero no se pudo actualizar el estado de la Hoja de Ruta.',
+                  'warning'
+                );
+
+              }
+
+            });
+
         },
 
         error: (err) => {
+
           console.error('Error al crear seguimiento', err);
 
           this.isPosting.set(false);
@@ -694,14 +771,11 @@ export class HojaRuta {
             err.error?.message ?? 'No se pudo registrar el seguimiento.',
             'error'
           );
-        },
 
+        }
 
       });
 
-    this.hojaRutaService.clearCache();
-    modal.close();
-    this.isPosting.set(false);
   }
 
   openSeguiModal(hojaRuta: HojaRutaSimple) {
