@@ -634,8 +634,6 @@ export class HojaRuta {
     this.resetDestinoSeleccionado();
     const user = this.user();
     this.hojaRuta.set(hojaRuta);
-    console.log('Hoja de Ruta seleccionada para Seg', hojaRuta);
-
     const maxNumeroCopia =
       hojaRuta.seguimientos?.reduce(
         (max, seg) => Math.max(max, seg.numeroCopia ?? 0),
@@ -651,7 +649,6 @@ export class HojaRuta {
       tipoEnvio = 'COPIA';
       numeroCopia = siguienteNumeroCopia;
     }
-    this.selectedHRId.set('new');
     this.seguiForm.reset({
       origenHr: hojaRuta.origen,
       idHojaRuta: hojaRuta._id,
@@ -659,7 +656,7 @@ export class HojaRuta {
       tipoEnvio: tipoEnvio,
       detalle: '',
       fechaDerivado: new Date(),
-      numeroCopia: siguienteNumeroCopia,
+      numeroCopia: numeroCopia,
       idUnidadOrgOrigen: user?.idUnidadOrg ? (typeof user.idUnidadOrg === 'string' ? user.idUnidadOrg : user.idUnidadOrg._id) : '',
       idUnidadFuncOrigen: user?.idUnidadFuncional ? (typeof user.idUnidadFuncional === 'string' ? user.idUnidadFuncional : user.idUnidadFuncional._id) : '',
       idSubUnidadOrigen: user?.idSubUnidad ? (typeof user.idSubUnidad === 'string' ? user.idSubUnidad : user.idSubUnidad._id) : '',
@@ -732,7 +729,6 @@ export class HojaRuta {
 
                 this.isPosting.set(false);
 
-                modal.close();
 
                 Swal.fire(
                   'Correcto',
@@ -775,6 +771,7 @@ export class HojaRuta {
         }
 
       });
+    modal.close();
 
   }
 

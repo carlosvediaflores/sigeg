@@ -209,7 +209,6 @@
                     </td>
                     <th>
 
-
                         @if (hr.estado === 'RECIBIDO') {
 
                         <a (click)="openNewModalSeg(hr)" class="btn btn-ghost text-accent btn-xs lg:tooltip"
@@ -499,7 +498,7 @@
             <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
         </form>
 
-      <!--   <pre>
+        <!-- <pre>
         {{ seguiForm.value| json }}
         </pre> -->
         <h3 class="font-bold text-2xl mb-6">
@@ -528,15 +527,15 @@
                             <input type="radio" class="radio radio-sm radio-success" formControlName="tipoEnvio"
                                 value="OFICIAL">
                             <span class="text-success font-medium">Oficial</span>
-                        </label> 
+                        </label>
                         } @else {
-                       
+
                         <label class="cursor-pointer flex items-center gap-2">
                             <input type="radio" class="radio radio-sm radio-error" formControlName="tipoEnvio"
                                 value="COPIA">
                             <span class="text-error font-medium">Copia {{ seguiForm.get('numeroCopia')?.value }}</span>
                         </label>
-                        } 
+                        }
                     </fieldset>
                 </div>
 
