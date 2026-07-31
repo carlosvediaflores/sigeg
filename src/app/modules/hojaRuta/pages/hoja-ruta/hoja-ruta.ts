@@ -18,7 +18,7 @@ import { AuthService } from '@auth/services/auth.service';
 
 @Component({
   selector: 'app-hoja-ruta',
-  imports: [RouterLink, Pagination, DatePipe, FormErrorLabel, ReactiveFormsModule, ],
+  imports: [RouterLink, Pagination, DatePipe, FormErrorLabel, ReactiveFormsModule,],
   templateUrl: './hoja-ruta.html',
   styleUrl: './hoja-ruta.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -156,6 +156,7 @@ export class HojaRuta {
   selectedOrg = signal<any | null>(null);
   selectedUnidad = signal<any | null>(null);
   selectedSubUnidad = signal<any | null>(null);
+  selectedNumeroCopia = signal(0);
 
   year = new Date().getFullYear();
   numeroHR = 0;
@@ -449,6 +450,35 @@ export class HojaRuta {
     Swal.fire(
       'Actualizado',
       'La hoja de ruta fue marcada como RECIBIDO',
+      'success'
+    );
+  }
+
+  async changeStatusRecibido(hr: HojaRutaSimple) {
+
+    const result = await Swal.fire({
+      title: '¿Cambiar a RECIBIDO?',
+      text: `Hoja de Ruta Nº ${hr.numero}`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, recibir',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if (!result.isConfirmed) return;
+
+    await firstValueFrom(
+      this.hojaRutaService.updateHojaRuta(
+        hr._id,
+        { estado: 'REGISTRADO' }
+      )
+    );
+
+    this.hojaRutaResource.reload();
+
+    Swal.fire(
+      'Actualizado',
+      'La hoja de ruta fue marcada como REGISTRADO',
       'success'
     );
   }
@@ -775,6 +805,40 @@ export class HojaRuta {
 
   }
 
+  seguimientosAgrupados = computed(() => {
+    const hr = this.selectedHrResource.value();
+
+    if (!hr) return [];
+
+    const grupos = new Map<number, Seguimiento[]>();
+
+    for (const seg of hr.seguimientos) {
+      const copia = seg.numeroCopia ?? 0;
+
+      if (!grupos.has(copia)) {
+        grupos.set(copia, []);
+      }
+
+      grupos.get(copia)!.push(seg);
+    }
+
+    return [...grupos.entries()]
+      .sort((a, b) => a[0] - b[0])
+      .map(([numeroCopia, seguimientos]) => ({
+        numeroCopia,
+        titulo: numeroCopia === 0
+          ? 'Oficial'
+          : `Copia ${numeroCopia}`,
+        seguimientos
+      }));
+  });
+
+  seguimientosActuales = computed(() => {
+    const grupo = this.seguimientosAgrupados()
+      .find(g => g.numeroCopia === this.selectedNumeroCopia());
+
+    return grupo?.seguimientos ?? [];
+  });
   openSeguiModal(hojaRuta: HojaRutaSimple) {
 
     console.log('Hoja de Ruta seleccionada', hojaRuta);
@@ -786,6 +850,26 @@ export class HojaRuta {
     ) as HTMLDialogElement | null;
 
     modal?.showModal();
+  }
+
+  closeDialog(event: MouseEvent) {
+
+    const dialog = event.currentTarget as HTMLDialogElement;
+    const box = dialog.querySelector('.modal-box');
+
+    if (!box) return;
+
+    const rect = box.getBoundingClientRect();
+
+    const inside =
+      event.clientX >= rect.left &&
+      event.clientX <= rect.right &&
+      event.clientY >= rect.top &&
+      event.clientY <= rect.bottom;
+
+    if (!inside) {
+      dialog.close();
+    }
   }
 
   getFieldError(fieldName: string): string | null {

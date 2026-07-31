@@ -44,6 +44,7 @@ export class Oficina {
   seguimientos = signal<Seguimiento | null>(null);
   seguiId$ = toObservable(this.seguiId);
   selectedSeguiId = signal('');
+  selectedNumeroCopia = signal(0);
   selectedSeguiId$ = toObservable(this.selectedSeguiId);
   selectedHrId = signal('');
   selectedHrId$ = toObservable(this.selectedHrId);
@@ -170,6 +171,40 @@ export class Oficina {
 
     return null;
   }
+   seguimientosAgrupados = computed(() => {
+    const hr = this.selectedHrResource.value();
+
+    if (!hr) return [];
+
+    const grupos = new Map<number, Seguimiento[]>();
+
+    for (const seg of hr.seguimientos) {
+      const copia = seg.numeroCopia ?? 0;
+
+      if (!grupos.has(copia)) {
+        grupos.set(copia, []);
+      }
+
+      grupos.get(copia)!.push(seg);
+    }
+
+    return [...grupos.entries()]
+      .sort((a, b) => a[0] - b[0])
+      .map(([numeroCopia, seguimientos]) => ({
+        numeroCopia,
+        titulo: numeroCopia === 0
+          ? 'Oficial'
+          : `Copia ${numeroCopia}`,
+        seguimientos
+      }));
+  });
+
+  seguimientosActuales = computed(() => {
+    const grupo = this.seguimientosAgrupados()
+      .find(g => g.numeroCopia === this.selectedNumeroCopia());
+
+    return grupo?.seguimientos ?? [];
+  });
   openSeguiModal(hojaRuta: any) {
 
     console.log('Hoja de Ruta seleccionada', hojaRuta);
@@ -181,6 +216,26 @@ export class Oficina {
     ) as HTMLDialogElement;
 
     modal.showModal();
+  }
+
+  closeDialog(event: MouseEvent) {
+
+    const dialog = event.currentTarget as HTMLDialogElement;
+    const box = dialog.querySelector('.modal-box');
+
+    if (!box) return;
+
+    const rect = box.getBoundingClientRect();
+
+    const inside =
+      event.clientX >= rect.left &&
+      event.clientX <= rect.right &&
+      event.clientY >= rect.top &&
+      event.clientY <= rect.bottom;
+
+    if (!inside) {
+      dialog.close();
+    }
   }
 
   anularEnvio(segui: Seguimiento) {

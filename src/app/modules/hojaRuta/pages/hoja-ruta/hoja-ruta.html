@@ -169,6 +169,13 @@
                         </button>
                         }
 
+
+                        <!-- @case ('RECIBIDO') {
+                        <button class="btn btn-xs btn-success" (click)="changeStatusRecibido(hr)">
+                            RECIBIDO
+                        </button>
+                        } -->
+
                         @case ('RECIBIDO') {
                         <span class="badge badge-success">
                             RECIBIDO
@@ -672,7 +679,7 @@
     </form>
 </dialog>
 
-<dialog id="segui_modal" class="modal">
+<dialog id="segui_modal" class="modal" (click)="closeDialog($event)">
 
     <div class="modal-box max-w-5xl">
         <form method="dialog">
@@ -680,11 +687,12 @@
         </form>
         @if(selectedHrResource.value(); as hr){
 
-        <h3 class="font-bold text-lg mb-4">
+        <h3 class="font-bold text-base text-center">
             Hoja de Ruta Nº {{ hr.numero }}
         </h3>
+        <div class="divider p-0 m-0"></div>
 
-        <div class="grid grid-cols-2 gap-4 mb-6">
+        <div class="grid grid-cols-2 gap-2 text-sm">
 
             <div>
                 <span class="font-semibold">Origen:</span>
@@ -717,14 +725,58 @@
             </div>
 
         </div>
-        <div class="divider"></div>
-        <h4 class="font-semibold mb-2">
+        <div class="divider p-0 m-0"></div>
+        <h4 class="font-semibold ">
             Historial de Seguimientos
         </h4>
+        <!-- name of each tab group should be unique -->
+        <div class="tabs tabs-lift">
+
+            @for(grupo of seguimientosAgrupados(); track grupo.numeroCopia){
+
+            <a class="tab gap-2" [class.tab-active]="selectedNumeroCopia() === grupo.numeroCopia"
+                (click)="selectedNumeroCopia.set(grupo.numeroCopia)">
+
+                @if(grupo.numeroCopia === 0){
+
+                <!-- Icono Oficial -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
+                    class="size-4 text-success">
+                    <path fill-rule="evenodd"
+                        d="M15 8c0 .982-.472 1.854-1.202 2.402a2.995 2.995 0 0 1-.848 2.547 2.995 2.995 0 0 1-2.548.849A2.996 2.996 0 0 1 8 15a2.996 2.996 0 0 1-2.402-1.202 2.995 2.995 0 0 1-2.547-.848 2.995 2.995 0 0 1-.849-2.548A2.996 2.996 0 0 1 1 8c0-.982.472-1.854 1.202-2.402a2.995 2.995 0 0 1 .848-2.547 2.995 2.995 0 0 1 2.548-.849A2.995 2.995 0 0 1 8 1c.982 0 1.854.472 2.402 1.202a2.995 2.995 0 0 1 2.547.848c.695.695.978 1.645.849 2.548A2.996 2.996 0 0 1 15 8Zm-3.291-2.843a.75.75 0 0 1 .135 1.052l-4.25 5.5a.75.75 0 0 1-1.151.043l-2.25-2.5a.75.75 0 1 1 1.114-1.004l1.65 1.832 3.7-4.789a.75.75 0 0 1 1.052-.134Z"
+                        clip-rule="evenodd" />
+                </svg>
+
+                Oficial
+
+                } @else {
+
+                <!-- Icono Copia -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
+                    class="size-4 text-info">
+                    <path
+                        d="M5.5 3.5A1.5 1.5 0 0 1 7 2h2.879a1.5 1.5 0 0 1 1.06.44l2.122 2.12a1.5 1.5 0 0 1 .439 1.061V9.5A1.5 1.5 0 0 1 12 11V8.621a3 3 0 0 0-.879-2.121L9 4.379A3 3 0 0 0 6.879 3.5H5.5Z" />
+                    <path
+                        d="M4 5a1.5 1.5 0 0 0-1.5 1.5v6A1.5 1.5 0 0 0 4 14h5a1.5 1.5 0 0 0 1.5-1.5V8.621a1.5 1.5 0 0 0-.44-1.06L7.94 5.439A1.5 1.5 0 0 0 6.878 5H4Z" />
+                </svg>
+
+                Copia {{ grupo.numeroCopia }}
+
+                }
+                <!-- Badge -->
+                <span class="badge badge-sm badge-primary">
+                    {{ grupo.seguimientos.length }}
+                </span>
+
+            </a>
+
+            }
+
+        </div>
 
         <ul class="timeline timeline-snap-icon max-md:timeline-compact timeline-vertical timeline-vertical-reverse">
 
-            @for(segui of hr.seguimientos; track segui._id; let i = $index){
+            @for(segui of seguimientosActuales(); track segui._id; let i = $index){
 
             <li>
 
