@@ -69,7 +69,7 @@ export class SeguimientosService {
     id: string,
     segui: Partial<Seguimiento>
   ) {
-    console.log('createSeguimiento', segui);
+    console.log('updateSeguimiento', segui);
     return this.http.patch<Seguimiento>(
       `${baseUrl}/seguimientos/${id}`,
       segui
@@ -97,6 +97,14 @@ export class SeguimientosService {
     return this.http.patch(
       `${environment.baseUrl}/seguimientos/${id}/anular-envio`,
       {}
+    );
+  }
+
+  asociarHojaRuta(id: Seguimiento, seguimientos: string[]) {
+    console.log('Asociar Hoja de Ruta', id, seguimientos );
+    return this.http.patch(
+      `${environment.baseUrl}/seguimientos/${id}/asociar-hoja-ruta`,
+      { seguimientos }
     );
   }
 

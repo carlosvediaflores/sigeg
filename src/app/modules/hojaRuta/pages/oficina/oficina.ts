@@ -16,7 +16,7 @@ import { OrgService } from '../../../organizacion/services/org.service';
 
 @Component({
   selector: 'app-oficina',
-  imports: [RouterLink, Pagination, DatePipe, ReactiveFormsModule, FormErrorLabel, ],
+  imports: [RouterLink, Pagination, DatePipe, ReactiveFormsModule, FormErrorLabel,],
   templateUrl: './oficina.html',
   styleUrl: './oficina.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -54,6 +54,9 @@ export class Oficina {
   route = inject(ActivatedRoute);
   fb = inject(FormBuilder);
   year = new Date().getFullYear();
+
+  selectedSeguimientos = signal<Seguimiento[]>([]);
+  seguimientoOficial = signal<Seguimiento | null>(null);
 
 
   searchFormSegui = this.fb.group({
@@ -171,7 +174,7 @@ export class Oficina {
 
     return null;
   }
-   seguimientosAgrupados = computed(() => {
+  seguimientosAgrupados = computed(() => {
     const hr = this.selectedHrResource.value();
 
     if (!hr) return [];
@@ -442,7 +445,7 @@ export class Oficina {
 
   }
 
- 
+
   openNewModalSeg(segui: Seguimiento, copia: boolean) {
     this.resetDestinoSeleccionado();
 
@@ -611,6 +614,111 @@ export class Oficina {
 
       });
     modal.close();
+
+  }
+
+  toggleSeleccion(segui: Seguimiento) {
+
+    const lista = this.selectedSeguimientos();
+
+    const existe = lista.some(
+      x => x._id === segui._id
+    );
+
+
+    if (existe) {
+
+      this.selectedSeguimientos.set(
+        lista.filter(
+          x => x._id !== segui._id
+        )
+      );
+
+    } else {
+
+      this.selectedSeguimientos.set([
+        ...lista,
+        segui
+      ]);
+
+    }
+  }
+  isSelected(segui: Seguimiento) {
+
+    return this.selectedSeguimientos()
+      .some(x => x._id === segui._id);
+
+  }
+
+  openModalAsociar() {
+
+    this.seguimientoOficial.set(null);
+
+    const modal = document.getElementById(
+      'modal_asociar'
+    ) as HTMLDialogElement;
+
+    modal.showModal();
+
+  }
+
+  asociarSeleccionados() {
+
+    const oficial = this.seguimientoOficial();
+
+
+    if (!oficial) {
+      return;
+    }
+
+
+    const ids = this.selectedSeguimientos()
+      .filter(
+        x => x._id !== oficial._id
+      )
+      .map(
+        x => x._id
+      );
+
+
+
+    this.seguimientosService
+      .asociarHojaRuta(
+        oficial,
+        ids
+      )
+      .subscribe({
+
+        next: (resp) => {
+
+
+          console.log('Asociado', resp);
+
+
+          this.selectedSeguimientos.set([]);
+
+
+          const modal =
+            document.getElementById(
+              'modal_asociar'
+            ) as HTMLDialogElement;
+
+
+          modal.close();
+
+
+          this.seguimientosResource.reload();
+
+
+        },
+
+
+        error: (err) => {
+          console.error(err);
+        }
+
+      });
+
 
   }
 

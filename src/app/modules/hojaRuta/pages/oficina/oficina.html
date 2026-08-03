@@ -32,6 +32,26 @@
             </select>
             <span>Gestión</span>
         </label>
+        @if(searchFormSegui.value.estado==='RECIBIDO'
+        && selectedSeguimientos().length >= 2){
+
+        <button class="btn btn-success" (click)="openModalAsociar()">
+
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5">
+
+                <path d="M18 8a6 6 0 0 0-12 0v4a6 6 0 0 0 12 0V8Z" />
+
+            </svg>
+
+            Asociar
+
+            <span class="badge badge-primary">
+                {{selectedSeguimientos().length}}
+            </span>
+
+        </button>
+
+        }
         <div class="flex flex-1"></div>
         <div class="indicator mr-2">
             <span class="indicator-item badge badge-sm">{{ seguimientosResource.value()?.total }}</span>
@@ -95,11 +115,13 @@
             <!-- head -->
             <thead>
                 <tr class="text-center">
-                    <!-- <th>
+                    @if (searchFormSegui.value.estado==='RECIBIDO'){
+                    <th>
                         <label>
                             <input type="checkbox" class="checkbox" />
                         </label>
-                    </th> -->
+                    </th>
+                    }
                     <th>Nº H-R</th>
                     <th>Orígen</th>
                     <th>Referencia</th>
@@ -116,11 +138,14 @@
                 @for (segui of seguimientosResource.value()?.seguimientos; track segui._id) {
 
                 <tr>
-                    <!-- <th>
+                    @if (searchFormSegui.value.estado==='RECIBIDO'){
+                    <th>
                         <label>
-                            <input type="checkbox" class="checkbox" />
+                            <input type="checkbox" class="checkbox checkbox-primary" [checked]="isSelected(segui)"
+                                (change)="toggleSeleccion(segui)" />
                         </label>
-                    </th> -->
+                    </th>
+                    }
                     <td>
                         <div class="flex items-center gap-3">
                             <div class="items-center cursor-pointer" (click)="openSeguiModal(segui.idHojaRuta)">
@@ -272,14 +297,14 @@
     </div>
 </div>
 
-<dialog id="newSeg_modal" class="modal" >
+<dialog id="newSeg_modal" class="modal">
 
     <div class="modal-box max-w-5xl p-8">
         <form method="dialog">
             <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
         </form>
 
-      <!--   <pre>
+        <!--   <pre>
         {{ seguiForm.value| json }}
         </pre> -->
         <h3 class="font-bold text-2xl mb-6">
@@ -308,15 +333,15 @@
                             <input type="radio" class="radio radio-sm radio-success" formControlName="tipoEnvio"
                                 value="OFICIAL">
                             <span class="text-success font-medium">Oficial</span>
-                        </label> 
+                        </label>
                         } @else {
-                       
+
                         <label class="cursor-pointer flex items-center gap-2">
                             <input type="radio" class="radio radio-sm radio-error" formControlName="tipoEnvio"
                                 value="COPIA">
                             <span class="text-error font-medium">Copia {{ seguiForm.get('numeroCopia')?.value }}</span>
                         </label>
-                        } 
+                        }
                     </fieldset>
                 </div>
 
@@ -453,7 +478,7 @@
     </form>
 </dialog>
 
-<dialog id="segui_modal" class="modal"  (click)="closeDialog($event)">
+<dialog id="segui_modal" class="modal" (click)="closeDialog($event)">
 
     <div class="modal-box max-w-5xl">
         <form method="dialog">
@@ -504,7 +529,7 @@
             Historial de Seguimientos
         </h4>
 
-         <!-- name of each tab group should be unique -->
+        <!-- name of each tab group should be unique -->
         <div class="tabs tabs-lift">
 
             @for(grupo of seguimientosAgrupados(); track grupo.numeroCopia){
@@ -885,6 +910,102 @@
         </div>
 
     </div>
+</dialog>
+
+<dialog id="modal_asociar" class="modal">
+
+    <div class="modal-box max-w-3xl">
+
+
+        <h3 class="font-bold text-xl">
+            Seleccione Seguimiento Oficial
+        </h3>
+
+
+        <div class="space-y-3 mt-5">
+
+
+            @for(segui of selectedSeguimientos(); track segui._id){
+
+
+            <label class="flex items-center gap-3 cursor-pointer">
+
+                <input type="radio" name="oficial" class="radio radio-success" (change)="seguimientoOficial.set(segui)">
+
+
+                <div class="card bg-base-200 w-full">
+
+                    <div class="card-body p-3">
+
+
+                        <div class="font-bold">
+
+                            H.R. Nº {{segui.numeroHr}}
+
+                        </div>
+
+
+                        <div class="text-sm">
+
+                            {{segui.detalle}}
+
+                        </div>
+
+
+                        <div class="text-xs opacity-60">
+
+                            {{segui.origenHr}}
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+            </label>
+
+
+            }
+
+
+        </div>
+
+
+
+        <div class="modal-action">
+
+
+            <button class="btn btn-success" (click)="asociarSeleccionados()" [disabled]="!seguimientoOficial()">
+
+                Asociar
+
+            </button>
+
+
+            <form method="dialog">
+
+                <button class="btn">
+                    Cancelar
+                </button>
+
+            </form>
+
+
+        </div>
+
+
+    </div>
+
+
+    <form method="dialog" class="modal-backdrop">
+        <button>
+            cerrar
+        </button>
+    </form>
+
+
 </dialog>
 
 @if (wasSaved()) {
