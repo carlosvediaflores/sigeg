@@ -100,12 +100,11 @@ export class SeguimientosService {
     );
   }
 
-  asociarHojaRuta(id: Seguimiento, seguimientos: string[]) {
+  asociarHojaRuta(id: string, seguimientos: string[]) {
     console.log('Asociar Hoja de Ruta', id, seguimientos );
     return this.http.patch(
-      `${environment.baseUrl}/seguimientos/${id}/asociar-hoja-ruta`,
+      `${environment.baseUrl}/hojarutas/${id}/asociar-hoja-ruta`,
       { seguimientos }
     );
   }
-
 }

@@ -663,15 +663,10 @@ export class Oficina {
   }
 
   asociarSeleccionados() {
-
     const oficial = this.seguimientoOficial();
-
-
     if (!oficial) {
       return;
     }
-
-
     const ids = this.selectedSeguimientos()
       .filter(
         x => x._id !== oficial._id
@@ -680,46 +675,28 @@ export class Oficina {
         x => x._id
       );
 
-
-
     this.seguimientosService
       .asociarHojaRuta(
-        oficial,
+        oficial._id,
         ids
       )
       .subscribe({
 
         next: (resp) => {
-
-
           console.log('Asociado', resp);
-
-
           this.selectedSeguimientos.set([]);
-
-
           const modal =
             document.getElementById(
               'modal_asociar'
             ) as HTMLDialogElement;
-
-
           modal.close();
-
-
           this.seguimientosResource.reload();
-
-
         },
-
-
         error: (err) => {
           console.error(err);
         }
 
       });
-
-
   }
 
 }
