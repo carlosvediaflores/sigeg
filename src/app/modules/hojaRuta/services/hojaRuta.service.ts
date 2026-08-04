@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { Observable, of, tap } from 'rxjs';
-import { HojaRutaSimple, HojaRutaResponse } from '../interfaces/hojaRuta';
+import { HojaRutaSimple, HojaRutaResponse, QueryHojaRutaDto } from '../interfaces/hojaRuta';
 import { HttpClient } from '@angular/common/http';
 const baseUrl = environment.baseUrl;
 

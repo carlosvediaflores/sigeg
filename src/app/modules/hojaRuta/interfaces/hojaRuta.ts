@@ -91,4 +91,23 @@ export interface ArchivosOficina {
 export interface CarpetasOficina {
 
 }
+export interface QueryHojaRutaDto {
 
+  limit?: number;
+  offset?: number;
+
+  gestion?: number;
+
+  numero?: string;
+
+  termino?: string;
+
+  estado?: string;
+
+  tipoOrigen?: string;
+
+  prioridad?: string;
+
+  tipoDocumento?: string;
+
+}

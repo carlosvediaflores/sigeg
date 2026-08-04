@@ -214,14 +214,20 @@ export class HojaRuta {
         this.searchFormHR$,
       ]).pipe(
 
-        switchMap(([page, limit, filters]) =>
-          this.hojaRutaService.getHojaRutas({
+        switchMap(([page, limit, filters]) => {
+          const normalizedFilters = {
+            gestion: filters?.gestion ?? undefined,
+            termino: filters?.termino ?? undefined,
+            estado: filters?.estado ?? undefined,
+            numero: filters?.numero ?? undefined,
+          };
 
+          return this.hojaRutaService.getHojaRutas({
             offset: (page - 1) * limit,
             limit,
-            ...filters,
-          })
-        )
+            ...normalizedFilters,
+          });
+        })
       )
         .pipe(tap((resp) => console.log('hojasRuta', resp))),
   });
