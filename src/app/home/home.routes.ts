@@ -1,6 +1,7 @@
 import { Routes } from "@angular/router";
 import { HomeLayout } from "./home-layout/home-layout";
 import { HomePage } from "./pages/home-page/home-page";
+import { BuscarTramite } from "./pages/buscarTramite/buscarTramite";
 
 export const homeRoutes: Routes = [
   {
@@ -10,6 +11,10 @@ export const homeRoutes: Routes = [
       {
         path: '',
         component: HomePage,
+      },
+      {
+        path: 'miTramite',
+        component: BuscarTramite,
       },
 
     //   {
