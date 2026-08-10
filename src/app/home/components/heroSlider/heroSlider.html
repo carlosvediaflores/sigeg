@@ -1,7 +1,4 @@
-
-<section
-class="hero min-h-175"
-style="background-image:url('assets/images/hero/ckochas.jpg')">
+<section class="hero min-h-175" style="background-image:url('assets/images/hero/ckochas.jpg')">
 
     <div class="hero-overlay bg-black/50"></div>
 
@@ -32,13 +29,14 @@ style="background-image:url('assets/images/hero/ckochas.jpg')">
 
             <div class="mt-10 flex justify-center gap-4">
 
-                <button class="btn btn-primary">
+                <button class="btn btn-success">
 
                     Conocer el Municipio
 
                 </button>
 
-                <button  routerLink="/miTramite"class="btn btn-outline btn-primary bg-white text-primary hover:bg-primary hover:text-white">
+                <button class="btn btn-outline btn-success bg-white text-success hover:bg-success hover:text-white"
+                    (click)="activarBusqueda()">
 
                     Click para buscar tu Trámite
 

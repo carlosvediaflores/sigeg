@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, JsonPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -11,7 +11,7 @@ import { toSignal, toObservable, rxResource } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-buscar-tramite',
-  imports: [RouterLink, DatePipe, ReactiveFormsModule,],
+  imports: [RouterLink, DatePipe, ReactiveFormsModule, ],
   templateUrl: './buscarTramite.html',
   styleUrl: './buscarTramite.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,31 +19,33 @@ import { toSignal, toObservable, rxResource } from '@angular/core/rxjs-interop';
 export class BuscarTramite {
   hojaRutaService = inject(HojaRutaService);
   seguimientosService = inject(SeguimientosService);
-   public hojaRutas = signal<HojaRutaResponse[] | null>(null);
-   hojaRuta = signal<HojaRutaSimple | null>(null);
+  public hojaRutas = signal<HojaRutaResponse[] | null>(null);
+  hojaRuta = signal<HojaRutaSimple | null>(null);
   route = inject(ActivatedRoute);
   fb = inject(FormBuilder);
   router = inject(Router);
   selectedHrId = signal('');
   selectedHrId$ = toObservable(this.selectedHrId);
-   selectedNumeroCopia = signal(0);
+  selectedNumeroCopia = signal(0);
+
+  hojaRutaResource = signal<any | null>(null);
+  cargando = signal(false);
 
   year = new Date().getFullYear();
-mostrarResultados = signal(false);
+  mostrarResultados = signal(false);
   searchFormHR = this.fb.group({
     gestion: [this.year],
     termino: [''],
-    estado: [''],
     numero: [''],
   });
 
-   searchFormHR$ = this.searchFormHR.valueChanges.pipe(
+  searchFormHR$ = this.searchFormHR.valueChanges.pipe(
     startWith(this.searchFormHR.value),
     debounceTime(300),
     distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b))
   );
 
- currentPage = toSignal(
+  currentPage = toSignal(
     this.route.queryParamMap.pipe(
 
       map((params) =>
@@ -69,38 +71,20 @@ mostrarResultados = signal(false);
   hojaRutaPerPage$ =
     toObservable(this.hojaRutaPerPage);
 
-  hojaRutaResource = rxResource({
-    stream: () =>
-      combineLatest([
-        this.currentPage$,
-        this.hojaRutaPerPage$,
-        this.searchFormHR$,
-      ]).pipe(
 
-        switchMap(([page, limit, filters]) =>
-          this.hojaRutaService.getHojaRutas({
-
-            offset: (page - 1) * limit,
-            limit,
-            ...filters,
-          })
-        )
-      )
-        .pipe(tap((resp) => console.log('hojasRuta', resp))),
-  });
 
   selectedHrResource = rxResource({
-      stream: () =>
-        this.selectedHrId$.pipe(
-          switchMap(id =>
-            id
-              ? this.hojaRutaService.getHojaRuta(id)
-              : of(null)
-          )
+    stream: () =>
+      this.selectedHrId$.pipe(
+        switchMap(id =>
+          id
+            ? this.hojaRutaService.getHojaRuta(id)
+            : of(null)
         )
-    });
+      )
+  });
 
-    getTiempoPendiente(fecha: string | Date): string {
+  getTiempoPendiente(fecha: string | Date): string {
 
     const inicio = new Date(fecha).getTime();
     const ahora = Date.now();
@@ -147,7 +131,106 @@ mostrarResultados = signal(false);
 
     return grupo?.seguimientos ?? [];
   });
-   openSeguiModal(hojaRuta: HojaRutaSimple) {
+
+  limpiarBusqueda() {
+  this.searchFormHR.reset({
+    termino: '',
+    numero: '',
+    gestion: this.year
+  });
+
+  // limpiar resultados
+  this.hojaRutaResource.set(null);
+
+  // ocultar modal si estuviera abierto
+  this.selectedHrId.set('');
+
+  // opcional: limpiar selección
+  this.selectedNumeroCopia.set(0);
+}
+
+  puedeBuscar(): boolean {
+  const { numero, termino } = this.searchFormHR.value;
+
+  return !!(
+    numero ||
+    termino?.trim()
+  );
+}
+
+  buscarTramite() {
+
+    const values = this.searchFormHR.value;
+
+
+    const params = {
+
+      limit: this.hojaRutaPerPage(),
+
+      offset:
+        (this.currentPage() - 1)
+        *
+        this.hojaRutaPerPage(),
+
+
+      gestion:
+        Number(values.gestion),
+
+
+      ...(values.numero && {
+        numero:
+          Number(values.numero)
+      }),
+
+
+      ...(values.termino?.trim() && {
+        termino:
+          values.termino.trim()
+      })
+
+    };
+
+
+    console.log('PARAMS BUSQUEDA', params);
+
+
+    this.cargando.set(true);
+
+
+    this.hojaRutaService
+      .getHojaRutas(params)
+
+      .subscribe({
+
+        next: (data) => {
+
+
+          console.log('RESPUESTA HR', data);
+          this.hojaRutaResource
+            .set(data);
+          this.cargando
+            .set(false);
+        },
+        error: (err) => {
+          console.error(
+            'ERROR BUSCAR HR',
+            err
+          );
+          this.hojaRutaResource
+            .set(null);
+          this.cargando
+            .set(false);
+
+
+        }
+
+
+      });
+
+
+  }
+
+  openSeguiModal(hojaRuta: HojaRutaSimple) {
 
     console.log('Hoja de Ruta seleccionada', hojaRuta);
 
@@ -160,7 +243,7 @@ mostrarResultados = signal(false);
     modal?.showModal();
   }
 
-   closeDialog(event: MouseEvent) {
+  closeDialog(event: MouseEvent) {
 
     const dialog = event.currentTarget as HTMLDialogElement;
     const box = dialog.querySelector('.modal-box');

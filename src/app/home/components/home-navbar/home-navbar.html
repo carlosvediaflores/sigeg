@@ -1,52 +1,78 @@
 
-<div class="navbar bg-emerald-500 shadow-md sticky top-0 z-50">
+<header class="bg-green-600 shadow-md">
 
-    <div class="container mx-auto flex justify-between items-center">
 
-        <!-- Logo -->
+    <div class="container mx-auto h-18 flex items-center justify-between px-4">
 
-        <div class="navbar-start ">
 
-            <a routerLink="/">
 
-                <div class="flex items-center gap-3">
+        <!-- BOTON MOBILE -->
 
-                    <img
-                        src="assets/images/logo.png"
-                        class="w-14 h-14"
-                    />
+        <button class="lg:hidden text-3xl text-gray-600" (click)="menuMobile = !menuMobile">
 
-                    <div>
+            @if(menuMobile){
 
-                        <h1 class="font-bold text-primary leading-none">
+            ✖
 
-                            Gobierno Autónomo Municipal
+            }
+            @else {
 
-                        </h1>
+            ☰
 
-                        <p class="text-sm opacity-70">
+            }
 
-                            Ckochas
+        </button>
 
-                        </p>
 
-                    </div>
 
-                </div>
 
-            </a>
 
-        </div>
+        <!-- LOGO -->
 
-        <!-- Menú Desktop -->
+        <a routerLink="/" class="flex items-center gap-3">
 
-        <div class="navbar-center hidden lg:flex">
 
-            <ul class="menu menu-horizontal gap-1">
+            <img src="assets/images/logo.png" class="w-14 h-14" />
+
+
+            <div class="hidden sm:block">
+
+
+                <h1 class="font-bold  leading-none">
+
+                    Gobierno Autónomo Municipal
+
+                </h1>
+
+
+                <h1 class="text-lg font-bold leading-none pt-2">
+
+                    Ckochas
+
+                </h1>
+
+
+            </div>
+
+
+        </a>
+
+
+
+
+
+        <!-- MENU DESKTOP -->
+
+        <nav class="hidden lg:flex">
+
+
+            <ul class="flex items-center gap-2">
+
+
 
                 <li>
 
-                    <a routerLink="/">
+                    <a routerLink="/" class="px-4 py-2 hover:text-primary">
 
                         Inicio
 
@@ -54,116 +80,396 @@
 
                 </li>
 
-                <li>
 
-                    <details>
 
-                        <summary>
 
-                            Municipio
 
-                        </summary>
+                <!-- MUNICIPIO -->
 
-                        <ul class="p-2 bg-base-100 rounded-box w-60">
 
-                            <li><a>Historia</a></li>
+                <li class="relative group">
 
-                            <li><a>Misión</a></li>
 
-                            <li><a>Visión</a></li>
+                    <button
+                        class="px-4 py-2 flex items-center gap-1 hover:border rounded-box border-green-500  hover:bg-green-700   hover:underline cursor-pointer">
 
-                            <li><a>Autoridades</a></li>
+                        Municipio
 
-                            <li><a>Organigrama</a></li>
+                        <span>
+                            ▼
+                        </span>
 
-                        </ul>
+                    </button>
 
-                    </details>
+
+
+                    <ul class="
+                    absolute
+                    top-full
+                    left-0
+                    mt-2
+                    w-60
+
+                    bg-green-900
+                    shadow-xl
+                    rounded-box
+
+                    p-2
+
+                    opacity-0
+                    invisible
+                    translate-y-2
+
+                    group-hover:opacity-100
+                    group-hover:visible
+                    group-hover:translate-y-0
+
+                    transition-all
+                    duration-200
+
+                    z-50
+                    ">
+
+
+                        <li>
+                            <a routerLink="/historia" routerLinkActive=" active bg-green-700 border rounded-box border-green-500 underline"
+                                class="hover:border rounded-box border-green-500  hover:bg-green-700   hover:underline cursor-pointer">
+                                Historia
+                            </a>
+                        </li>
+
+
+                        <li>
+                            <a routerLink="/mision-vision" routerLinkActive=" active bg-green-700 border rounded-box border-green-500 underline"
+                                class="hover:border rounded-box border-green-500  hover:bg-green-700   hover:underline cursor-pointer">
+                                Misión, Visión y Valores
+                            </a>
+                        </li>
+
+
+                        <li>
+                            <a routerLink="/alcade" routerLinkActive=" active bg-green-700 border rounded-box border-green-500 underline"
+                                class="hover:border rounded-box border-green-500  hover:bg-green-700   hover:underline cursor-pointer">
+                                Alcade
+                            </a>
+                        </li>
+
+                        <li>
+                            <a routerLink="/concejo-municipal" routerLinkActive=" active bg-green-700 border rounded-box border-green-500 underline"
+                                class="hover:border rounded-box border-green-500  hover:bg-green-700   hover:underline cursor-pointer">
+                                Consejo Municipal
+                            </a>
+                        </li>
+
+
+                        <li>
+                            <a routerLink="/organigrama" routerLinkActive=" active bg-green-700 border rounded-box border-green-500 underline"
+                                class="hover:border rounded-box border-green-500  hover:bg-green-700   hover:underline cursor-pointer">
+                                Organigrama
+                            </a>
+                        </li>
+
+
+                    </ul>
+
 
                 </li>
 
-                <li>
 
-                    <details>
 
-                        <summary>
 
-                            Transparencia
 
-                        </summary>
 
-                        <ul class="p-2 bg-base-100 rounded-box w-60">
+                <!-- TRANSPARENCIA -->
 
-                            <li><a>POA</a></li>
 
-                            <li><a>PTDI</a></li>
+                <li class="relative group">
 
-                            <li><a>PEI</a></li>
 
-                            <li><a>Rendición Pública</a></li>
+                    <button
+                        class="px-4 py-2 flex items-center gap-1 hover:border rounded-box border-green-500  hover:bg-green-700   hover:underline cursor-pointer">
 
-                            <li><a>Auditorías</a></li>
+                        Transparencia
 
-                        </ul>
+                        <span>
+                            ▼
+                        </span>
 
-                    </details>
+                    </button>
+
+
+
+
+                    <ul class="
+                    absolute
+                    top-full
+                    left-0
+                    mt-2
+
+                    w-60
+
+                    bg-green-900
+                    shadow-xl
+                    rounded-box
+
+                    p-2
+
+
+                    opacity-0
+                    invisible
+
+                    translate-y-2
+
+                    group-hover:opacity-100
+                    group-hover:visible
+                    group-hover:translate-y-0
+
+
+                    transition-all
+                    duration-200
+
+                    z-50
+
+                    ">
+
+
+                        <li
+                            class="hover:border rounded-box border-green-500  hover:bg-green-700   hover:underline cursor-pointer">
+                            <a>POA</a></li>
+
+                        <li
+                            class="hover:border rounded-box border-green-500  hover:bg-green-700   hover:underline cursor-pointer">
+                            <a>PTDI</a></li>
+
+                        <li
+                            class="hover:border rounded-box border-green-500  hover:bg-green-700   hover:underline cursor-pointer">
+                            <a>PEI</a></li>
+
+                        <li
+                            class="hover:border rounded-box border-green-500  hover:bg-green-700   hover:underline cursor-pointer">
+                            <a>Rendición Pública</a></li>
+
+                        <li
+                            class="hover:border rounded-box border-green-500  hover:bg-green-700   hover:underline cursor-pointer">
+                            <a>Auditorías</a></li>
+
+
+                    </ul>
+
+
 
                 </li>
 
-                <li>
 
-                    <a>
 
-                        Noticias
 
+
+                <li routerLink="/gaceta" routerLinkActive=" active bg-green-700 border rounded-box border-green-500 underline">
+                    <a
+                        class="px-4 py-2 hover:border rounded-box border-green-500  hover:bg-green-700   hover:underline cursor-pointer">
+                        Gaceta Municipal
                     </a>
-
                 </li>
 
-                <li>
 
-                    <a>
 
+                <!--    <li>
+                    <a class="px-4 py-2 hover:border rounded-box border-green-500  hover:bg-green-700   hover:underline cursor-pointer">
                         Turismo
-
                     </a>
-
                 </li>
 
+
+
                 <li>
-
-                    <a>
-
+                    <a class="px-4 py-2 *:hover:border rounded-box border-green-500  hover:bg-green-700   hover:underline cursor-pointer">
                         Contacto
-
                     </a>
+                </li>
+ -->
 
+
+            </ul>
+
+
+
+        </nav>
+
+
+
+
+
+
+
+        <!-- DERECHA -->
+
+
+        <div class="flex items-center gap-2">
+
+
+            <!--  <button
+            class="hidden sm:block btn btn-ghost btn-circle"
+            >
+
+                🔍
+
+            </button> -->
+
+            <a routerLink="/auth/login" class="
+            btn
+            btn-accent
+            btn-sm
+            lg:btn-md
+            p-1
+            ">
+
+                Oficina Virtual
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+                    <path fill-rule="evenodd"
+                        d="M16.5 3.75a1.5 1.5 0 0 1 1.5 1.5v13.5a1.5 1.5 0 0 1-1.5 1.5h-6a1.5 1.5 0 0 1-1.5-1.5V15a.75.75 0 0 0-1.5 0v3.75a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3V5.25a3 3 0 0 0-3-3h-6a3 3 0 0 0-3 3V9A.75.75 0 1 0 9 9V5.25a1.5 1.5 0 0 1 1.5-1.5h6Zm-5.03 4.72a.75.75 0 0 0 0 1.06l1.72 1.72H2.25a.75.75 0 0 0 0 1.5h10.94l-1.72 1.72a.75.75 0 1 0 1.06 1.06l3-3a.75.75 0 0 0 0-1.06l-3-3a.75.75 0 0 0-1.06 0Z"
+                        clip-rule="evenodd" />
+                </svg>
+
+            </a>
+        </div>
+    </div>
+</header>
+
+<!-- =========================
+     MENU MOBILE
+========================= -->
+
+
+@if(menuMobile){
+
+
+<section class="lg:hidden bg-green-600 ">
+    <ul>
+        <li class="border-b border-gray-300">
+            <a routerLink="/" class="block px-6 py-2 text-lg" (click)="cerrarMenuMobile()">
+                Inicio
+            </a>
+        </li>
+
+        <!-- INSTITUCIONAL -->
+
+        <li class="border-b border-gray-300">
+
+
+            <button class="w-full flex justify-between px-6 py-2 text-lg" (click)="institucional=!institucional">
+
+
+                <span>
+                    Institucional
+                </span>
+
+
+                <span>
+                    ⌄
+                </span>
+
+
+            </button>
+            @if(institucional){
+
+
+            <ul class="bg-green-900">
+
+
+                <li routerLink="/historia" class="border-t px-10 py-2" (click)="cerrarMenuMobile()">
+                    Historia
+                </li>
+
+
+                <li routerLink="/mision-vision" class="border-t px-10 py-2" (click)="cerrarMenuMobile()">
+                    Misión, Visión y Valores
+                </li>
+
+
+                <li routerLink="/alcade" class="border-t px-10 py-2" (click)="cerrarMenuMobile()">
+                    Alcalde
+                </li>
+
+                <li routerLink="/concejo-municipal" class="border-t px-10 py-2" (click)="cerrarMenuMobile()">
+                    Consejo Municipal
+                </li>
+
+
+                <li routerLink="/organigrama" class="border-t px-10 py-2" (click)="cerrarMenuMobile()">
+                    Organigrama
                 </li>
 
             </ul>
 
-        </div>
+            }
 
-        <!-- Derecha -->
+        </li>
 
-        <div class="navbar-end gap-2">
+        <!-- Transparencia -->
 
-            <button class="btn btn-ghost btn-circle">
+         <li class="border-b border-gray-300">
 
-                🔍
+
+            <button class="w-full flex justify-between px-6 py-2 text-lg" (click)="transparencia=!transparencia">
+
+
+                <span>
+                    Transparencia
+                </span>
+
+
+                <span>
+                    ⌄
+                </span>
+
 
             </button>
 
-            <a
-                routerLink="/auth/login"
-                class="btn btn-primary">
+            @if(transparencia){
 
-                Oficina Virtual
 
-            </a>
+            <ul class="bg-green-900">
 
-        </div>
 
-    </div>
+                <li class="border-t px-10 py-2" (click)="cerrarMenuMobile()">
+                    POA
+                </li>
 
-</div>
+
+                <li class="border-t px-10 py-2" (click)="cerrarMenuMobile()">
+                    PTDI
+                </li>
+
+
+                <li class="border-t px-10 py-2" (click)="cerrarMenuMobile()">
+                    PEI
+                </li>
+
+
+                <li class="border-t px-10 py-2" (click)="cerrarMenuMobile()">
+                    Rendición Pública
+                </li>
+
+
+                <li class="border-t px-10 py-2" (click)="cerrarMenuMobile()">
+                    Auditorías
+                </li>
+
+            </ul>
+
+            }
+
+        </li>
+        
+        <li routerLink="/gaceta" class="border-b border-gray-300" (click)="cerrarMenuMobile()">
+
+
+            <div class="px-6 py-2 text-lg">
+
+                Gaceta Municipal
+
+            </div>
+        </li>
+    </ul>
+</section>
+}

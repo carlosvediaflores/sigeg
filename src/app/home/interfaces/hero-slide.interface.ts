@@ -7,3 +7,23 @@ export interface HeroSlide {
   botonTexto: string;
   botonRuta: string;
 }
+
+export interface DocumentoGaceta {
+
+    id: number;
+
+    numero: string;
+
+    tipo: string;
+
+    titulo: string;
+
+    fecha: string;
+
+    gestion: number;
+
+    archivo: string;
+
+    fechaAprobacion: string; // NUEVO
+
+}

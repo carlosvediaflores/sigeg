@@ -1,8 +1,16 @@
 
-<app-hero-slider/>
-<!-- <section id="buscar-tramite">
+<app-hero-slider
+    (buscarTramite)="abrirBusqueda()"
+/>
 
-    <app-buscar-tramite />
 
-</section>
- -->
+@if (mostrarBuscarTramite()) {
+
+    <section id="buscar-tramite">
+
+        <app-buscar-tramite />
+
+    </section>
+
+}
+
