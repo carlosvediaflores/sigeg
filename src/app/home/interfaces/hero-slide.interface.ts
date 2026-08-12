@@ -10,20 +10,20 @@ export interface HeroSlide {
 
 export interface DocumentoGaceta {
 
-    id: number;
+  id: number;
 
-    numero: string;
+  numero: string;
 
-    tipo: string;
+  tipo: string;
 
-    titulo: string;
+  titulo: string;
 
-    fecha: string;
+  fecha: string;
 
-    gestion: number;
+  gestion: number;
 
-    archivo: string;
+  archivo: string;
 
-    fechaAprobacion: string; // NUEVO
+  fechaAprobacion: string; // NUEVO
 
 }

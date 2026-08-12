@@ -830,13 +830,13 @@
 
 
 
-                                @if(segui.estado === 'ENVIADO'){
+                               <!--  @if(segui.estado === 'ENVIADO'){
 
                                 <div class="badge badge-error gap-2">
                                     SIN RECIBIR
                                 </div>
 
-                                }
+                                } -->
 
                                 @if(segui.estado !== 'ENVIADO' && segui.fechaRecepcion){
 
@@ -923,6 +923,7 @@
                                 <div class="badge badge-warning gap-2">
                                     DERIVADO
                                 </div>
+                                {{ segui.fechaDerivado | date:'dd/MM/yyyy HH:mm' }}
                                 }
 
                                 @default{
@@ -980,13 +981,13 @@
                             <div class="flex items-center gap-2 mb-2">
 
 
-                                @if(segui.estado === 'ENVIADO'){
+                                <!-- @if(segui.estado === 'ENVIADO'){
 
                                 <div class="badge badge-error gap-2">
                                     SIN RECIBIR
                                 </div>
 
-                                }
+                                } -->
 
                                 @if(segui.estado !== 'ENVIADO' && segui.fechaRecepcion){
 
@@ -1072,6 +1073,7 @@
                                 <div class="badge badge-warning gap-2">
                                     DERIVADO
                                 </div>
+                                {{ segui.fechaDerivado | date:'dd/MM/yyyy HH:mm' }}
                                 }
 
                                 @default{
