@@ -1,4 +1,4 @@
-<section class="hero min-h-175" style="background-image:url('assets/images/hero/ckochas.jpg')">
+<!-- <section class="hero min-h-175" style="background-image:url('assets/images/hero/ckochas.jpg')">
 
     <div class="hero-overlay bg-black/50"></div>
 
@@ -47,5 +47,418 @@
         </div>
 
     </div>
+
+</section> -->
+
+<section
+     class="
+    relative
+    w-full
+    h-137.5
+    sm:h-150
+    md:h-162.5
+    lg:h-175
+    overflow-hidden
+    "
+>
+
+
+    <!-- ======================================
+         SLIDES
+    ======================================= -->
+
+    @for (
+        slide of slides();
+        track slide.id;
+        let i = $index
+    ) {
+
+
+        <div
+            class="
+            absolute
+            inset-0
+            w-full
+            h-full
+            transition-opacity
+            duration-1000
+            ease-in-out
+            "
+            [class.opacity-100]="slideActual() === i"
+            [class.opacity-0]="slideActual() !== i"
+            [class.z-10]="slideActual() === i"
+            [class.z-0]="slideActual() !== i"
+        >
+
+
+            <!-- IMAGEN -->
+
+            <img
+                [src]="slide.imagen"
+                [alt]="slide.titulo"
+                class="
+                absolute
+                inset-0
+                w-full
+                h-full
+                object-cover
+                "
+            >
+
+
+            <!-- OVERLAY -->
+
+            <div
+                class="
+                absolute
+                inset-0
+                bg-linear-to-r
+                from-black/80
+                via-black/50
+                to-black/30
+                "
+            >
+            </div>
+
+
+            <!-- CONTENIDO -->
+
+            <div
+                class="
+                relative
+                z-10
+                h-full
+                flex
+                items-center
+                "
+            >
+
+
+                <div
+                    class="
+                    container
+                    mx-auto
+                    px-6
+                    md:px-10
+                    "
+                >
+
+
+                    <div
+                        class="
+                        max-w-4xl
+                        text-white
+                        "
+                    >
+
+
+                        <!-- SUBTITULO -->
+
+                        <div
+                            class="
+                            flex
+                            items-center
+                            gap-3
+                            mb-5
+                            "
+                        >
+
+
+                            <span
+                                class="
+                                h-0.5
+                                w-12
+                                bg-green-400
+                                "
+                            >
+                            </span>
+
+
+                            <span
+                                class="
+                                uppercase
+                                tracking-[0.2em]
+                                text-green-300
+                                text-sm
+                                font-semibold
+                                "
+                            >
+
+                                {{ slide.subtitulo }}
+
+                            </span>
+
+
+                        </div>
+
+
+
+                        <!-- TITULO -->
+
+                        <h1
+                            class="
+                            text-4xl
+                            sm:text-5xl
+                            md:text-6xl
+                            lg:text-7xl
+                            font-black
+                            leading-tight
+                            drop-shadow-lg
+                            "
+                        >
+
+                            {{ slide.titulo }}
+
+                        </h1>
+
+
+
+                        <!-- DESCRIPCION -->
+
+                        <p
+                            class="
+                            mt-6
+                            text-base
+                            md:text-xl
+                            text-white/85
+                            max-w-2xl
+                            leading-relaxed
+                            "
+                        >
+
+                            {{ slide.descripcion }}
+
+                        </p>
+
+
+
+                        <!-- BOTONES -->
+
+                        <div
+                            class="
+                            mt-8
+                            flex
+                            flex-col
+                            sm:flex-row
+                            gap-3
+                            "
+                        >
+
+
+                            <!-- BOTON PRINCIPAL -->
+
+                           <!--  <a
+                                [routerLink]="slide.botonRuta"
+                                class="
+                                btn
+                                btn-success
+                                text-white
+                                border-none
+                                px-7
+                                "
+                            >
+
+                                {{ slide.botonTexto }}
+
+                            </a> -->
+
+
+
+                            <!-- BUSCAR TRAMITE -->
+
+                            <button
+                                type="button"
+                                class="
+                                btn
+                                btn-success
+                                text-white
+                                border-none
+                                px-7
+                                "
+                                (click)="activarBusqueda()"
+                            >
+
+                                🔎
+
+                                Buscar mi Trámite
+
+                            </button>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    }
+
+
+
+    <!-- ======================================
+         FLECHA ANTERIOR
+    ======================================= -->
+
+    <button
+        type="button"
+        class="
+        absolute
+        left-4
+        md:left-8
+        top-1/2
+        -translate-y-1/2
+        z-30
+
+        btn
+        btn-circle
+
+        bg-black/30
+        hover:bg-green-700
+
+        border
+        border-white/30
+
+        text-white
+
+        backdrop-blur-sm
+        "
+        (click)="anterior()"
+        aria-label="Anterior"
+    >
+
+        ❮
+
+    </button>
+
+
+
+    <!-- ======================================
+         FLECHA SIGUIENTE
+    ======================================= -->
+
+    <button
+        type="button"
+        class="
+        absolute
+        right-4
+        md:right-8
+        top-1/2
+        -translate-y-1/2
+        z-30
+
+        btn
+        btn-circle
+
+        bg-black/30
+        hover:bg-green-700
+
+        border
+        border-white/30
+
+        text-white
+
+        backdrop-blur-sm
+        "
+        (click)="siguiente()"
+        aria-label="Siguiente"
+    >
+
+        ❯
+
+    </button>
+
+
+
+    <!-- ======================================
+         INDICADORES
+    ======================================= -->
+
+    <div
+        class="
+        absolute
+        bottom-8
+        left-1/2
+        -translate-x-1/2
+        z-30
+
+        flex
+        items-center
+        gap-2
+        "
+    >
+
+
+        @for (
+            slide of slides();
+            track slide.id;
+            let i = $index
+        ) {
+
+
+            <button
+                type="button"
+                class="
+                h-2
+                rounded-full
+                transition-all
+                duration-300
+                "
+                [class.w-10]="slideActual() === i"
+                [class.w-2]="slideActual() !== i"
+                [class.bg-green-400]="slideActual() === i"
+                [class.bg-white/50]="slideActual() !== i"
+                (click)="irA(i)"
+                [attr.aria-label]="'Ir al slide ' + (i + 1)"
+            >
+            </button>
+
+
+        }
+
+
+    </div>
+
+
+
+    <!-- ======================================
+         INDICADOR NUMERICO
+    ======================================= -->
+
+    <div
+        class="
+        absolute
+        bottom-8
+        right-6
+        md:right-10
+        z-30
+        text-white
+        text-sm
+        "
+    >
+
+        <span class="font-bold">
+
+            {{ slideActual() + 1 }}
+
+        </span>
+
+        <span class="text-white/50">
+
+            /
+            {{ slides().length }}
+
+        </span>
+
+    </div>
+
 
 </section>

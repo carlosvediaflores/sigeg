@@ -361,7 +361,7 @@
 
                         @for (entidad of entidadResource.value()?.entidades; track entidad._id) {
                         <option [value]="entidad._id">
-                            {{ entidad.codigo }} - {{ entidad.denominacion }}
+                            {{ entidad.sigla }} - {{ entidad.denominacion }}
                         </option>
                         }
                     </select>
