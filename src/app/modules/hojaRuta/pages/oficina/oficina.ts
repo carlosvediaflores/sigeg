@@ -59,6 +59,18 @@ export class Oficina {
   seguimientoOficial = signal<Seguimiento | null>(null);
 
 
+  pendientesRecepcion = computed(() =>
+    this.seguimientosResource.value()?.pendientesRecepcion ?? []
+  );
+
+  totalPendientesRecepcion = computed(() =>
+    this.seguimientosResource.value()?.totalPendientesRecepcion ?? 0
+  );
+
+  bloquearPagina = computed(() =>
+    this.totalPendientesRecepcion() > 0
+  );
+
   searchFormSegui = this.fb.group({
     gestion: [this.year],
     termino: [''],
@@ -443,6 +455,95 @@ export class Oficina {
       destinoUser: '',
     });
 
+  }
+
+  async recibirPendiente(segui: Seguimiento) {
+
+    console.log('CLICK RECIBIR:', segui);
+
+    const result = await Swal.fire({
+      title: '¿Recibir documento?',
+      html: `
+      <div class="text-left">
+        <p class="mb-2">
+          ¿Desea registrar la recepción de:
+        </p>
+
+        <p class="font-bold">
+          H.R. Nº ${segui.numeroHr}
+        </p>
+
+        <p class="text-sm opacity-70 mt-2">
+          ${segui.origenHr ?? ''}
+        </p>
+      </div>
+    `,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, recibir',
+      cancelButtonText: 'Cancelar',
+      reverseButtons: true,
+
+      // IMPORTANTE
+      customClass: {
+        container: 'swal-container'
+      }
+    });
+
+    console.log('RESULTADO SWAL:', result);
+
+    if (!result.isConfirmed) {
+      return;
+    }
+
+    try {
+
+      console.log(
+        'Actualizando seguimiento:',
+        segui._id
+      );
+
+      await firstValueFrom(
+        this.seguimientosService.updateSeguimiento(
+          segui._id,
+          {
+            estado: 'RECIBIDO'
+          }
+        )
+      );
+
+      console.log(
+        'Seguimiento actualizado correctamente'
+      );
+
+      await Swal.fire({
+        title: 'Documento recibido',
+        text: `H.R. Nº ${segui.numeroHr} fue recibida correctamente.`,
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false
+      });
+
+      this.seguimientosResource.reload();
+
+    } catch (error: any) {
+
+      console.error(
+        'Error al recibir seguimiento:',
+        error
+      );
+
+      await Swal.fire({
+        title: 'Error',
+        text:
+          error?.error?.message ??
+          error?.message ??
+          'No se pudo registrar la recepción.',
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      });
+
+    }
   }
 
 

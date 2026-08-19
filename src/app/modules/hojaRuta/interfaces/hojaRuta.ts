@@ -22,6 +22,8 @@ export interface SeguimientosResponse {
     totalRecibidos: number
     totalDerivados: number
     seguimientos: Seguimiento[];
+    pendientesRecepcion: Seguimiento[];
+    totalPendientesRecepcion: number;
 }
 
 export interface HojaRutaSimple {
@@ -36,7 +38,7 @@ export interface HojaRutaSimple {
     referencia: string;
     estado: string;
     fechaDocumento: Date | string;
-    fechaRecepcion: Date ;
+    fechaRecepcion: Date;
     numero: number;
     gestion: number;
     seguimientos: Seguimiento[];
@@ -93,21 +95,21 @@ export interface CarpetasOficina {
 }
 export interface QueryHojaRutaDto {
 
-  limit?: number;
-  offset?: number;
+    limit?: number;
+    offset?: number;
 
-  gestion?: number;
+    gestion?: number;
 
-  numero?: string;
+    numero?: string;
 
-  termino?: string;
+    termino?: string;
 
-  estado?: string;
+    estado?: string;
 
-  tipoOrigen?: string;
+    tipoOrigen?: string;
 
-  prioridad?: string;
+    prioridad?: string;
 
-  tipoDocumento?: string;
+    tipoDocumento?: string;
 
 }

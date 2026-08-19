@@ -1,3 +1,227 @@
+@if (bloquearPagina()) {
+
+<div  class="fixed inset-0 z-50
+         bg-base-300/95
+         backdrop-blur-sm
+         flex items-center justify-center
+         p-4">
+
+    <div class="w-full max-w-4xl
+             bg-base-100
+             rounded-2xl
+             shadow-2xl
+             border
+             border-warning/30">
+
+        <div class="p-6 md:p-8">
+
+            <!-- CABECERA -->
+
+            <div class="flex items-start gap-4">
+
+                <div class="shrink-0
+                   w-14 h-14
+                   rounded-full
+                   bg-warning/20
+                   text-warning
+                   flex items-center justify-center">
+
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-8">
+
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 9v3.75m9.303 3.376L13.303 4.5a1.5 1.5 0 0 0-2.606 0l-8 11.626A1.5 1.5 0 0 0 4 18.5h16a1.5 1.5 0 0 0 1.303-2.374ZM12 16.5h.008v.008H12V16.5Z" />
+
+                    </svg>
+
+                </div>
+
+
+                <div class="flex-1">
+
+                    <h2 class="text-xl md:text-2xl font-bold">
+
+                        Documentos pendientes de recepción
+
+                    </h2>
+
+                    <p class="text-sm md:text-base text-base-content/60 mt-1">
+
+                        Tiene documentos enviados de días anteriores
+                        que todavía no fueron recibidos.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="divider"></div>
+
+
+            <!-- MENSAJE -->
+
+            <div class="alert alert-warning mb-5">
+
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    class="stroke-current shrink-0 w-6 h-6">
+
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+
+                </svg>
+
+                <span>
+
+                    Debe registrar la recepción de todos los documentos
+                    pendientes antes de continuar.
+
+                </span>
+
+            </div>
+
+
+            <!-- LISTA -->
+
+            <div class="space-y-3 max-h-[55vh] overflow-y-auto pr-1">
+
+                @for (
+                segui of pendientesRecepcion();
+                track segui._id
+                ) {
+
+                <div class="card
+                     bg-base-200
+                     border
+                     border-base-300">
+
+                    <div class="card-body p-4">
+
+                        <div class="flex
+                         flex-col
+                         md:flex-row
+                         md:items-center
+                         md:justify-between
+                         gap-4">
+
+                            <!-- INFORMACIÓN -->
+
+                            <div class="flex-1">
+
+                                <div class="flex
+                             flex-wrap
+                             items-center
+                             gap-2">
+
+                                    <span class="badge badge-warning">
+
+                                        ENVIADO
+
+                                    </span>
+
+                                    <span class="font-bold">
+
+                                        H.R. Nº {{ segui.numeroHr }}
+
+                                    </span>
+
+                                </div>
+
+
+                                <p class="font-medium mt-2">
+
+                                    {{ segui.origenHr }}
+
+                                </p>
+
+
+                                @if (segui.detalle) {
+
+                                <p class="text-sm
+                               text-base-content/60
+                               mt-1">
+
+                                    {{ segui.detalle }}
+
+                                </p>
+
+                                }
+
+
+                                <div class="text-xs
+                             text-base-content/50
+                             mt-2">
+
+                                    Enviado:
+
+                                    {{ segui.fechaDerivado | date:'dd/MM/yyyy HH:mm' }}
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- BOTÓN -->
+
+                            <button type="button" class="btn btn-success md:min-w-32"
+                                (click)="recibirPendiente(segui); $event.stopPropagation()">
+
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="size-5">
+
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+
+                                </svg>
+
+                                Recibir
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                }
+
+            </div>
+
+
+            <!-- PIE -->
+
+            <div class="mt-6 flex justify-between items-center">
+
+                <span class="text-sm text-base-content/60">
+
+                    Pendientes:
+
+                    <strong>
+                        {{ totalPendientesRecepcion() }}
+                    </strong>
+
+                </span>
+
+
+                <span class="text-xs
+                   text-base-content/50">
+
+                    Reciba todos los documentos para continuar.
+
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+}
+
 <div class="flex-1">
 
     <div class="flex items-center gap-5 ">
@@ -36,7 +260,8 @@
         && selectedSeguimientos().length >= 2){
 
         <button class="btn btn-success" (click)="openModalAsociar()">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-5 *:text-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
+                class="size-5 *:text-primary">
                 <path
                     d="M5.5 3.5A1.5 1.5 0 0 1 7 2h2.879a1.5 1.5 0 0 1 1.06.44l2.122 2.12a1.5 1.5 0 0 1 .439 1.061V9.5A1.5 1.5 0 0 1 12 11V8.621a3 3 0 0 0-.879-2.121L9 4.379A3 3 0 0 0 6.879 3.5H5.5Z" />
                 <path
