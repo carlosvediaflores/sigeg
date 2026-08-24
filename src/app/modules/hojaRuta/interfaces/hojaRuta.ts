@@ -75,7 +75,6 @@ export interface Seguimiento {
     isActive: Boolean;
     archivosOficina: ArchivosOficina[];
     carpetasOficina: CarpetasOficina[];
-
 }
 
 export interface Asociados {

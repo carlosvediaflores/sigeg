@@ -33,9 +33,7 @@ export class GacetaService {
         value !== null && value !== undefined && value !== ''
       )
     );
-    return this.http.get<GacetaResponse>(`${baseUrl}/gaceta`,  params).pipe(
-      tap((resp) => console.log('PARAMS', params)),
-      tap((resp) => console.log('Gaceta', resp)),
+    return this.http.get<GacetaResponse>(`${baseUrl}/gaceta`, { params }).pipe(
     );
   }
 

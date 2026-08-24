@@ -81,7 +81,6 @@ export class GacetaPage {
           });
         })
       )
-        .pipe(tap((resp) => console.log('gacetas', resp))),
   });
 
   private getToday(): string {
@@ -110,6 +109,7 @@ export class GacetaPage {
   gacetaForm = this.fb.nonNullable.group({
     numero: [0, Validators.required],
     titulo: ['', Validators.required],
+    gestion: [this.year, Validators.required],
     fechaAprobacion: [this.getToday()],
     fechaPublicacion: [this.getToday()],
     tipo: ['', Validators.required],
@@ -122,6 +122,7 @@ export class GacetaPage {
     this.gacetaForm.reset({
       numero: 0,
       titulo: '',
+      gestion: this.year,
       fechaAprobacion: this.getToday(),
       fechaPublicacion: this.getToday(),
       tipo: '',
@@ -136,6 +137,28 @@ export class GacetaPage {
 
     modal?.showModal();
   }
+   
+  openEditModal(gaceta: GacetaSimple) {
+    this.selectedGacetaId.set(gaceta._id);
+
+    this.gacetaForm.reset({
+      numero: gaceta.numero,
+      titulo: gaceta.titulo,
+      gestion: gaceta.gestion,
+      fechaAprobacion: gaceta.fechaAprobacion,
+      fechaPublicacion: gaceta.fechaPublicacion,
+      tipo: gaceta.tipo._id,
+      isActive: gaceta.isActive,
+      isPublic: gaceta.isPublic,
+    });
+
+    const modal = document.getElementById(
+      'gaceta_modal'
+    ) as HTMLDialogElement | null;
+
+    modal?.showModal();
+  }
+
 
   async onSubmit() {
 
@@ -221,6 +244,7 @@ export class GacetaPage {
       this.gacetaForm.reset({
         numero: 0,
         titulo: '',
+        gestion: this.year,
         fechaAprobacion: this.getToday(),
         fechaPublicacion: this.getToday(),
         tipo: '',
@@ -294,6 +318,39 @@ export class GacetaPage {
 
     window.open(url, '_blank');
 
+  }
+
+  eliminarGaceta(gaceta: GacetaSimple) {
+
+    const confirmDelete = window.confirm(
+      `¿Está seguro de que desea eliminar la gaceta "${gaceta.titulo}"?`
+    );
+    if (!confirmDelete) {
+      return;
+    }
+
+    this.gacetaService.deleteGaceta(gaceta._id).subscribe({
+      next: () => {
+        this.gacetaResource.reload();
+        this.successMessage.set('Gaceta eliminada correctamente');
+        this.wasSaved.set(true);
+        setTimeout(() => {
+          this.wasSaved.set(false);
+        }, 3000);
+      },
+      error: (err: HttpErrorResponse) => {
+        console.error(err);
+        this.errorMessage.set(
+          err.error?.message ??
+          err.message ??
+          'Ocurrió un error inesperado.'
+        );
+        this.wasError.set(true);
+        setTimeout(() => {
+          this.wasError.set(false);
+        }, 5000);
+      }
+    });
   }
 
   formatFileSize(size?: number): string {

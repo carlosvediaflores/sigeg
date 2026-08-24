@@ -1,243 +1,128 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { DocumentoGaceta } from '../../interfaces/hero-slide.interface';
+import { toSignal, toObservable, rxResource } from '@angular/core/rxjs-interop';
+import { map, combineLatest, switchMap, debounceTime, startWith } from 'rxjs';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { GacetaService } from '../../../modules/gacetaAdmin/services/gaceta.service';
+import { DatePipe } from '@angular/common';
+import { GacetaSimple } from '../../../modules/gacetaAdmin/interfaces/gaceta.interface';
+import { environment } from '../../../../environments/environment';
 
+const baseUrl = environment.baseUrl;
 @Component({
-  selector: 'app-gaceta',
-  imports: [],
-  templateUrl: './gaceta.html',
-  styleUrl: './gaceta.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-gaceta',
+    imports: [ReactiveFormsModule, DatePipe],
+    templateUrl: './gaceta.html',
+    styleUrls: ['./gaceta.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Gaceta {
-   // ==========================================
-    // FILTROS
-    // ==========================================
 
-    busqueda = signal('');
+     errorMessage = signal('');
+  wasError = signal(false);
+    gacetaService = inject(GacetaService);
+    
+    route = inject(ActivatedRoute);
+    fb = inject(FormBuilder);
+    currentPage = toSignal(
+        this.route.queryParamMap.pipe(
 
-    gestionSeleccionada = signal<number | null>(null);
+            map((params) =>
+                params.get('page')
+                    ? +params.get('page')!
+                    : 1
+            ),
 
-    tipoSeleccionado = signal<string>('TODOS');
-
-
-
-    // ==========================================
-    // DATOS
-    // ==========================================
-
-    documentos = signal<DocumentoGaceta[]>([
-
-
+            map((page) =>
+                isNaN(page)
+                    ? 1
+                    : page
+            )
+        ),
         {
-            id: 1,
-            numero: '001/2026',
-            tipo: 'LEY MUNICIPAL',
-            titulo: 'Ley Municipal de Organización y Funcionamiento del Gobierno Autónomo Municipal de Ckochas',
-            fecha: '15/01/2026',
-            gestion: 2026,
-            archivo: '#',
-            fechaAprobacion: '10/01/2026'
-        },
-
-
-        {
-            id: 2,
-            numero: '002/2026',
-            tipo: 'DECRETO MUNICIPAL',
-            titulo: 'Decreto Municipal correspondiente a la gestión 2026',
-            fecha: '22/01/2026',
-            gestion: 2026,
-            archivo: '#',
-            fechaAprobacion: '10/01/2026'
-        },
-
-
-        {
-            id: 3,
-            numero: '003/2026',
-            tipo: 'RESOLUCIÓN MUNICIPAL',
-            titulo: 'Resolución Municipal de carácter administrativo',
-            fecha: '05/02/2026',
-            gestion: 2026,
-            archivo: '#',
-            fechaAprobacion: '10/01/2026'
-        },
-
-
-        {
-            id: 4,
-            numero: '004/2026',
-            tipo: 'LEY MUNICIPAL',
-            titulo: 'Ley Municipal de Administración Municipal',
-            fecha: '18/02/2026',
-            gestion: 2026,
-            archivo: '#',
-            fechaAprobacion: '10/01/2026'
-        },
-
-
-        {
-            id: 5,
-            numero: '005/2025',
-            tipo: 'DECRETO MUNICIPAL',
-            titulo: 'Decreto Municipal correspondiente a la gestión 2025',
-            fecha: '12/11/2025',
-            gestion: 2025,
-            archivo: '#',
-            fechaAprobacion: '10/01/2026'
+            initialValue: 1,
         }
+    );
+
+    year = new Date().getFullYear();
+
+    searchFormGaceta = this.fb.group({
+    gestion: [this.year],
+    termino: [''],
+    isActive: [''],
+    isPublic: [''],
+    tipo: [''],
+  });
+
+  searchFormGaceta$ = this.searchFormGaceta.valueChanges.pipe(
+        debounceTime(300),
+        startWith(this.searchFormGaceta.getRawValue())
+      );
+
+    gacetaPerPage = signal(20);
+    currentPage$ = toObservable(this.currentPage);
+
+    gacetaPerPage$ = toObservable(this.gacetaPerPage);
 
 
-    ]);
 
+    gacetaResource = rxResource({
+        stream: () =>
+            combineLatest([
+                this.currentPage$,
+                this.gacetaPerPage$,
+                this.searchFormGaceta$,
+            ]).pipe(
 
-
-    // ==========================================
-    // TIPOS
-    // ==========================================
-
-    tipos = computed(() => {
-
-        const valores = this.documentos()
-            .map(x => x.tipo);
-
-        return [...new Set(valores)];
-
+                switchMap(([page, limit, filters]) => {
+                    return this.gacetaService.getGacetas({
+                        offset: (page - 1) * limit,
+                        limit,
+                        ...filters,
+                    });
+                })
+            )
     });
 
+     tipoGacetaResource = rxResource({
+    stream: () => this.gacetaService.gettipoGaceta(),
+  });
 
+   formatFileSize(size?: number): string {
+    if (!size) return '0 KB';
 
-    // ==========================================
-    // GESTIONES
-    // ==========================================
-
-    gestiones = computed(() => {
-
-        const valores = this.documentos()
-            .map(x => x.gestion);
-
-        return [...new Set(valores)]
-            .sort((a, b) => b - a);
-
-    });
-
-
-
-    // ==========================================
-    // FILTRADO
-    // ==========================================
-
-    documentosFiltrados = computed(() => {
-
-
-        const texto =
-            this.busqueda()
-                .toLowerCase()
-                .trim();
-
-
-        return this.documentos().filter(documento => {
-
-
-            const coincideTexto =
-
-                !texto ||
-
-                documento.numero
-                    .toLowerCase()
-                    .includes(texto) ||
-
-                documento.tipo
-                    .toLowerCase()
-                    .includes(texto) ||
-
-                documento.titulo
-                    .toLowerCase()
-                    .includes(texto);
-
-
-
-            const coincideGestion =
-
-                this.gestionSeleccionada() === null ||
-
-                documento.gestion ===
-                this.gestionSeleccionada();
-
-
-
-            const coincideTipo =
-
-                this.tipoSeleccionado() === 'TODOS' ||
-
-                documento.tipo ===
-                this.tipoSeleccionado();
-
-
-
-            return (
-
-                coincideTexto &&
-
-                coincideGestion &&
-
-                coincideTipo
-
-            );
-
-
-        });
-
-
-    });
-
-
-
-    // ==========================================
-    // MÉTODOS
-    // ==========================================
-
-
-    buscar(event: Event) {
-
-        const input =
-            event.target as HTMLInputElement;
-
-        this.busqueda.set(input.value);
-
+    if (size < 1024) {
+      return `${size} B`;
     }
 
+    if (size < 1024 * 1024) {
+      return `${(size / 1024).toFixed(2)} KB`;
+    }
 
+    return `${(size / (1024 * 1024)).toFixed(2)} MB`;
+  }
 
-    cambiarGestion(event: Event) {
-
-        const select =
-            event.target as HTMLSelectElement;
-
-        const value = select.value;
-
-        this.gestionSeleccionada.set(
-
-            value === 'TODOS'
-                ? null
-                : Number(value)
-
+  openGacetaPdf(gaceta: GacetaSimple) {
+  
+      if (!gaceta.archivo) {
+        this.errorMessage.set(
+          'Esta gaceta no tiene un documento PDF'
         );
-
+  
+        this.wasError.set(true);
+  
+        setTimeout(() => {
+          this.wasError.set(false);
+        }, 4000);
+  
+        return;
+      }
+  
+      const url =
+        `${baseUrl}/gaceta/archivo/${encodeURIComponent(gaceta.archivo)}`;
+  
+      window.open(url, '_blank');
+  
     }
-
-
-
-    cambiarTipo(event: Event) {
-
-        const select =
-            event.target as HTMLSelectElement;
-
-        this.tipoSeleccionado.set(
-            select.value
-        );
-
-    }
-
-
 }

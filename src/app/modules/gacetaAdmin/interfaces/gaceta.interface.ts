@@ -6,13 +6,13 @@ export interface TipoGacetaInterface {
 
 export interface GacetaSimple {
   _id: string;
-  numero: number | null;
+  numero: number;
   gestion: number;
   titulo: string;
   fechaPublicacion: string;
   fechaAprobacion: string;
   nombreTipo: string;
-  tipo: TipoGacetaInterface | null;
+  tipo: TipoGacetaInterface;
 
   archivo?: string;
   nombreArchivoOriginal?: string;

@@ -92,158 +92,56 @@
 
 
 
-        <div class="
-            grid
-            grid-cols-1
-            md:grid-cols-3
-            gap-4
-            ">
-
-
-            <!-- BUSQUEDA -->
-
-            <div class="md:col-span-1">
-
-
-                <label class="
-                    text-sm
-                    font-medium
-                    block
-                    mb-2
-                    ">
-
-                    Buscar
-
-                </label>
-
-
-                <div class="relative">
-
-
-                    <input type="text" placeholder="Número, título o palabra..."
-                        class="input input-bordered w-full pr-10" (input)="buscar($event)" />
-
-
-                    <span class="
-                        absolute
-                        right-3
-                        top-1/2
-                        -translate-y-1/2
-                        opacity-50
-                        ">
-
-                        🔍
-
-                    </span>
-
-
-                </div>
-
-
-            </div>
-
-
-
-
-
-            <!-- GESTION -->
-
-
-            <div>
-
-
-                <label class="
-                    text-sm
-                    font-medium
-                    block
-                    mb-2
-                    ">
-
-                    Gestión
-
-                </label>
-
-
-                <select class="select select-bordered w-full" (change)="cambiarGestion($event)">
-
-
-                    <option value="TODOS">
-
-                        Todas las gestiones
-
-                    </option>
-
-
-                    @for (gestion of gestiones(); track gestion) {
-
-                    <option [value]="gestion">
-
-                        Gestión {{ gestion }}
-
-                    </option>
-
-                    }
-
-
-                </select>
-
-
-            </div>
-
-
-
-
-
-            <!-- TIPO -->
-
-
-            <div>
-
-
-                <label class="
-                    text-sm
-                    font-medium
-                    block
-                    mb-2
-                    ">
-
-                    Tipo de documento
-
-                </label>
-
-
-                <select class="select select-bordered w-full" (change)="cambiarTipo($event)">
-
-
-                    <option value="TODOS">
-
-                        Todos los tipos
-
-                    </option>
-
-
-                    @for (tipo of tipos(); track tipo) {
-
-                    <option [value]="tipo">
-
-                        {{ tipo }}
-
-                    </option>
-
-                    }
-
-
-                </select>
-
-
-            </div>
-
-
-        </div>
+       
 
 
     </div>
 
+     <div class="flex gap-2 items-center p-0 m-0" [formGroup]="searchFormGaceta">
+
+       
+        <label class="floating-label">
+            <select formControlName="gestion" class="select select-bordered w-20">
+                <option value="2026">2026</option>
+                <option value="2027">2027</option>
+                <option value="2028">2028</option>
+                <option value="2029">2029</option>
+                <option value="2030">2030</option>
+                <option value="2031">2031</option>
+            </select>
+            <span>Gestión</span>
+        </label>
+        <div class="flex flex-1"></div>
+
+        <div class="my-3">
+            <label class="floating-label">
+                <select class="select select-bordered w-full " formControlName="tipo">
+                    <option value="" disabled>
+                        Seleccione un tipo de gaceta
+                    </option>
+
+                    @for (tipo of tipoGacetaResource.value(); track tipo._id) {
+                    <option [value]="tipo._id">
+                        {{ tipo.nombre }}
+                    </option>
+                    }
+                </select>
+                <span>Seleccione un tipo de gaceta</span>
+            </label>
+        </div>
+
+        <label class="floating-label w-50">
+            <input type="text" placeholder="Búsqueda General" class="input select-xs sm:input-sm md:input-md "
+                formControlName="termino" />
+            <span>Búsqueda General</span>
+        </label>
+        <button type="button" class="btn btn-info btn-sm"
+            (click)="searchFormGaceta.reset({ termino: '', tipo: '', isActive: '', isPublic: '', gestion: year })">
+            Limpiar
+        </button>
+
+        
+    </div>
 
 
 
@@ -274,7 +172,7 @@
                 opacity-60
                 ">
 
-                {{ documentosFiltrados().length }}
+                {{ gacetaResource.value()?.total }}
                 documentos encontrados
 
             </p>
@@ -292,12 +190,12 @@
     <!-- DOCUMENTOS -->
 
 
-  <!--   <div class="space-y-4">
+    <div class="space-y-4">
 
 
         @for (
-        documento of documentosFiltrados();
-        track documento.id
+        documento of gacetaResource.value()?.gacetas;
+        track documento._id
         ) {
 
 
@@ -321,7 +219,7 @@
                     ">
 
 
-             
+
 
 
                 <div class="
@@ -346,7 +244,7 @@
 
 
 
-          
+
 
 
                 <div class="flex-1">
@@ -365,7 +263,7 @@
                                 badge-success
                                 ">
 
-                            {{ documento.tipo }}
+                            {{ documento.tipo.nombre }}
 
                         </span>
 
@@ -389,7 +287,7 @@
                             text-lg
                             ">
 
-                        {{ documento.tipo }}
+                        {{ documento.tipo.nombre }}
                         N° {{ documento.numero }}
 
                     </h3>
@@ -411,17 +309,17 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-xs">
 
 
-                    
+
 
                         <div class="
-bg-base-200 
-rounded-lg 
-p-3 
-flex 
-items-center 
-gap-2
-text-xs
-">
+                            bg-base-200 
+                            rounded-lg 
+                            p-3 
+                            flex 
+                            items-center 
+                            gap-2
+                            text-xs
+                            ">
 
                             <p class="opacity-60">
                                 📅 Fecha de Publicación:
@@ -429,7 +327,7 @@ text-xs
 
 
                             <p class="font-semibold">
-                                {{ documento.fecha }}
+                                {{ documento.fechaPublicacion | date: 'medium' }}
                             </p>
 
 
@@ -439,17 +337,17 @@ text-xs
 
 
 
-                  
+
 
                         <div class="
-bg-base-200 
-rounded-lg 
-p-3 
-flex 
-items-center 
-gap-2
-text-xs
-">
+                            bg-base-200 
+                            rounded-lg 
+                            p-3 
+                            flex 
+                            items-center 
+                            gap-2
+                            text-xs
+                            ">
 
 
                             <p class="text-green-700">
@@ -458,7 +356,7 @@ text-xs
 
 
                             <p class="font-semibold text-green-700">
-                                {{ documento.fechaAprobacion }}
+                                {{ documento.fechaAprobacion | date: 'mediumDate' }}
                             </p>
 
 
@@ -475,7 +373,7 @@ text-xs
 
 
 
-         
+
 
 
                 <div class="
@@ -497,17 +395,45 @@ text-xs
 
 
 
-                    <a [href]="documento.archivo" target="_blank" class="
-                            btn
-                            btn-success
-                            btn-sm
-                            text-white
-                            ">
+                    @if (documento.archivo) {
 
-                        ↓
-                        PDF
+                        <button type="button" (click)="openGacetaPdf(documento)" class="flex items-center gap-2 group"
+                            title="Ver documento PDF">
 
-                    </a>
+                            <!-- Icono PDF -->
+                            <div
+                                class="flex items-center justify-center w-9 h-9 rounded-lg bg-error/10 text-error group-hover:bg-error/20 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                    class="w-5 h-5">
+                                    <path
+                                        d="M5.625 1.5A2.625 2.625 0 0 0 3 4.125v15.75A2.625 2.625 0 0 0 5.625 22.5h12.75A2.625 2.625 0 0 0 21 19.875V7.5L15 1.5H5.625Z" />
+
+                                    <path fill="white" d="M13.5 1.5V7.5H19.5" />
+                                </svg>
+                            </div>
+
+                            <!-- Tamaño -->
+                            <div class="flex flex-col items-start leading-tight">
+                                <span class="text-xs font-semibold">
+                                    PDF
+                                </span>
+                                <span class="text-[11px] opacity-60 max-w-32 truncate"
+                                    [title]="documento.nombreArchivoOriginal">
+                                    {{ formatFileSize(documento.tamano) }}
+                                </span>
+                                <!-- <span class="text-[11px] opacity-60">
+                                    {{ formatFileSize(gaceta.tamano) }}
+                                </span> -->
+                            </div>
+                        </button>
+
+                        } @else {
+
+                        <span class="text-xs opacity-40">
+                            Sin PDF
+                        </span>
+
+                        }
 
 
                 </div>
@@ -522,10 +448,10 @@ text-xs
         }
 
 
-       
 
 
-        @if (documentosFiltrados().length === 0) {
+
+        @if (gacetaResource.value()?.total === 0) {
 
 
         <div class="
@@ -561,7 +487,7 @@ text-xs
         }
 
 
-    </div> -->
+    </div>
 
 
 </section>
