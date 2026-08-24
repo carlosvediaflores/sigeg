@@ -1,0 +1,410 @@
+<div class="flex-1">
+
+    <div class="flex items-center gap-5 pb-2">
+        <h1 class="text-1xl font-bold">Registro Hojas de Ruta</h1>
+        <h3 class="text-lg">
+            Total
+            <span class="text-accent">{{ gacetaResource.value()?.total }}</span>
+        </h3>
+    </div>
+
+    <div class="flex gap-2 items-center p-0 m-0" [formGroup]="searchFormGaceta">
+
+        <label class="floating-label">
+            <select class="select select-bordered w-20" (change)="gacetaPerPage.set(+selectPerPage.value)"
+                #selectPerPage>
+
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+            <span>Mostrar</span>
+        </label>
+
+        <label class="floating-label">
+            <select formControlName="gestion" class="select select-bordered w-20">
+                <option value="2026">2026</option>
+                <option value="2027">2027</option>
+                <option value="2028">2028</option>
+                <option value="2029">2029</option>
+                <option value="2030">2030</option>
+                <option value="2031">2031</option>
+            </select>
+            <span>Gestión</span>
+        </label>
+        <div class="flex flex-1"></div>
+
+        <div class="my-3">
+            <label class="floating-label">
+                <select class="select select-bordered w-full " formControlName="tipo">
+                    <option value="" disabled>
+                        Seleccione un tipo de gaceta
+                    </option>
+
+                    @for (tipo of tipoGacetaResource.value(); track tipo._id) {
+                    <option [value]="tipo._id">
+                        {{ tipo.nombre }}
+                    </option>
+                    }
+                </select>
+                <span>Seleccione un tipo de gaceta</span>
+            </label>
+        </div>
+
+        <label class="floating-label w-50">
+            <input type="text" placeholder="Búsqueda General" class="input select-xs sm:input-sm md:input-md "
+                formControlName="termino" />
+            <span>Búsqueda General</span>
+        </label>
+        <button type="button" class="btn btn-info btn-sm"
+            (click)="searchFormGaceta.reset({ termino: '', tipo: '', isActive: '', isPublic: '', gestion: year })">
+            Limpiar
+        </button>
+
+        <button class="btn btn-sm btn-info text-cyan-50 p-1 " (click)="openNewModal()">
+            + Registrar Nuevo
+        </button>
+    </div>
+    <div class="divider p-0 m-0"></div>
+    <!--  <pre>
+    {{gacetaResource.value() | json }}
+</pre> -->
+    <div class="overflow-x-auto mt-0">
+        <table class="table table-zebra btn-xs">
+            <!-- head -->
+            <thead>
+                <tr class="text-center">
+                    <th>Nombre</th>
+                    <th>Detalle</th>
+                    <th class="w-10">Fecha de Aprobación</th>
+                    <th class="w-10">Fecha de Publicación</th>
+                    <th>Estado</th>
+                    <th>Público</th>
+                    <th>Documento Digital</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- row 1 -->
+                @for (gaceta of gacetaResource.value()?.gacetas; track gaceta._id) {
+
+                <tr>
+
+                    <td>
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-sm">
+                                {{ gaceta?.tipo?.nombre ?? 'Sin tipo' }} N° {{ gaceta?.numero ?? 'Sin número' }}
+                            </span>
+                        </div>
+                    </td>
+                    <td>
+                        {{ gaceta.titulo }}
+                    </td>
+                    <td>
+                        {{ gaceta.fechaAprobacion | date : 'mediumDate' }}
+                    </td>
+                    <td class="w-10">
+                        {{ gaceta.fechaPublicacion | date : 'medium' }}
+                    </td>
+                    <td>
+                        {{ gaceta?.isActive ? 'Activo' : 'Inactivo' }}
+                    </td>
+                    <td>
+
+                        {{ gaceta?.isPublic ? 'Sí' : 'No' }}
+                    </td>
+
+                    <td>
+
+                        @if (gaceta.archivo) {
+
+                        <button type="button" (click)="openGacetaPdf(gaceta)" class="flex items-center gap-2 group"
+                            title="Ver documento PDF">
+
+                            <!-- Icono PDF -->
+                            <div
+                                class="flex items-center justify-center w-9 h-9 rounded-lg bg-error/10 text-error group-hover:bg-error/20 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                    class="w-5 h-5">
+                                    <path
+                                        d="M5.625 1.5A2.625 2.625 0 0 0 3 4.125v15.75A2.625 2.625 0 0 0 5.625 22.5h12.75A2.625 2.625 0 0 0 21 19.875V7.5L15 1.5H5.625Z" />
+
+                                    <path fill="white" d="M13.5 1.5V7.5H19.5" />
+                                </svg>
+                            </div>
+
+                            <!-- Tamaño -->
+                            <div class="flex flex-col items-start leading-tight">
+                                <span class="text-xs font-semibold">
+                                    PDF
+                                </span>
+                                <span class="text-[11px] opacity-60 max-w-32 truncate"
+                                    [title]="gaceta.nombreArchivoOriginal">
+                                    {{ formatFileSize(gaceta.tamano) }}
+                                </span>
+                                <!-- <span class="text-[11px] opacity-60">
+                                    {{ formatFileSize(gaceta.tamano) }}
+                                </span> -->
+                            </div>
+                        </button>
+
+                        } @else {
+
+                        <span class="text-xs opacity-40">
+                            Sin PDF
+                        </span>
+
+                        }
+
+                    </td>
+                    <th>
+
+                        <!-- @if (hr.estado === 'RECIBIDO') {
+
+                        <a (click)="openNewModalSeg(hr)" class="btn btn-ghost text-accent btn-xs lg:tooltip"
+                            data-tip="Derivar">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
+                            </svg>
+                        </a>
+
+                        }
+
+                        @if (hr.estado != 'RECIBIDO') {
+
+                        <a (click)="openNewModalSeg(hr)" class="btn btn-ghost text-accent btn-xs lg:tooltip"
+                            data-tip="Derivar Copia">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                class="size-6">
+                                <path fill-rule="evenodd"
+                                    d="M7.5 3.75A1.5 1.5 0 0 0 6 5.25v13.5a1.5 1.5 0 0 0 1.5 1.5h6a1.5 1.5 0 0 0 1.5-1.5V15a.75.75 0 0 1 1.5 0v3.75a3 3 0 0 1-3 3h-6a3 3 0 0 1-3-3V5.25a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3V9A.75.75 0 0 1 15 9V5.25a1.5 1.5 0 0 0-1.5-1.5h-6Zm10.72 4.72a.75.75 0 0 1 1.06 0l3 3a.75.75 0 0 1 0 1.06l-3 3a.75.75 0 1 1-1.06-1.06l1.72-1.72H9a.75.75 0 0 1 0-1.5h10.94l-1.72-1.72a.75.75 0 0 1 0-1.06Z"
+                                    clip-rule="evenodd" />
+                            </svg>
+
+                        </a>
+
+                        }
+                        @if (hr.estado === 'ENVIADO') {
+
+                        <a (click)="anularEnvio(hr)" class="btn btn-ghost text-error btn-xs lg:tooltip"
+                            data-tip="Anular Envío">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                class="size-6">
+                                <path fill-rule="evenodd"
+                                    d="M2.515 10.674a1.875 1.875 0 0 0 0 2.652L8.89 19.7c.352.351.829.549 1.326.549H19.5a3 3 0 0 0 3-3V6.75a3 3 0 0 0-3-3h-9.284c-.497 0-.974.198-1.326.55l-6.375 6.374ZM12.53 9.22a.75.75 0 1 0-1.06 1.06L13.19 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06l1.72-1.72 1.72 1.72a.75.75 0 1 0 1.06-1.06L15.31 12l1.72-1.72a.75.75 0 1 0-1.06-1.06l-1.72 1.72-1.72-1.72Z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </a>
+                        }
+
+                        <button class="btn btn-ghost btn-circle  btn-xs text-info lg:tooltip" data-tip="Editar"
+                            (click)="openEditModal(hr)">
+                            <div class="indicator">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                    class="size-6">
+                                    <path
+                                        d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32l8.4-8.4Z" />
+                                    <path
+                                        d="M5.25 5.25a3 3 0 0 0-3 3v10.5a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3V13.5a.75.75 0 0 0-1.5 0v5.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5V8.25a1.5 1.5 0 0 1 1.5-1.5h5.25a.75.75 0 0 0 0-1.5H5.25Z" />
+                                </svg>
+                            </div>
+                        </button> -->
+
+                    </th>
+                </tr>
+                }
+            </tbody>
+        </table>
+        <app-pagination [pages]="gacetaResource.value()?.pages ?? 0" [currentPage]="currentPage()" />
+    </div>
+</div>
+<dialog id="gaceta_modal" class="modal">
+
+    <div class="modal-box max-w-4xl">
+
+        <h3 class="font-bold text-2xl mb-4">
+
+            @if(selectedGacetaId() === 'new') {
+
+            Nueva Gaceta
+
+            } @else {
+
+            Editar Gaceta
+
+            }
+
+        </h3>
+
+        <form [formGroup]="gacetaForm" (ngSubmit)="onSubmit()">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <div class="my-3">
+                    <label class="floating-label">
+                        <select class="select select-bordered w-full " formControlName="tipo">
+                            <option value="" disabled>
+                                Seleccione un tipo de gaceta
+                            </option>
+
+                            @for (tipo of tipoGacetaResource.value(); track tipo._id) {
+                            <option [value]="tipo._id">
+                                {{ tipo.nombre }}
+                            </option>
+                            }
+                        </select>
+                        <span>Seleccione un tipo de gaceta</span>
+                    </label>
+                </div>
+
+                <div class="my-3">
+                    <label class="floating-label">
+                        <span class="label-text">Número</span>
+                        <input type="number" placeholder="Número" class="input input-bordered w-full"
+                            formControlName="numero" [class.input-error]="getFieldError('numero')" />
+                    </label>
+                    <form-error-label [errorMessage]="getFieldError('numero')" />
+
+                </div>
+
+                <div class="md:col-span-2 w-full my-3">
+
+                    <label class="floating-label w-full">
+
+                        <textarea class="textarea textarea-bordered w-full min-h-20" placeholder="Título"
+                            formControlName="titulo" [class.input-error]="getFieldError('titulo')">
+                        </textarea>
+
+                        <span>Título</span>
+
+                    </label>
+
+                    <form-error-label [errorMessage]="getFieldError('titulo')" />
+
+                </div>
+
+
+
+                <div>
+
+                    <label class="floating-label">
+                        <span class="label-text">Fecha de Aprobación</span>
+                        <input type="date" placeholder="Fecha de Aprobación" class="input input-bordered w-full"
+                            formControlName="fechaAprobacion" [class.input-error]="getFieldError('fechaAprobacion')" />
+                    </label>
+                    <form-error-label [errorMessage]="getFieldError('fechaAprobacion')" />
+
+                </div>
+
+                <div class="md:col-span-2 my-3">
+                    <label class="floating-label">
+                        <input type="file" accept="application/pdf,.pdf" class="file-input file-input-bordered w-full"
+                            (change)="onFileSelected($event)" />
+
+                        <span>Documento PDF</span>
+                    </label>
+
+                    @if (selectedFile(); as file) {
+                    <div class="mt-2 flex items-center gap-2">
+                        <span class="badge badge-success">
+                            PDF seleccionado
+                        </span>
+
+                        <span class="text-sm">
+                            {{ file.name }}
+                        </span>
+
+                        <span class="text-xs opacity-60">
+                            {{ (file.size / 1024 / 1024).toFixed(2) }} MB
+                        </span>
+                    </div>
+                    } @else {
+                    <div class="mt-2 text-xs opacity-60">
+                        Documento PDF opcional. Máximo 20 MB.
+                    </div>
+                    }
+                </div>
+
+                <label class="flex items-center gap-3">
+                    <span class="font-semibold">Estado:</span>
+
+                    <span class="badge" [class.badge-success]="gacetaForm.controls.isActive.value"
+                        [class.badge-error]="!gacetaForm.controls.isActive.value">
+                        {{ gacetaForm.controls.isActive.value ? 'Activo' : 'Inactivo' }}
+                    </span>
+
+                    <input type="checkbox" class="toggle toggle-success" formControlName="isActive" />
+                </label>
+
+                <label class="flex items-center gap-3">
+                    <span class="font-semibold">Publicado:</span>
+
+                    <span class="badge" [class.badge-success]="gacetaForm.controls.isPublic.value"
+                        [class.badge-error]="!gacetaForm.controls.isPublic.value">
+                        {{ gacetaForm.controls.isPublic.value ? 'Publicado' : 'No Publicado' }}
+                    </span>
+
+                    <input type="checkbox" class="toggle toggle-success" formControlName="isPublic" />
+                </label>
+            </div>
+
+            <div class="modal-action">
+
+                <button type="button" class="btn btn-secondary" onclick="gaceta_modal.close()">
+
+                    Cancelar
+
+                </button>
+
+                <button type="submit" class="btn btn-success" [disabled]="isPosting()">
+
+                    @if(isPosting()) {
+
+                    <span class="loading loading-spinner loading-sm">
+                    </span>
+
+                    Guardando...
+
+                    } @else {
+
+                    Guardar
+
+                    }
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <form method="dialog" class="modal-backdrop">
+
+        <button>
+            cerrar
+        </button>
+
+    </form>
+
+
+    <!-- <pre>{{ gacetaForm.value | json }}</pre> -->
+</dialog>
+
+@if (wasError()) {
+<div class="toast toast-end toast-top z-50">
+    <div class="alert alert-error">
+        <span>{{ errorMessage() }}</span>
+    </div>
+</div>
+}
+
+@if (wasSaved()) {
+<div class="toast toast-end toast-top z-50">
+    <div class="alert alert-success">
+        <span>{{ successMessage() }}</span>
+    </div>
+</div>
+}

@@ -19,5 +19,6 @@ export const routes: Routes = [
     { path: 'organizacion', loadChildren: () => import('./modules/organizacion/org.routes'), canMatch: [AuthenticatedGuard] },
     { path: 'hojaRuta', loadChildren: () => import('./modules/hojaRuta/hojaRuta.routes'), canMatch: [AuthenticatedGuard] },
     { path: 'entidades', loadChildren: () => import('./modules/entidades/entidad.routes'), canMatch: [AuthenticatedGuard] },
+    { path: 'gaceta-admin', loadChildren: () => import('./modules/gacetaAdmin/gaceta.routes'), canMatch: [AuthenticatedGuard] },
     { path: '', loadChildren: () => import('./home/home.routes') },
 ];
