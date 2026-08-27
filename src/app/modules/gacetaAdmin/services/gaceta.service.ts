@@ -70,4 +70,7 @@ export class GacetaService {
   deleteTipoGaceta(id: string) {
     return this.http.delete(`${baseUrl}/gaceta/tipo/${id}`);
   }
+  printConfirmacion(id: string) {
+    return this.http.get(`${baseUrl}/gaceta/printConfir/${id}`, { responseType: 'blob' });
+  }
 }

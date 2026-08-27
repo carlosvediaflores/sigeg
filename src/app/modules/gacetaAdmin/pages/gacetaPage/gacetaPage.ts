@@ -426,4 +426,22 @@ export class GacetaPage {
 
     return null;
   }
+
+   printConfirmacion(gaceta: GacetaSimple) {
+  
+      this.gacetaService.printConfirmacion(gaceta._id)
+        .subscribe(blob => {
+  
+          const url = window.URL.createObjectURL(blob);
+  
+          window.open(url, '_blank');
+  
+          // Liberar memoria después de unos segundos
+          setTimeout(() => {
+            window.URL.revokeObjectURL(url);
+          }, 1000);
+  
+        });
+  
+    }
 }
