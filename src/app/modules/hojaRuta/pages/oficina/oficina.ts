@@ -74,6 +74,17 @@ export class Oficina {
   searchFormSegui = this.fb.group({
     gestion: [this.year],
     termino: [''],
+    estado: ['RECIBIDO'],
+    numeroHr: [''],
+    destinoUser: [this.user()?._id ?? ''],
+    idUnidadOrgDest: [this.user()?.idUnidadOrg?._id ?? ''],
+    idUnidadFuncDest: [this.user()?.idUnidadFuncional?._id ?? ''],
+    idSubUnidadDest: [this.user()?.idSubUnidad?._id ?? ''],
+  });
+
+   searchFormSeg = this.fb.group({
+    gestion: [this.year],
+    termino: [''],
     estado: [''],
     numeroHr: [''],
     destinoUser: [this.user()?._id ?? ''],
@@ -85,6 +96,11 @@ export class Oficina {
   searchFormSegui$ = this.searchFormSegui.valueChanges.pipe(
     debounceTime(300),
     startWith(this.searchFormSegui.getRawValue())
+  );
+
+  searchFormSeg$ = this.searchFormSeg.valueChanges.pipe(
+    debounceTime(300),
+    startWith(this.searchFormSeg.getRawValue())
   );
 
   usersResource = rxResource({
@@ -135,6 +151,26 @@ export class Oficina {
         )
       )
         .pipe(tap((resp) => console.log('Seguimientos', resp))),
+  });
+
+  seguimientosResourceCount = rxResource({
+    stream: () =>
+      combineLatest([
+        this.currentPage$,
+        this.seguimientosPerPage$,
+        this.searchFormSeg$,
+      ]).pipe(
+
+        switchMap(([page, limit, filters]) =>
+          this.seguimientosService.getSeguimientos({
+
+            offset: (page - 1) * limit,
+            limit,
+            ...filters,
+          })
+        )
+      )
+        .pipe(tap((resp) => console.log('Seguimientos2', resp))),
   });
 
   selectedSeguiResource = rxResource({
@@ -340,8 +376,6 @@ export class Oficina {
     idUnidadOrgDest: [''],
     idUnidadFuncDest: [''],
     idSubUnidadDest: [''],
-
-
 
     origenUser: ['', Validators.required],
     destinoUser: ['', Validators.required],
@@ -805,5 +839,21 @@ export class Oficina {
    
 
   }
+archivarSeguimiento(segui: Seguimiento) {
 
+    /* this.seguimientosService
+      .archivar(segui._id)
+      .subscribe({
+
+        next: (resp) => {
+          console.log('Archivado', resp);
+          this.seguimientosResource.reload();
+        },
+        error: (err) => {
+          console.error(err);
+        }
+
+      }); */
+
+  }
 }

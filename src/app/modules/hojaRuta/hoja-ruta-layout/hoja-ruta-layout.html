@@ -212,7 +212,7 @@
                         <span class="text-sm text-white/50 hidden md:block">Panel de Control</span>
                     </div>
                 </a>
-                @if (user()?.roles?.[0]?.name === 'secretario' || user()?.roles?.[0]?.name === 'admin'){ 
+                @if (user()?.roles?.[0]?.name === 'secretario' || user()?.roles?.[0]?.name === 'admin'){
                 <a routerLink="/hojaRuta/list" routerLinkActive=" active bg-slate-800"
                     class="w-full px-2 inline-flex space-x-2 items-center border-b border-slate-700 py-3 hover:bg-white/5 transition ease-linear duration-150 text-accent text-lg hover:underline cursor-pointer">
                     <div>
@@ -261,6 +261,24 @@
                     <div class="flex flex-col">
                         <span class="text-lg text-slate-300 font-bold leading-5">Reportes</span>
                         <span class="text-sm text-slate-500 hidden md:block">Reportes</span>
+                    </div>
+                </a>
+
+                <a routerLink="/hojaRuta/oficina" routerLinkActive=" active bg-slate-800"
+                    class="w-full px-2 inline-flex space-x-2 items-center border-b border-slate-700 py-3 hover:bg-white/5 transition ease-linear duration-150 text-accent text-lg hover:underline cursor-pointer">
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+                            <path
+                                d="M3.375 3C2.339 3 1.5 3.84 1.5 4.875v.75c0 1.036.84 1.875 1.875 1.875h17.25c1.035 0 1.875-.84 1.875-1.875v-.75C22.5 3.839 21.66 3 20.625 3H3.375Z" />
+                            <path fill-rule="evenodd"
+                                d="m3.087 9 .54 9.176A3 3 0 0 0 6.62 21h10.757a3 3 0 0 0 2.995-2.824L20.913 9H3.087Zm6.163 3.75A.75.75 0 0 1 10 12h4a.75.75 0 0 1 0 1.5h-4a.75.75 0 0 1-.75-.75Z"
+                                clip-rule="evenodd" />
+                        </svg>
+
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-lg text-slate-300 font-bold leading-5">Archivos</span>
+                        <span class="text-sm text-slate-500 hidden md:block">Archivos</span>
                     </div>
                 </a>
                 <!-- Menu Item End -->
