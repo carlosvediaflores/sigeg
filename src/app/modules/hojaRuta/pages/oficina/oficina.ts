@@ -800,4 +800,10 @@ export class Oficina {
       });
   }
 
+  verDetalle(segui: Seguimiento) {
+
+   
+
+  }
+
 }

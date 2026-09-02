@@ -448,7 +448,7 @@
                     <td class="w-10">
                         {{ (segui.fechaRecepcion | date : 'medium') ?? 'No recibido' }}
                     </td>
-                    <td>
+                    <td class="text-center">
 
                         @switch (segui.estado) {
 
@@ -456,44 +456,251 @@
                         <button class="btn btn-xs btn-warning" (click)="changeStatus(segui)">
                             ENVIADO
                         </button>
+
                         }
 
                         @case ('RECIBIDO') {
-                        <span class="badge badge-success">
+                        <span class="badge btn-xs badge-success">
                             RECIBIDO
                         </span>
                         }
 
                         @case ('DERIVADO') {
-                        <span class="badge badge-info">
+                        <span class="badge btn-xs badge-info">
                             DERIVADO
                         </span>
                         }
 
                         @case ('ANULADO') {
-                        <span class="badge badge-error">
+                        <span class="badge btn-xs badge-error">
                             ANULADO
                         </span>
                         }
 
                         @default {
-                        <span class="badge">
+                        <span class="badge btn-xs">
                             {{ segui.estado }}
                         </span>
                         }
+                        
 
                         }
+                        <!-- TIPO DE ENVÍO -->
+                                    @if (segui.tipoEnvio === 'OFICIAL') {
+
+                                    <span class="badge badge-info badge-xs">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
+                                            class="size-4 text-warning">
+                                            <path fill-rule="evenodd"
+                                                d="M15 8c0 .982-.472 1.854-1.202 2.402a2.995 2.995 0 0 1-.848 2.547 2.995 2.995 0 0 1-2.548.849A2.996 2.996 0 0 1 8 15a2.996 2.996 0 0 1-2.402-1.202 2.995 2.995 0 0 1-2.547-.848 2.995 2.995 0 0 1-.849-2.548A2.996 2.996 0 0 1 1 8c0-.982.472-1.854 1.202-2.402a2.995 2.995 0 0 1 .848-2.547 2.995 2.995 0 0 1 2.548-.849A2.995 2.995 0 0 1 8 1c.982 0 1.854.472 2.402 1.202a2.995 2.995 0 0 1 2.547.848c.695.695.978 1.645.849 2.548A2.996 2.996 0 0 1 15 8Zm-3.291-2.843a.75.75 0 0 1 .135 1.052l-4.25 5.5a.75.75 0 0 1-1.151.043l-2.25-2.5a.75.75 0 1 1 1.114-1.004l1.65 1.832 3.7-4.789a.75.75 0 0 1 1.052-.134Z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                        OFICIAL
+                                    </span>
+
+                                    } @else if (segui.tipoEnvio === 'COPIA') {
+
+                                    <span class="badge badge-secondary badge-xs">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
+                                            class="size-4 text-info">
+                                            <path
+                                                d="M5.5 3.5A1.5 1.5 0 0 1 7 2h2.879a1.5 1.5 0 0 1 1.06.44l2.122 2.12a1.5 1.5 0 0 1 .439 1.061V9.5A1.5 1.5 0 0 1 12 11V8.621a3 3 0 0 0-.879-2.121L9 4.379A3 3 0 0 0 6.879 3.5H5.5Z" />
+                                            <path
+                                                d="M4 5a1.5 1.5 0 0 0-1.5 1.5v6A1.5 1.5 0 0 0 4 14h5a1.5 1.5 0 0 0 1.5-1.5V8.621a1.5 1.5 0 0 0-.44-1.06L7.94 5.439A1.5 1.5 0 0 0 6.878 5H4Z" />
+                                        </svg>
+                                        COPIA {{ segui.numeroCopia }}
+                                    </span>
+                                    }
 
                     </td>
                     <th>
 
-                        <!-- <a class="btn btn-ghost text-accent btn-xs">
+    <div class="dropdown dropdown-end">
+
+        <!-- BOTÓN 3 PUNTOS -->
+        <button tabindex="0"
+                type="button"
+                class="btn btn-ghost btn-sm btn-square"
+                title="Acciones">
+
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 fill="none"
+                 viewBox="0 0 24 24"
+                 stroke-width="2"
+                 stroke="currentColor"
+                 class="size-5">
+
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M12 6.75h.007v.008H12V6.75Zm0 5.25h.007v.008H12V12Zm0 5.25h.007v.008H12v-.008Z" />
+
+            </svg>
+
+        </button>
+
+
+        <!-- MENÚ -->
+        <ul tabindex="0"
+            class="dropdown-content menu
+                   bg-base-100
+                   rounded-box
+                   z-50
+                   w-52
+                   p-2
+                   shadow-xl
+                   border border-base-300">
+
+
+            <!-- EDITAR -->
+            <li>
+                <!-- <a (click)="editarSeguimiento(segui)">
+
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke-width="1.5"
+                         stroke="currentColor"
+                         class="size-5">
+
+                        <path stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 15.97a4.5 4.5 0 0 1-1.897 1.13L6 18l.9-2.685a4.5 4.5 0 0 1 1.13-1.897l8.832-8.931Z" />
+
+                        <path stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M19.5 14.25v5.25a2.25 2.25 0 0 1-2.25 2.25h-12A2.25 2.25 0 0 1 3 19.5v-12a2.25 2.25 0 0 1 2.25-2.25h5.25" />
+
+                    </svg>
+
+                    Editar
+
+                </a> -->
+            </li>
+
+
+            <!-- DERIVAR -->
+            @if (segui.estado === 'RECIBIDO') {
+
+                <li>
+                    <a (click)="openNewModalSeg(segui, false)">
+
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke-width="1.5"
+                             stroke="currentColor"
+                             class="size-5">
+
+                            <path stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
+
+                        </svg>
+
+                        Derivar
+
+                    </a>
+                </li>
+
+            }
+
+
+            <!-- DERIVAR COPIA -->
+            @if (segui.estado === 'DERIVADO') {
+
+                <li>
+                    <a (click)="openNewModalSeg(segui, true)">
+
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             viewBox="0 0 24 24"
+                             fill="currentColor"
+                             class="size-5">
+
+                            <path fill-rule="evenodd"
+                                  d="M7.5 3.75A1.5 1.5 0 0 0 6 5.25v13.5a1.5 1.5 0 0 0 1.5 1.5h6a1.5 1.5 0 0 0 1.5-1.5V15a.75.75 0 0 1 1.5 0v3.75a3 3 0 0 1-3 3h-6a3 3 0 0 1-3-3V5.25a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3V9A.75.75 0 0 1 15 9V5.25a1.5 1.5 0 0 0-1.5-1.5h-6Zm10.72 4.72a.75.75 0 0 1 1.06 0l3 3a.75.75 0 0 1 0 1.06l-3 3a.75.75 0 1 1-1.06-1.06l1.72-1.72H9a.75.75 0 0 1 0-1.5h10.94l-1.72-1.72a.75.75 0 0 1 0-1.06Z"
+                                  clip-rule="evenodd" />
+
+                        </svg>
+
+                        Derivar copia
+
+                    </a>
+                </li>
+
+
+                <!-- ANULAR -->
+                <li>
+                    <a class="text-error"
+                       (click)="anularEnvio(segui)">
+
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke-width="1.5"
+                             stroke="currentColor"
+                             class="size-5">
+
+                            <path stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  d="M6 18 18 6M6 6l12 12" />
+
+                        </svg>
+
+                        Anular envío
+
+                    </a>
+                </li>
+
+            }
+
+
+            <!-- SEPARADOR -->
+            <li class="menu-title">
+                <span>Más acciones</span>
+            </li>
+
+
+            <!-- VER DETALLE -->
+            <li>
+                <a (click)="verDetalle(segui)">
+
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke-width="1.5"
+                         stroke="currentColor"
+                         class="size-5">
+
+                        <path stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M2.036 12.322a1.012 1.012 0 0 1 0-.644C3.423 7.51 7.36 4.5 12 4.5c4.64 0 8.577 3.01 9.964 7.178.08.24.08.5 0 .644C20.577 16.49 16.64 19.5 12 19.5c-4.64 0-8.577-3.01-9.964-7.178Z" />
+
+                        <path stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+
+                    </svg>
+
+                    Ver detalle
+
+                </a>
+            </li>
+
+
+        </ul>
+
+    </div>
+
+</th>
+                    <!-- <th>
+
+                        <a class="btn btn-ghost text-accent btn-xs">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor" class="size-6">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Zm-3 0h.008v.008H15V10.5Z" />
                             </svg>
-                        </a> -->
+                        </a>
 
                         @if (segui.estado === 'RECIBIDO') {
 
@@ -538,7 +745,7 @@
 
                         }
 
-                    </th>
+                    </th> -->
                 </tr>
                 }
             </tbody>
