@@ -6,39 +6,6 @@ import { tap } from 'rxjs';
 
 const baseUrl = environment.baseUrl;
 
-const emptyOrg: Org = {
-  _id: 'new',
-  nombre: '',
-  sigla: '',
-  codigo: 0,
-  cargo: '',
-  persona: '',
-  isActive: true,
-  unidadFuncional: []
-};
-
-const emptyUni: UnidadFuncional = {
-  _id: 'new',
-  nombre: '',
-  sigla: '',
-  codigo: 0,
-  cargo: '',
-  persona:'',
-  isActive: true,
-  idUnidadOrg: '',
-  subUnidad: [],
-};
-
-const emptyCargo: SubUnidad = {
-  _id: 'new',
-  nombre: '',
-  sigla: '',
-  codigo: 0,
-  cargo: '',
-  persona:'',
-  isActive: true,
-  unidadFuncional: '',
-};
 
 @Injectable({
   providedIn: 'root',
@@ -51,13 +18,13 @@ export class OrgService {
     //.pipe(tap((resp) => console.log('orgs', resp)));
   }
 
-  getOrgById(id: string) {
+  /* getOrgById(id: string) {
     if (id === 'new') {
       return emptyOrg;
     }
     return this.http.get<Org>(`${baseUrl}/cargo/uni-org/${id}`);
   }
-
+ */
   createOrg(org: Partial<Org>) {
     return this.http.post<Org>(
       `${baseUrl}/cargo/uni-org`,

@@ -43,7 +43,6 @@ export interface HojaRutaSimple {
     gestion: number;
     seguimientos: Seguimiento[];
     asociados: Asociados[];
-    archivos: Archivos[];
     isActive: Boolean;
     entidad: string;
     representante: string;
@@ -73,16 +72,21 @@ export interface Seguimiento {
     origenUser: User;
     destinoUser: User;
     isActive: Boolean;
-    archivosOficina: ArchivosOficina[];
-    carpetasOficina: CarpetasOficina[];
+
 }
 
 export interface Asociados {
 
 }
 
-export interface Archivos {
-
+export interface HrArchivado {
+  _id: string;
+  nombre: string;
+  descripcion?: string;
+  idUnidadOrg?: string;
+  idUnidadFuncional?: string;
+  idSubUnidad?: string;
+  archivados: string[];
 }
 
 export interface ArchivosOficina {

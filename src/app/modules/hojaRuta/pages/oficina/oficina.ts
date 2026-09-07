@@ -9,7 +9,7 @@ import { SeguimientosService } from '../../services/seguimientos.service';
 import { DatePipe, JsonPipe } from '@angular/common';
 import { FormErrorLabel } from '@shared/components/form-error-label/form-error-label';
 import { Pagination } from '@shared/components/pagination/pagination';
-import { HojaRutaSimple, Seguimiento } from '../../interfaces/hojaRuta';
+import { HojaRutaSimple, HrArchivado, Seguimiento } from '../../interfaces/hojaRuta';
 import Swal from 'sweetalert2';
 import { AuthService } from '@auth/services/auth.service';
 import { OrgService } from '../../../organizacion/services/org.service';
@@ -24,8 +24,8 @@ import { OrgService } from '../../../organizacion/services/org.service';
 export class Oficina {
   activatedRoute = inject(ActivatedRoute);
   authService = inject(AuthService);
-  private orgService = inject(OrgService);
   user = computed(() => this.authService.user());
+  private orgService = inject(OrgService);
   wasSaved = signal(false);
   successMessage = signal('');
   isPosting = signal(false);
@@ -70,7 +70,6 @@ export class Oficina {
   bloquearPagina = computed(() =>
     this.totalPendientesRecepcion() > 0
   );
-
   searchFormSegui = this.fb.group({
     gestion: [this.year],
     termino: [''],
@@ -82,7 +81,7 @@ export class Oficina {
     idSubUnidadDest: [this.user()?.idSubUnidad?._id ?? ''],
   });
 
-   searchFormSeg = this.fb.group({
+  searchFormSeg = this.fb.group({
     gestion: [this.year],
     termino: [''],
     estado: [''],
@@ -380,8 +379,6 @@ export class Oficina {
     origenUser: ['', Validators.required],
     destinoUser: ['', Validators.required],
 
-    archivosOficina: [[]],
-    carpetasOficina: [[]],
   });
 
   orgsResource = rxResource({
@@ -836,10 +833,10 @@ export class Oficina {
 
   verDetalle(segui: Seguimiento) {
 
-   
+
 
   }
-archivarSeguimiento(segui: Seguimiento) {
+  archivarSeguimiento(segui: Seguimiento) {
 
     /* this.seguimientosService
       .archivar(segui._id)
@@ -856,4 +853,338 @@ archivarSeguimiento(segui: Seguimiento) {
       }); */
 
   }
+
+
+
+  showModalArchivar = signal(false);
+
+  archivadores = signal<HrArchivado[]>([]);
+
+  seguiSeleccionado = signal<Seguimiento | null>(null);
+  archivadorSeleccionado = signal<HrArchivado | null>(null);
+
+  openModalArchivar(segui: Seguimiento) {
+
+    this.seguiSeleccionado.set(segui);
+
+    const usuario = this.user();
+
+    const archivos = [
+      ...(usuario?.idUnidadOrg?.hrArchivo ?? []),
+      ...(usuario?.idUnidadFuncional?.hrArchivo ?? []),
+      ...(usuario?.idSubUnidad?.hrArchivo ?? []),
+    ];
+
+    this.archivadores.set(archivos);
+
+    this.showModalArchivar.set(true);
+  }
+
+  closeModalArchivar() {
+    this.showModalArchivar.set(false);
+    this.seguiSeleccionado.set(null);
+  }
+
+  async crearArchivador() {
+
+    const result = await Swal.fire({
+      title: 'Nuevo archivo',
+
+      html: `
+      <div class="text-left">
+
+        <label
+          for="nombreArchivador"
+          class="block text-sm font-medium mb-2">
+          Nombre
+        </label>
+
+        <input
+          id="nombreArchivador"
+          type="text"
+          class="swal2-input w-full! m-0!"
+          placeholder="Ej. Notas atendidas">
+
+        <label
+          for="descripcionArchivador"
+          class="block text-sm font-medium mt-4 mb-2">
+          Descripción
+        </label>
+
+        <textarea
+          id="descripcionArchivador"
+          class="swal2-textarea w-full! m-0!"
+          placeholder="Descripción del archivo"></textarea>
+
+      </div>
+    `,
+
+      showCancelButton: true,
+
+      confirmButtonText: 'Crear archivo',
+      cancelButtonText: 'Cancelar',
+
+      focusConfirm: false,
+
+      preConfirm: () => {
+
+        const nombre = (
+          document.getElementById(
+            'nombreArchivador'
+          ) as HTMLInputElement
+        )?.value.trim();
+
+        const descripcion = (
+          document.getElementById(
+            'descripcionArchivador'
+          ) as HTMLTextAreaElement
+        )?.value.trim();
+
+        if (!nombre) {
+          Swal.showValidationMessage(
+            'El nombre del archivo es obligatorio'
+          );
+
+          return false;
+        }
+
+        return {
+          nombre,
+          descripcion,
+        };
+      },
+
+    });
+
+    if (!result.isConfirmed) {
+      return;
+    }
+
+    const usuario = this.user();
+
+    if (!usuario) {
+      return;
+    }
+
+    const archivo: Partial<HrArchivado> = {
+      nombre: result.value.nombre,
+      descripcion: result.value.descripcion,
+
+      idUnidadOrg: usuario.idUnidadOrg?._id,
+
+      idUnidadFuncional: usuario.idUnidadFuncional?._id,
+
+      idSubUnidad: usuario.idSubUnidad?._id,
+
+    };
+
+    console.log('Enviando archivador:', archivo);
+
+    this.seguimientosService
+      .createArchivador(archivo)
+      .subscribe({
+        next: (response) => {
+
+          this.archivadores.update(
+            archivos => [...archivos, response]
+          );
+
+          Swal.fire({
+            icon: 'success',
+            title: 'Archivo creado',
+            timer: 1500,
+            showConfirmButton: false,
+          });
+
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Error al crear archivador:',
+            error
+          );
+
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text:
+              error?.error?.message ??
+              'No se pudo crear el archivo',
+          });
+
+        },
+      });
+  }
+
+  seleccionarArchivador(archivo: HrArchivado) {
+
+    this.archivadorSeleccionado.set(archivo);
+
+    console.log('Archivador seleccionado:', archivo);
+
+    this.confirmarArchivar();
+  }
+
+  async confirmarArchivar() {
+
+  const segui = this.seguiSeleccionado();
+  const archivador = this.archivadorSeleccionado();
+
+  if (!segui) {
+    return;
+  }
+
+  if (!archivador) {
+    return;
+  }
+
+  const result = await Swal.fire({
+
+    title: 'Archivar Hoja de Ruta',
+
+    html: `
+      <div class="text-left">
+
+        <div class="flex items-center gap-3 p-3 rounded-lg
+                    bg-base-200 mb-4">
+
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            class="size-8 text-amber-500">
+
+            <path
+              d="M19.5 6.75h-7.379a.75.75 0 0 1-.53-.22l-1.342-1.341A2.25 2.25 0 0 0 8.659 4.5H4.5A2.25 2.25 0 0 0 2.25 6.75v10.5A2.25 2.25 0 0 0 4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25v-8.25a2.25 2.25 0 0 0-2.25-2.25Z" />
+
+          </svg>
+
+          <div>
+
+            <div class="font-semibold">
+              ${archivador.nombre}
+            </div>
+
+            <div class="text-sm opacity-60">
+              ${archivador.descripcion ?? ''}
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <label
+          for="mensajeArchivado"
+          class="block text-sm font-medium mb-2">
+
+          Mensaje / Observación
+
+        </label>
+
+        <textarea
+          id="mensajeArchivado"
+          class="swal2-textarea w-full! m-0!"
+          placeholder="Ingrese una observación sobre el archivado..."
+          rows="4"></textarea>
+
+      </div>
+    `,
+
+    showCancelButton: true,
+
+    confirmButtonText: 'Archivar',
+    cancelButtonText: 'Cancelar',
+
+    confirmButtonColor: '#f59e0b',
+
+    focusConfirm: false,
+
+    preConfirm: () => {
+
+      const mensaje = (
+        document.getElementById(
+          'mensajeArchivado'
+        ) as HTMLTextAreaElement
+      )?.value.trim();
+
+      if (!mensaje) {
+
+        Swal.showValidationMessage(
+          'Ingrese un mensaje u observación'
+        );
+
+        return false;
+      }
+
+      return {
+        mensaje,
+      };
+    },
+
+  });
+
+  if (!result.isConfirmed) {
+    return;
+  }
+
+  const mensaje = result.value.mensaje;
+
+  console.log('Archivar:', {
+    seguimiento: segui._id,
+    archivador: archivador._id,
+    mensaje,
+  });
+
+
+  // LLAMAR AL BACKEND
+
+  this.seguimientosService
+    .archivarSeguimiento(
+      segui._id!,
+      archivador._id,
+      mensaje
+    )
+    .subscribe({
+
+      next: (response) => {
+
+        console.log(
+          'Seguimiento archivado:',
+          response
+        );
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Archivado correctamente',
+          text: `La Hoja de Ruta fue archivada en "${archivador.nombre}"`,
+          timer: 1800,
+          showConfirmButton: false,
+        });
+
+        this.closeModalArchivar();
+
+      },
+
+      error: (error) => {
+
+        console.error(
+          'Error al archivar:',
+          error
+        );
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text:
+            error?.error?.message ??
+            'No se pudo archivar la Hoja de Ruta',
+        });
+
+      },
+
+    });
+}
+
 }

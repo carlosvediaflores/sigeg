@@ -561,9 +561,9 @@
 
 
                                     <!-- ARCHIVAR -->
-                                       @if (segui.estado === 'RECIBIDO') {
+                                    @if (segui.estado === 'RECIBIDO') {
                                     <li>
-                                        <a (click)="archivarSeguimiento(segui)">
+                                        <a (click)="openModalArchivar(segui)">
 
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                                                 fill="currentColor" class="size-5 text-amber-500">
@@ -586,7 +586,7 @@
                                     @if (segui.estado === 'DERIVADO') {
 
                                     <li>
-                                        <a  class="text-cyan-300" (click)="openNewModalSeg(segui, true)">
+                                        <a class="text-cyan-300" (click)="openNewModalSeg(segui, true)">
 
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                                                 fill="currentColor" class="size-5">
@@ -1400,6 +1400,281 @@
 
 
 </dialog>
+
+@if (showModalArchivar()) {
+<dialog class="modal modal-open">
+    <div class="modal-box max-w-2xl">
+
+        <!-- HEADER -->
+        <div class="flex items-center justify-between border-b pb-3">
+            <div>
+                <h3 class="text-lg font-bold">
+                    Archivar Hoja de Ruta
+                </h3>
+
+                @if (seguiSeleccionado(); as segui) {
+                <p class="text-sm text-base-content/60 mt-1">
+                    HR N.º {{ segui.numeroHr }}
+                </p>
+                }
+            </div>
+
+            <button type="button" class="btn btn-sm btn-circle btn-ghost" (click)="closeModalArchivar()">
+
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-5">
+
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+
+        <!-- CONTENIDO -->
+        <div class="py-5">
+
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+
+                @if ($any(user()?.idUnidadOrg)?.hrArchivo?.length) {
+
+                @for (archivo of archivadores(); track archivo._id) {
+
+                <button type="button" class="group rounded-xl border border-base-300
+                    bg-base-200/40
+                    hover:bg-base-200
+                    hover:border-amber-500
+                    transition-all duration-200
+                    text-left
+                    overflow-hidden"
+                    (click)="seleccionarArchivador(archivo)">
+
+                    <div class="flex justify-center pt-5 pb-3">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-16 text-amber-500
+                       group-hover:text-amber-400
+                       group-hover:scale-105
+                       transition-all">
+
+                            <path
+                                d="M19.5 6.75h-7.379a.75.75 0 0 1-.53-.22l-1.342-1.341A2.25 2.25 0 0 0 8.659 4.5H4.5A2.25 2.25 0 0 0 2.25 6.75v10.5A2.25 2.25 0 0 0 4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25v-8.25a2.25 2.25 0 0 0-2.25-2.25Z" />
+
+                        </svg>
+
+                    </div>
+
+                    <div class="px-4 pb-4">
+
+                        <h4 class="font-semibold text-base truncate">
+                            {{ archivo.nombre }}
+                        </h4>
+
+                        @if (archivo.descripcion) {
+
+                        <p class="text-sm text-base-content/60 mt-1 line-clamp-2">
+                            {{ archivo.descripcion }}
+                        </p>
+
+                        } @else {
+
+                        <p class="text-sm text-base-content/40 italic mt-1">
+                            Sin descripción
+                        </p>
+
+                        }
+
+                    </div>
+
+                </button>
+
+                }
+
+                }
+
+
+                @if ($any(user()?.idUnidadFuncional)?.hrArchivo?.length) {
+
+                @for (archivo of archivadores(); track archivo._id) {
+
+                <button type="button" class="group rounded-xl border border-base-300
+               bg-base-200/40
+               hover:bg-base-200
+               hover:border-amber-500
+               transition-all duration-200
+               text-left
+               overflow-hidden"
+               (click)="seleccionarArchivador(archivo)">
+
+                    <div class="flex justify-center pt-5 pb-3">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-16 text-amber-500
+                       group-hover:text-amber-400
+                       group-hover:scale-105
+                       transition-all">
+
+                            <path
+                                d="M19.5 6.75h-7.379a.75.75 0 0 1-.53-.22l-1.342-1.341A2.25 2.25 0 0 0 8.659 4.5H4.5A2.25 2.25 0 0 0 2.25 6.75v10.5A2.25 2.25 0 0 0 4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25v-8.25a2.25 2.25 0 0 0-2.25-2.25Z" />
+
+                        </svg>
+
+                    </div>
+
+                    <div class="px-4 pb-4">
+
+                        <h4 class="font-semibold text-base truncate">
+                            {{ archivo.nombre }}
+                        </h4>
+
+                        @if (archivo.descripcion) {
+
+                        <p class="text-sm text-base-content/60 mt-1 line-clamp-2">
+                            {{ archivo.descripcion }}
+                        </p>
+
+                        } @else {
+
+                        <p class="text-sm text-base-content/40 italic mt-1">
+                            Sin descripción
+                        </p>
+
+                        }
+
+                    </div>
+
+                </button>
+
+                }
+
+                }
+
+
+                @if ($any(user()?.idSubUnidad)?.hrArchivo?.length) {
+
+                @for (archivo of archivadores(); track archivo._id) {
+
+                <button type="button" class="group rounded-xl border border-base-300
+                    bg-base-200/40
+                    hover:bg-base-200
+                    hover:border-amber-500
+                    transition-all duration-200
+                    text-left
+                    overflow-hidden"
+                    (click)="seleccionarArchivador(archivo)">
+
+                    <div class="flex justify-center pt-5 pb-3">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-16 text-amber-500
+                       group-hover:text-amber-400
+                       group-hover:scale-105
+                       transition-all">
+
+                            <path
+                                d="M19.5 6.75h-7.379a.75.75 0 0 1-.53-.22l-1.342-1.341A2.25 2.25 0 0 0 8.659 4.5H4.5A2.25 2.25 0 0 0 2.25 6.75v10.5A2.25 2.25 0 0 0 4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25v-8.25a2.25 2.25 0 0 0-2.25-2.25Z" />
+
+                        </svg>
+
+                    </div>
+
+                    <div class="px-4 pb-4">
+
+                        <h4 class="font-semibold text-base truncate">
+                            {{ archivo.nombre }}
+                        </h4>
+
+                        @if (archivo.descripcion) {
+
+                        <p class="text-sm text-base-content/60 mt-1 line-clamp-2">
+                            {{ archivo.descripcion }}
+                        </p>
+
+                        } @else {
+
+                        <p class="text-sm text-base-content/40 italic mt-1">
+                            Sin descripción
+                        </p>
+
+                        }
+
+                    </div>
+
+                </button>
+
+                }
+
+                }
+
+            </div>
+
+
+            <!-- NO HAY ARCHIVADORES -->
+            @if (
+            !$any(user()?.idUnidadOrg)?.hrArchivo?.length &&
+            !$any(user()?.idUnidadFuncional)?.hrArchivo?.length &&
+            !$any(user()?.idSubUnidad)?.hrArchivo?.length
+            ) {
+
+            <div class="flex flex-col items-center justify-center py-10">
+
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-12 text-base-content/30">
+
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M2.25 12.75V6.375a2.25 2.25 0 0 1 2.25-2.25h5.379c.597 0 1.17.237 1.591.659l1.122 1.122c.422.422.994.659 1.591.659h5.442a2.25 2.25 0 0 1 2.25 2.25v7.5a2.25 2.25 0 0 1-2.25 2.25H4.5a2.25 2.25 0 0 1-2.25-2.25v-1.5Z" />
+
+                </svg>
+
+                <p class="text-sm text-base-content/50 mt-3">
+                    No tiene archivadores configurados
+                </p>
+
+            </div>
+
+            }
+
+
+            <!-- CREAR ARCHIVADOR -->
+            <div class="flex justify-end mt-6 pt-4 border-t border-base-300">
+
+                <button type="button" class="btn btn-primary" (click)="crearArchivador()">
+
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6 text-warning">
+                        <path fill-rule="evenodd"
+                            d="M19.5 21a3 3 0 0 0 3-3V9a3 3 0 0 0-3-3h-5.379a.75.75 0 0 1-.53-.22L11.47 3.66A2.25 2.25 0 0 0 9.879 3H4.5a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h15Zm-6.75-10.5a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25v2.25a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V10.5Z"
+                            clip-rule="evenodd" />
+                    </svg>
+
+
+                    Nuevo archivo
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div class="modal-action">
+
+            <button type="button" class="btn" (click)="closeModalArchivar()">
+
+                Cancelar
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- CLICK FUERA -->
+    <form method="dialog" class="modal-backdrop">
+
+        <button type="button" (click)="closeModalArchivar()">
+            cerrar
+        </button>
+
+    </form>
+
+</dialog>
+}
 
 @if (wasSaved()) {
 <div class="toast toast-end toast-top z-50">
