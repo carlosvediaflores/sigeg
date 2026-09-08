@@ -91,6 +91,11 @@ export interface HrArchivado {
   archivados: string[];
 }
 
+export interface ArchivadosResponse {
+  total: number;
+  pages: number;
+  archivados: HrArchivado[];
+}
 export interface ArchivosOficina {
 
 }

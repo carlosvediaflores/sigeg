@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
-import { SeguimientosResponse, Seguimiento, HojaRutaSimple, HrArchivado } from '../interfaces/hojaRuta';
+import { SeguimientosResponse, Seguimiento, HojaRutaSimple, HrArchivado, ArchivadosResponse } from '../interfaces/hojaRuta';
 import { Observable, of, tap } from 'rxjs';
 const baseUrl = environment.baseUrl;
 
@@ -139,5 +139,15 @@ export class SeguimientosService {
         smsArchivado,
       }
     );
+  }
+
+  getArchivados(options: Options): Observable<ArchivadosResponse> {
+    console.log('optionsArchivados', options)
+    const params = Object.fromEntries(
+      Object.entries(options).filter(([_, value]) =>
+        value !== null && value !== undefined && value !== ''
+      )
+    );
+    return this.http.get<ArchivadosResponse>(`${baseUrl}/seguimientos/archivados`, { params });
   }
 }
