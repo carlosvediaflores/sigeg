@@ -58,9 +58,11 @@ export interface Seguimiento {
     tipoEnvio: string;
     detalle: string;
     estado: string;
-    smsMaletin: string;
+    smsArchivado: string;
+    detalleArchivado: string;
     fechaDerivado: Date | string;
     fechaRecepcion: Date | string;
+    fechaRespuesta: Date | string;  
     numeroCopia: number;
     gestion: number;
     idUnidadOrgOrigen?: Org;

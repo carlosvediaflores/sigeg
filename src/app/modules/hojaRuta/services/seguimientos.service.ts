@@ -100,6 +100,14 @@ export class SeguimientosService {
     );
   }
 
+  desarchivar(id: string) {
+    console.log('Desarchivar Hoja de Ruta', id);
+    return this.http.patch(
+      `${environment.baseUrl}/seguimientos/${id}/desarchivar`,
+      {}
+    );
+  }
+
   asociarHojaRuta(id: string, seguimientos: string[]) {
     console.log('Asociar Hoja de Ruta', id, seguimientos);
     return this.http.patch(

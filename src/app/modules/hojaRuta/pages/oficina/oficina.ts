@@ -328,6 +328,47 @@ export class Oficina {
     });
 
   }
+
+  desarchivar(segui: Seguimiento) {
+    console.log('Desarchivar Hoja de Ruta', segui);
+    Swal.fire({
+      title: '¿Desarchivar?',
+      text: `Hoja de Ruta Nº ${segui.numeroHr}`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, desarchivar',
+      cancelButtonText: 'Cancelar'
+    }).then(async result => {
+
+      if (!result.isConfirmed) return;
+
+      try {
+
+        await firstValueFrom(
+          this.seguimientosService.desarchivar(segui._id)
+        );
+
+        this.seguimientosResource.reload();
+
+        Swal.fire(
+          'Correcto',
+          'La hoja de ruta fue desarchivada.',
+          'success'
+        );
+
+      } catch (e: any) {
+
+        Swal.fire(
+          'No se puede desarchivar',
+          e.error?.message ?? 'La hoja de ruta ya fue desarchivada.',
+          'warning'
+        );
+
+      }
+
+    });
+
+  }
   async changeStatus(segui: Seguimiento) {
 
     const result = await Swal.fire({
@@ -672,7 +713,8 @@ export class Oficina {
 
           this.seguimientosService
             .updateSeguimiento(seguimiento._id, {
-              estado: 'DERIVADO'
+              estado: 'DERIVADO',
+              fechaRespuesta: new Date(),
             })
             .subscribe({
 
@@ -836,26 +878,7 @@ export class Oficina {
 
 
   }
-  archivarSeguimiento(segui: Seguimiento) {
-
-    /* this.seguimientosService
-      .archivar(segui._id)
-      .subscribe({
-
-        next: (resp) => {
-          console.log('Archivado', resp);
-          this.seguimientosResource.reload();
-        },
-        error: (err) => {
-          console.error(err);
-        }
-
-      }); */
-
-  }
-
-
-
+ 
   showModalArchivar = signal(false);
 
   archivadores = signal<HrArchivado[]>([]);
@@ -1028,22 +1051,22 @@ export class Oficina {
 
   async confirmarArchivar() {
 
-  const segui = this.seguiSeleccionado();
-  const archivador = this.archivadorSeleccionado();
+    const segui = this.seguiSeleccionado();
+    const archivador = this.archivadorSeleccionado();
 
-  if (!segui) {
-    return;
-  }
+    if (!segui) {
+      return;
+    }
 
-  if (!archivador) {
-    return;
-  }
+    if (!archivador) {
+      return;
+    }
 
-  const result = await Swal.fire({
+    const result = await Swal.fire({
 
-    title: 'Archivar Hoja de Ruta',
+      title: 'Archivar Hoja de Ruta',
 
-    html: `
+      html: `
       <div class="text-left">
 
         <div class="flex items-center gap-3 p-3 rounded-lg
@@ -1092,99 +1115,99 @@ export class Oficina {
       </div>
     `,
 
-    showCancelButton: true,
+      showCancelButton: true,
 
-    confirmButtonText: 'Archivar',
-    cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Archivar',
+      cancelButtonText: 'Cancelar',
 
-    confirmButtonColor: '#f59e0b',
+      confirmButtonColor: '#f59e0b',
 
-    focusConfirm: false,
+      focusConfirm: false,
 
-    preConfirm: () => {
+      preConfirm: () => {
 
-      const mensaje = (
-        document.getElementById(
-          'mensajeArchivado'
-        ) as HTMLTextAreaElement
-      )?.value.trim();
+        const mensaje = (
+          document.getElementById(
+            'mensajeArchivado'
+          ) as HTMLTextAreaElement
+        )?.value.trim();
 
-      if (!mensaje) {
+        if (!mensaje) {
 
-        Swal.showValidationMessage(
-          'Ingrese un mensaje u observación'
-        );
+          Swal.showValidationMessage(
+            'Ingrese un mensaje u observación'
+          );
 
-        return false;
-      }
+          return false;
+        }
 
-      return {
-        mensaje,
-      };
-    },
-
-  });
-
-  if (!result.isConfirmed) {
-    return;
-  }
-
-  const mensaje = result.value.mensaje;
-
-  console.log('Archivar:', {
-    seguimiento: segui._id,
-    archivador: archivador._id,
-    mensaje,
-  });
-
-
-  // LLAMAR AL BACKEND
-
-  this.seguimientosService
-    .archivarSeguimiento(
-      segui._id!,
-      archivador._id,
-      mensaje
-    )
-    .subscribe({
-
-      next: (response) => {
-
-        console.log(
-          'Seguimiento archivado:',
-          response
-        );
-
-        Swal.fire({
-          icon: 'success',
-          title: 'Archivado correctamente',
-          text: `La Hoja de Ruta fue archivada en "${archivador.nombre}"`,
-          timer: 1800,
-          showConfirmButton: false,
-        });
-
-        this.closeModalArchivar();
-
-      },
-
-      error: (error) => {
-
-        console.error(
-          'Error al archivar:',
-          error
-        );
-
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text:
-            error?.error?.message ??
-            'No se pudo archivar la Hoja de Ruta',
-        });
-
+        return {
+          mensaje,
+        };
       },
 
     });
-}
+
+    if (!result.isConfirmed) {
+      return;
+    }
+
+    const mensaje = result.value.mensaje;
+
+    console.log('Archivar:', {
+      seguimiento: segui._id,
+      archivador: archivador._id,
+      mensaje,
+    });
+
+
+    // LLAMAR AL BACKEND
+
+    this.seguimientosService
+      .archivarSeguimiento(
+        segui._id!,
+        archivador._id,
+        mensaje
+      )
+      .subscribe({
+
+        next: (response) => {
+
+          console.log(
+            'Seguimiento archivado:',
+            response
+          );
+
+          Swal.fire({
+            icon: 'success',
+            title: 'Archivado correctamente',
+            text: `La Hoja de Ruta fue archivada en "${archivador.nombre}"`,
+            timer: 1800,
+            showConfirmButton: false,
+          });
+
+          this.closeModalArchivar();
+
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Error al archivar:',
+            error
+          );
+
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text:
+              error?.error?.message ??
+              'No se pudo archivar la Hoja de Ruta',
+          });
+
+        },
+
+      });
+  }
 
 }
