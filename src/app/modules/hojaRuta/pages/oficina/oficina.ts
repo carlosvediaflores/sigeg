@@ -104,7 +104,7 @@ export class Oficina {
 
   usersResource = rxResource({
     stream: () => this.userService.getUsers({ limit: 1000 })
-      .pipe(tap((resp) => console.log('Users', resp))),
+      //.pipe(tap((resp) => console.log('Users', resp))),
   });
 
   currentPage = toSignal(
@@ -149,7 +149,7 @@ export class Oficina {
           })
         )
       )
-        .pipe(tap((resp) => console.log('Seguimientos', resp))),
+        //.pipe(tap((resp) => console.log('Seguimientos', resp))),
   });
 
   seguimientosResourceCount = rxResource({
@@ -169,7 +169,7 @@ export class Oficina {
           })
         )
       )
-        .pipe(tap((resp) => console.log('Seguimientos2', resp))),
+        //.pipe(tap((resp) => console.log('Seguimientos2', resp))),
   });
 
   selectedSeguiResource = rxResource({
@@ -424,7 +424,7 @@ export class Oficina {
 
   orgsResource = rxResource({
     stream: () => this.orgService.getOrgs()
-      .pipe(tap((resp) => console.log('orgs', resp))),
+      //.pipe(tap((resp) => console.log('orgs', resp))),
   });
 
   onOrgChange(event: Event) {

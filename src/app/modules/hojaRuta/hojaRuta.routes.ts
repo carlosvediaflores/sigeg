@@ -5,6 +5,7 @@ import { Dasboard } from "./dasboard/dasboard";
 import { HojaRuta } from "./pages/hoja-ruta/hoja-ruta";
 import { NewSeguimiento } from "./pages/new-seguimiento/new-seguimiento";
 import { Oficina } from "./pages/oficina/oficina";
+import { Archivados } from "./pages/archivados/archivados";
 
 export const hojaRutaRoutes: Routes = [
   {
@@ -18,6 +19,8 @@ export const hojaRutaRoutes: Routes = [
       },
 
      {path: 'oficina', component: Oficina, },
+
+     {path: 'archivados', component: Archivados, },
 
     /*  {path: 'roles-list', component: RolesList, }, */
 

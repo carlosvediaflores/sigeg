@@ -6,7 +6,7 @@ import { ArchivadosResponse } from '../../interfaces/hojaRuta';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { rxResource, toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { combineLatest, debounceTime, map, startWith, switchMap } from 'rxjs';
+import { combineLatest, debounceTime, map, startWith, switchMap, tap } from 'rxjs';
 import { AuthService } from '@auth/services/auth.service';
 
 const baseUrl = environment.baseUrl;
@@ -49,16 +49,16 @@ export class Archivados {
     }
   );
 
-  gacetaPerPage = signal(20);
+  archivadosPerPage = signal(20);
   currentPage$ = toObservable(this.currentPage);
 
-  gacetaPerPage$ = toObservable(this.gacetaPerPage);
+  archivadosPerPage$ = toObservable(this.archivadosPerPage);
 
-  gacetaResource = rxResource({
+  archivadosResource = rxResource({
     stream: () =>
       combineLatest([
         this.currentPage$,
-        this.gacetaPerPage$,
+        this.archivadosPerPage$,
         this.searchFormArchivados$,
       ]).pipe(
 
@@ -67,7 +67,9 @@ export class Archivados {
             offset: (page - 1) * limit,
             limit,
              ...filters,
-          });
+          })
+          .pipe(tap((resp) => console.log('Arch', resp)),
+          );
         })
       )
   });
@@ -75,10 +77,9 @@ export class Archivados {
    searchFormArchivados = this.fb.group({
     nombre: [''],
     descripcion: [''],
-    destinoUser: [this.user()?._id ?? ''],
-    idUnidadOrgDest: [this.user()?.idUnidadOrg?._id ?? ''],
-    idUnidadFuncDest: [this.user()?.idUnidadFuncional?._id ?? ''],
-    idSubUnidadDest: [this.user()?.idSubUnidad?._id ?? ''],
+    idUnidadOrg: [this.user()?.idUnidadOrg?._id ?? ''],
+    idUnidadFuncional: [this.user()?.idUnidadFuncional?._id ?? ''],
+    idSubUnidad: [this.user()?.idSubUnidad?._id ?? ''],
   });
 
    searchFormArchivados$ = this.searchFormArchivados.valueChanges.pipe(

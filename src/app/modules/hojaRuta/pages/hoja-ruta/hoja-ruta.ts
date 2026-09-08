@@ -553,8 +553,6 @@ export class HojaRuta {
     origenUser: ['', Validators.required],
     destinoUser: ['', Validators.required],
 
-    archivosOficina: [[]],
-    carpetasOficina: [[]],
   });
 
   orgsResource = rxResource({

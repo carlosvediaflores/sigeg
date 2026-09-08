@@ -148,6 +148,6 @@ export class SeguimientosService {
         value !== null && value !== undefined && value !== ''
       )
     );
-    return this.http.get<ArchivadosResponse>(`${baseUrl}/seguimientos/archivados`, { params });
+    return this.http.get<ArchivadosResponse>(`${baseUrl}/seguimientos/archivados/all`, { params });
   }
 }
