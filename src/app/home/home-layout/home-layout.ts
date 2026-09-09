@@ -4,10 +4,11 @@ import { AuthService } from '@auth/services/auth.service';
 import { HomeNavbar } from '../components/home-navbar/home-navbar';
 import { Topbar } from '../components/topbar/topbar';
 import { Footer } from '../components/footer/footer';
+import { HomeNavGamb } from '../components/home-nav-gamb/home-nav-gamb';
 
 @Component({
   selector: 'app-home-layout',
-  imports: [ RouterOutlet, HomeNavbar, Topbar, Footer],
+  imports: [ RouterOutlet, HomeNavbar, Topbar, Footer, HomeNavGamb],
   templateUrl: './home-layout.html',
   styleUrl: './home-layout.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

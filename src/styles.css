@@ -8,6 +8,10 @@
 @plugin "daisyui" {
   themes: dark --default, dark, corporate;
 }
+
+/* @plugin "daisyui" {
+  themes: garden --default, dark, corporate;
+} */
 /* @plugin "daisyui" {
   themes: sunset --default, dark, corporate;
 } */

@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { HeroSlider } from '../../components/heroSlider/heroSlider';
 import { BuscarTramite } from '../buscarTramite/buscarTramite';
+import { Slidergamb } from "../../components/slidergamb/slidergamb";
 
 @Component({
   selector: 'app-home-page',
-  imports: [HeroSlider, BuscarTramite ],
+  imports: [HeroSlider, BuscarTramite, Slidergamb],
   templateUrl: './home-page.html',
   styleUrl: './home-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

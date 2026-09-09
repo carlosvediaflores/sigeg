@@ -18,6 +18,7 @@ export const homeRoutes: Routes = [
         path: '',
         component: HomePage,
       },
+      
       {
         path: 'miTramite',
         component: BuscarTramite,
