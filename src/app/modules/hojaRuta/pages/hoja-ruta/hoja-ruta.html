@@ -85,7 +85,7 @@
             Limpiar
         </button>
 
-        <button class="btn btn-info text-cyan-50 p-1 " (click)="openNewModal()">
+        <button class="btn btn-sm btn-info text-cyan-50 p-1 " (click)="openNewModal()">
             + Registrar Nuevo
         </button>
     </div>
@@ -164,8 +164,8 @@
                         @switch (hr.estado) {
 
                         @case ('REGISTRADO') {
-                        <button class="btn btn-xs btn-warning" (click)="changeStatus(hr)">
-                            REGISTRADO
+                        <button class="btn btn-xs btn-secondary" (click)="changeStatus(hr)">
+                            SIN RECIBIR
                         </button>
                         }
 
@@ -235,7 +235,7 @@
 
                         }
 
-                        @if (hr.estado != 'RECIBIDO') {
+                        @if (hr.estado === 'ENVIADO' ) {
 
                         <a (click)="openNewModalSeg(hr)" class="btn btn-ghost text-accent btn-xs lg:tooltip"
                             data-tip="Derivar Copia">
