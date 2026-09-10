@@ -104,7 +104,7 @@ export class Oficina {
 
   usersResource = rxResource({
     stream: () => this.userService.getUsers({ limit: 1000 })
-      //.pipe(tap((resp) => console.log('Users', resp))),
+    //.pipe(tap((resp) => console.log('Users', resp))),
   });
 
   currentPage = toSignal(
@@ -149,7 +149,7 @@ export class Oficina {
           })
         )
       )
-        //.pipe(tap((resp) => console.log('Seguimientos', resp))),
+    //.pipe(tap((resp) => console.log('Seguimientos', resp))),
   });
 
   seguimientosResourceCount = rxResource({
@@ -169,7 +169,7 @@ export class Oficina {
           })
         )
       )
-        //.pipe(tap((resp) => console.log('Seguimientos2', resp))),
+    //.pipe(tap((resp) => console.log('Seguimientos2', resp))),
   });
 
   selectedSeguiResource = rxResource({
@@ -424,7 +424,7 @@ export class Oficina {
 
   orgsResource = rxResource({
     stream: () => this.orgService.getOrgs()
-      //.pipe(tap((resp) => console.log('orgs', resp))),
+    //.pipe(tap((resp) => console.log('orgs', resp))),
   });
 
   onOrgChange(event: Event) {
@@ -793,7 +793,11 @@ export class Oficina {
 
   toggleSeleccion(segui: Seguimiento) {
 
+    console.log('Toggling selection for', segui);
+
     const lista = this.selectedSeguimientos();
+
+    console.log('Current selected list', lista);
 
     const existe = lista.some(
       x => x._id === segui._id
@@ -801,6 +805,7 @@ export class Oficina {
 
 
     if (existe) {
+      console.log('Segui already selected, removing it');
 
       this.selectedSeguimientos.set(
         lista.filter(
@@ -809,6 +814,7 @@ export class Oficina {
       );
 
     } else {
+      console.log('Segui not selected, adding it');
 
       this.selectedSeguimientos.set([
         ...lista,
@@ -878,7 +884,7 @@ export class Oficina {
 
 
   }
- 
+
   showModalArchivar = signal(false);
 
   archivadores = signal<HrArchivado[]>([]);
