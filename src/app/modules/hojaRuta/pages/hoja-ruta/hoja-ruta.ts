@@ -907,4 +907,22 @@ export class HojaRuta {
       });
 
   }
+
+  printAsociados(hr: HojaRutaSimple) {
+
+    this.hojaRutaService.printAsociados(hr._id)
+      .subscribe(blob => {
+
+        const url = window.URL.createObjectURL(blob);
+
+        window.open(url, '_blank');
+
+        // Liberar memoria después de unos segundos
+        setTimeout(() => {
+          window.URL.revokeObjectURL(url);
+        }, 1000);
+
+      });
+
+  }
 }

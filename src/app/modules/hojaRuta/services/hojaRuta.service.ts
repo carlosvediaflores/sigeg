@@ -118,4 +118,10 @@ export class HojaRutaService {
       responseType: 'blob',
     });
   }
+
+  printAsociados(id: string) {
+    return this.http.get(`${baseUrl}/hojarutas/printAsociados/${id}`, {
+      responseType: 'blob',
+    });
+  }
 }

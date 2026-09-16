@@ -188,7 +188,7 @@
                             ENVIADO
                         </span>
                         @if(hr.asociados && hr.asociados.length > 0) {
-                        <a (click)="anularEnvio(hr)" class="btn btn-ghost text-amber-600 btn-xs lg:tooltip"
+                        <a (click)="printAsociados(hr)" class="btn btn-ghost text-amber-600 btn-xs lg:tooltip"
                             data-tip="Ver Asociados">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                 class="size-6">
@@ -220,7 +220,7 @@
                         <span class="badge badge-sm badge-neutral">
                             ASOCIADO
                         </span>
-                        <a (click)="anularEnvio(hr)" class="btn btn-ghost text-amber-600 btn-xs lg:tooltip"
+                        <a (click)="printAsociados(hr)" class="btn btn-ghost text-amber-600 btn-xs lg:tooltip"
                             data-tip="Ver Asociados">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                 class="size-6">
