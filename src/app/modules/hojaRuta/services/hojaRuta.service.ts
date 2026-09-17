@@ -120,8 +120,12 @@ export class HojaRutaService {
   }
 
   printAsociados(id: string) {
-    return this.http.get(`${baseUrl}/hojarutas/printAsociados/${id}`, {
+
+  return this.http.get(
+    `${baseUrl}/hojarutas/printAsociados/${id}`,
+    {
       responseType: 'blob',
-    });
-  }
+    },
+  );
+}
 }

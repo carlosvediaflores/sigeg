@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal, ViewChild } from '@angular/core';
 import { toSignal, toObservable, rxResource } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -13,6 +13,7 @@ import { HojaRutaSimple, HrArchivado, Seguimiento } from '../../interfaces/hojaR
 import Swal from 'sweetalert2';
 import { AuthService } from '@auth/services/auth.service';
 import { OrgService } from '../../../organizacion/services/org.service';
+import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-oficina',
@@ -70,6 +71,19 @@ export class Oficina {
   bloquearPagina = computed(() =>
     this.totalPendientesRecepcion() > 0
   );
+
+   @ViewChild('modalPdfAsociados')
+modalPdfAsociados!: ElementRef<HTMLDialogElement>;
+
+pdfAsociadosUrl = signal<SafeResourceUrl | null>(null);
+pdfAsociadosLoading = signal(false);
+
+private pdfAsociadosBlobUrl: string | null = null;
+
+ constructor(
+    private sanitizer: DomSanitizer,
+  ) {
+  }
   searchFormSegui = this.fb.group({
     gestion: [this.year],
     termino: [''],
@@ -1214,6 +1228,158 @@ export class Oficina {
         },
 
       });
+  }
+
+  printHojaRuta(hr: HojaRutaSimple) {
+  
+      this.hojaRutaService.printHojaRuta(hr._id)
+        .subscribe(blob => {
+  
+          const url = window.URL.createObjectURL(blob);
+  
+          window.open(url, '_blank');
+  
+          // Liberar memoria después de unos segundos
+          setTimeout(() => {
+            window.URL.revokeObjectURL(url);
+          }, 1000);
+  
+        });
+  
+    }
+  
+   printAsociados(hr: HojaRutaSimple) {
+  
+    // --------------------------------------------------
+    // Limpiar PDF anterior
+    // --------------------------------------------------
+    this.limpiarPdfAsociados();
+  
+    // --------------------------------------------------
+    // Mostrar loading
+    // --------------------------------------------------
+    this.pdfAsociadosLoading.set(true);
+  
+    // --------------------------------------------------
+    // Abrir modal
+    // --------------------------------------------------
+    const modal = this.modalPdfAsociados?.nativeElement;
+  
+    if (!modal) {
+      console.error('No se encontró el modal de asociados');
+      return;
+    }
+  
+    modal.showModal();
+  
+    // --------------------------------------------------
+    // Generar PDF
+    // --------------------------------------------------
+    this.hojaRutaService
+      .printAsociados(hr._id)
+      .subscribe({
+        next: (blob: Blob) => {
+  
+          console.log('PDF recibido:', blob);
+          console.log('Tamaño PDF:', blob.size);
+  
+          if (!blob || blob.size === 0) {
+            console.error('El PDF está vacío');
+  
+            this.pdfAsociadosLoading.set(false);
+  
+            Swal.fire(
+              'Error',
+              'El PDF generado está vacío.',
+              'error'
+            );
+  
+            this.closeModalPdfAsociados();
+  
+            return;
+          }
+  
+          // ------------------------------------------------
+          // Crear URL temporal
+          // ------------------------------------------------
+          this.pdfAsociadosBlobUrl =
+            window.URL.createObjectURL(blob);
+  
+          console.log(
+            'URL PDF:',
+            this.pdfAsociadosBlobUrl
+          );
+  
+          // ------------------------------------------------
+          // Sanitizar URL
+          // ------------------------------------------------
+          const safeUrl =
+            this.sanitizer.bypassSecurityTrustResourceUrl(
+              this.pdfAsociadosBlobUrl
+            );
+  
+          // ------------------------------------------------
+          // Actualizar signal
+          // ------------------------------------------------
+          this.pdfAsociadosUrl.set(safeUrl);
+  
+          // ------------------------------------------------
+          // Ocultar loading
+          // ------------------------------------------------
+          this.pdfAsociadosLoading.set(false);
+        },
+  
+        error: (error) => {
+  
+          console.error(
+            'Error al generar PDF de asociados:',
+            error
+          );
+  
+          this.pdfAsociadosLoading.set(false);
+  
+          Swal.fire(
+            'Error',
+            error?.error?.message ??
+            'No se pudo generar el PDF de las hojas de ruta asociadas.',
+            'error'
+          );
+  
+          this.closeModalPdfAsociados();
+        }
+      });
+  }
+   closeModalPdfAsociados() {
+  
+    // --------------------------------------------------
+    // Cerrar modal
+    // --------------------------------------------------
+    if (this.modalPdfAsociados?.nativeElement) {
+      this.modalPdfAsociados.nativeElement.close();
+    }
+  
+    // --------------------------------------------------
+    // Limpiar PDF
+    // --------------------------------------------------
+    this.limpiarPdfAsociados();
+  }
+    private limpiarPdfAsociados() {
+  
+    // Quitar URL del iframe
+    this.pdfAsociadosUrl.set(null);
+  
+    // Ocultar loading
+    this.pdfAsociadosLoading.set(false);
+  
+    // Liberar Blob URL
+    if (this.pdfAsociadosBlobUrl) {
+  
+      window.URL.revokeObjectURL(
+        this.pdfAsociadosBlobUrl
+      );
+  
+      this.pdfAsociadosBlobUrl = null;
+    }
   }
 
 }
