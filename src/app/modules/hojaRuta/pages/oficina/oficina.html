@@ -467,6 +467,25 @@
                         <span class="badge badge-sm badge-success">
                             RECIBIDO
                         </span>
+                        @if(segui.idHojaRuta.asociados && segui.idHojaRuta.asociados.length > 0) {
+
+                        <a (click)="printAsociados(segui.idHojaRuta)"
+                            class="btn btn-ghost text-amber-600 btn-xs lg:tooltip" data-tip="Ver Asociados">
+
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                class="size-5 p-0">
+                                <path fill-rule="evenodd"
+                                    d="M7.502 6h7.128A3.375 3.375 0 0 1 18 9.375v9.375a3 3 0 0 0 3-3V6.108c0-1.505-1.125-2.811-2.664-2.94a48.972 48.972 0 0 0-.673-.05A3 3 0 0 0 15 1.5h-1.5a3 3 0 0 0-2.663 1.618c-.225.015-.45.032-.673.05C8.662 3.295 7.554 4.542 7.502 6ZM13.5 3A1.5 1.5 0 0 0 12 4.5h4.5A1.5 1.5 0 0 0 15 3h-1.5Z"
+                                    clip-rule="evenodd" />
+
+                                <path fill-rule="evenodd"
+                                    d="M3 9.375C3 8.339 3.84 7.5 4.875 7.5h9.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-9.75A1.875 1.875 0 0 1 3 20.625V9.375ZM6 12a.75.75 0 0 1 .75-.75h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H6.75a.75.75 0 0 1-.75-.75V12Zm2.25 0a.75.75 0 0 1 .75-.75h3.75a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75ZM6 15a.75.75 0 0 1 .75-.75h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H6.75a.75.75 0 0 1-.75-.75V15Zm2.25 0a.75.75 0 0 1 .75-.75h3.75a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75ZM6 18a.75.75 0 0 1 .75-.75h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H6.75a.75.75 0 0 1-.75-.75V18Zm2.25 0a.75.75 0 0 1 .75-.75h3.75a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75Z"
+                                    clip-rule="evenodd" />
+                            </svg>
+
+                        </a>
+
+                        }
                         }
 
                         @case ('DERIVADO') {
@@ -518,249 +537,128 @@
 
                     </td>
                     <th>
-                        <div class="flex ">
-
+                        <div class=" text-center">
                             @if (segui.estado === 'RECIBIDO') {
-
-                            <a (click)="openNewModalSeg(segui, false)"
-                                class="btn btn-ghost text-accent btn-xs lg:tooltip" data-tip="Derivar">
+                            <button (click)="openNewModalSeg(segui, false)" class="btn btn-xs  text-accent p-0">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-6">
+                                    stroke-width="1.5" stroke="currentColor" class="size-5">
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
                                 </svg>
-                            </a>
+                                Derivar
+                            </button>
+
+                            <button (click)="openModalArchivar(segui)" class="btn btn-xs  text-amber-500 p-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                    class="size-5 ">
+                                    <path
+                                        d="M3.375 3C2.339 3 1.5 3.84 1.5 4.875v.75c0 1.036.84 1.875 1.875 1.875h17.25c1.035 0 1.875-.84 1.875-1.875v-.75C22.5 3.839 21.66 3 20.625 3H3.375Z" />
+                                    <path fill-rule="evenodd"
+                                        d="m3.087 9 .54 9.176A3 3 0 0 0 6.62 21h10.757a3 3 0 0 0 2.995-2.824L20.913 9H3.087Zm6.163 3.75A.75.75 0 0 1 10 12h4a.75.75 0 0 1 0 1.5h-4a.75.75 0 0 1-.75-.75Z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                Archivar
+                            </button>
+
+                             @if(segui.idHojaRuta.asociados && segui.idHojaRuta.asociados.length > 0) {
+                            <button type="button" class="btn  text-fuchsia-500 btn-xs p-0 ">
+
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                    class="size-5">
+                                    <path fill-rule="evenodd"
+                                        d="M12 1.5c-1.921 0-3.816.111-5.68.327-1.497.174-2.57 1.46-2.57 2.93V21.75a.75.75 0 0 0 1.029.696l3.471-1.388 3.472 1.388a.75.75 0 0 0 .556 0l3.472-1.388 3.471 1.388a.75.75 0 0 0 1.029-.696V4.757c0-1.47-1.073-2.756-2.57-2.93A49.255 49.255 0 0 0 12 1.5Zm-.97 6.53a.75.75 0 1 0-1.06-1.06L7.72 9.22a.75.75 0 0 0 0 1.06l2.25 2.25a.75.75 0 1 0 1.06-1.06l-.97-.97h3.065a1.875 1.875 0 0 1 0 3.75H12a.75.75 0 0 0 0 1.5h1.125a3.375 3.375 0 1 0 0-6.75h-3.064l.97-.97Z"
+                                        clip-rule="evenodd" />
+                                </svg>
+
+
+                                Desasociar
+                            </button>
+                            }
                             }
 
-                            <div class="dropdown dropdown-end">
+                            <!-- DERIVAR COPIA -->
+                            @if (segui.estado === 'DERIVADO') {
+                            <button class="btn btn-xs text-cyan-300 p-0" (click)="openNewModalSeg(segui, true)">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                    class="size-5">
 
-                                <!-- BOTÓN 3 PUNTOS -->
-                                <button tabindex="0" type="button" class="btn btn-ghost btn-sm btn-square"
-                                    title="Acciones">
+                                    <path fill-rule="evenodd"
+                                        d="M7.5 3.75A1.5 1.5 0 0 0 6 5.25v13.5a1.5 1.5 0 0 0 1.5 1.5h6a1.5 1.5 0 0 0 1.5-1.5V15a.75.75 0 0 1 1.5 0v3.75a3 3 0 0 1-3 3h-6a3 3 0 0 1-3-3V5.25a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3V9A.75.75 0 0 1 15 9V5.25a1.5 1.5 0 0 0-1.5-1.5h-6Zm10.72 4.72a.75.75 0 0 1 1.06 0l3 3a.75.75 0 0 1 0 1.06l-3 3a.75.75 0 1 1-1.06-1.06l1.72-1.72H9a.75.75 0 0 1 0-1.5h10.94l-1.72-1.72a.75.75 0 0 1 0-1.06Z"
+                                        clip-rule="evenodd" />
 
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="2" stroke="currentColor" class="size-6 text-red-500">
+                                </svg>
+                                Derivar copia
+                            </button>
+                            <!-- ANULAR -->
 
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M12 6.75h.007v.008H12V6.75Zm0 5.25h.007v.008H12V12Zm0 5.25h.007v.008H12v-.008Z" />
+                            <button class="btn btn-xs text-error p-0" (click)="anularEnvio(segui)">
 
-                                    </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="size-5">
 
-                                </button>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
 
+                                </svg>
 
-                                <!-- MENÚ -->
-                                <ul tabindex="0" class="dropdown-content menu
-                                bg-base-100
-                                rounded-box
-                                z-50
-                                w-52
-                                p-2
-                                shadow-xl
-                                border border-base-300">
+                                Anular envío
 
+                            </button>
+                            }
 
-                                    <!-- ARCHIVAR -->
-                                    @if (segui.estado === 'RECIBIDO') {
-                                    <li>
-                                        <a (click)="openModalArchivar(segui)">
+                            <!-- ARCHIVADO -->
+                            @if (segui.estado === 'ARCHIVADO') {
 
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                                                fill="currentColor" class="size-5 text-amber-500">
-                                                <path
-                                                    d="M3.375 3C2.339 3 1.5 3.84 1.5 4.875v.75c0 1.036.84 1.875 1.875 1.875h17.25c1.035 0 1.875-.84 1.875-1.875v-.75C22.5 3.839 21.66 3 20.625 3H3.375Z" />
-                                                <path fill-rule="evenodd"
-                                                    d="m3.087 9 .54 9.176A3 3 0 0 0 6.62 21h10.757a3 3 0 0 0 2.995-2.824L20.913 9H3.087Zm6.163 3.75A.75.75 0 0 1 10 12h4a.75.75 0 0 1 0 1.5h-4a.75.75 0 0 1-.75-.75Z"
-                                                    clip-rule="evenodd" />
-                                            </svg>
+                            <button type="button" class="btn btn-xs text-secondary p-0" (click)="desarchivar(segui)">
 
-                                            Archivar
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                    class="size-5">
+                                    <path d="M2 3a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H2Z" />
+                                    <path fill-rule="evenodd"
+                                        d="M2 7.5h16l-.811 7.71a2 2 0 0 1-1.99 1.79H4.802a2 2 0 0 1-1.99-1.79L2 7.5Zm5.22 1.72a.75.75 0 0 1 1.06 0L10 10.94l1.72-1.72a.75.75 0 1 1 1.06 1.06L11.06 12l1.72 1.72a.75.75 0 1 1-1.06 1.06L10 13.06l-1.72 1.72a.75.75 0 0 1-1.06-1.06L8.94 12l-1.72-1.72a.75.75 0 0 1 0-1.06Z"
+                                        clip-rule="evenodd" />
+                                </svg>
 
-                                        </a>
-                                    </li>
+                                Desarchivar
 
-                                    @if(segui.idHojaRuta.asociados && segui.idHojaRuta.asociados.length > 0) {
-                                    <li>
-                                        <a (click)="printAsociados(segui.idHojaRuta)"
-                                            class="btn btn-ghost text-amber-600 btn-xs lg:tooltip"
-                                            data-tip="Ver Asociados">
+                            </button>
+                            }
 
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                                                fill="currentColor" class="size-6">
-                                                <path fill-rule="evenodd"
-                                                    d="M7.502 6h7.128A3.375 3.375 0 0 1 18 9.375v9.375a3 3 0 0 0 3-3V6.108c0-1.505-1.125-2.811-2.664-2.94a48.972 48.972 0 0 0-.673-.05A3 3 0 0 0 15 1.5h-1.5a3 3 0 0 0-2.663 1.618c-.225.015-.45.032-.673.05C8.662 3.295 7.554 4.542 7.502 6ZM13.5 3A1.5 1.5 0 0 0 12 4.5h4.5A1.5 1.5 0 0 0 15 3h-1.5Z"
-                                                    clip-rule="evenodd" />
-
-                                                <path fill-rule="evenodd"
-                                                    d="M3 9.375C3 8.339 3.84 7.5 4.875 7.5h9.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-9.75A1.875 1.875 0 0 1 3 20.625V9.375ZM6 12a.75.75 0 0 1 .75-.75h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H6.75a.75.75 0 0 1-.75-.75V12Zm2.25 0a.75.75 0 0 1 .75-.75h3.75a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75ZM6 15a.75.75 0 0 1 .75-.75h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H6.75a.75.75 0 0 1-.75-.75V15Zm2.25 0a.75.75 0 0 1 .75-.75h3.75a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75ZM6 18a.75.75 0 0 1 .75-.75h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H6.75a.75.75 0 0 1-.75-.75V18Zm2.25 0a.75.75 0 0 1 .75-.75h3.75a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75Z"
-                                                    clip-rule="evenodd" />
-                                            </svg>
-
-                                        </a>
-                                    </li>
-                                    }
-                                    }
+                            <!-- ASOCIADOS -->
+                            @if (segui.estado === 'ASOCIADO') {
 
 
+                            <button type="button" (click)="printAsociados(segui.idHojaRuta)"
+                                class="btn  text-amber-300 btn-xs p-0 ">
+
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                    class="size-5">
+                                    <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+                                    <path fill-rule="evenodd"
+                                        d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 0 1 0-1.113ZM17.25 12a5.25 5.25 0 1 1-10.5 0 5.25 5.25 0 0 1 10.5 0Z"
+                                        clip-rule="evenodd" />
+                                </svg>
+
+                                Asociados
+                            </button>
+
+                            <button type="button" class="btn  text-fuchsia-500 btn-xs p-0 ">
+
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                    class="size-5">
+                                    <path fill-rule="evenodd"
+                                        d="M12 1.5c-1.921 0-3.816.111-5.68.327-1.497.174-2.57 1.46-2.57 2.93V21.75a.75.75 0 0 0 1.029.696l3.471-1.388 3.472 1.388a.75.75 0 0 0 .556 0l3.472-1.388 3.471 1.388a.75.75 0 0 0 1.029-.696V4.757c0-1.47-1.073-2.756-2.57-2.93A49.255 49.255 0 0 0 12 1.5Zm-.97 6.53a.75.75 0 1 0-1.06-1.06L7.72 9.22a.75.75 0 0 0 0 1.06l2.25 2.25a.75.75 0 1 0 1.06-1.06l-.97-.97h3.065a1.875 1.875 0 0 1 0 3.75H12a.75.75 0 0 0 0 1.5h1.125a3.375 3.375 0 1 0 0-6.75h-3.064l.97-.97Z"
+                                        clip-rule="evenodd" />
+                                </svg>
 
 
+                                Desasociar
+                            </button>
 
-                                    <!-- DERIVAR COPIA -->
-                                    @if (segui.estado === 'DERIVADO') {
+                            }
 
-                                    <li>
-                                        <a class="text-cyan-300" (click)="openNewModalSeg(segui, true)">
-
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                                                fill="currentColor" class="size-5">
-
-                                                <path fill-rule="evenodd"
-                                                    d="M7.5 3.75A1.5 1.5 0 0 0 6 5.25v13.5a1.5 1.5 0 0 0 1.5 1.5h6a1.5 1.5 0 0 0 1.5-1.5V15a.75.75 0 0 1 1.5 0v3.75a3 3 0 0 1-3 3h-6a3 3 0 0 1-3-3V5.25a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3V9A.75.75 0 0 1 15 9V5.25a1.5 1.5 0 0 0-1.5-1.5h-6Zm10.72 4.72a.75.75 0 0 1 1.06 0l3 3a.75.75 0 0 1 0 1.06l-3 3a.75.75 0 1 1-1.06-1.06l1.72-1.72H9a.75.75 0 0 1 0-1.5h10.94l-1.72-1.72a.75.75 0 0 1 0-1.06Z"
-                                                    clip-rule="evenodd" />
-
-                                            </svg>
-
-                                            Derivar copia
-
-                                        </a>
-                                    </li>
-
-
-
-                                    <!-- ANULAR -->
-                                    <li>
-                                        <a class="text-error" (click)="anularEnvio(segui)">
-
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-5">
-
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M6 18 18 6M6 6l12 12" />
-
-                                            </svg>
-
-                                            Anular envío
-
-                                        </a>
-                                    </li>
-
-
-                                    }
-
-                                    <!-- ASOCIADOS -->
-                                    @if (segui.estado === 'ASOCIADO') {
-
-                                    <li>
-                                        <a (click)="printAsociados(segui.idHojaRuta)"
-                                            class="btn btn-ghost text-amber-600 btn-xs lg:tooltip"
-                                            data-tip="Ver Asociados">
-
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                                                fill="currentColor" class="size-6">
-                                                <path fill-rule="evenodd"
-                                                    d="M7.502 6h7.128A3.375 3.375 0 0 1 18 9.375v9.375a3 3 0 0 0 3-3V6.108c0-1.505-1.125-2.811-2.664-2.94a48.972 48.972 0 0 0-.673-.05A3 3 0 0 0 15 1.5h-1.5a3 3 0 0 0-2.663 1.618c-.225.015-.45.032-.673.05C8.662 3.295 7.554 4.542 7.502 6ZM13.5 3A1.5 1.5 0 0 0 12 4.5h4.5A1.5 1.5 0 0 0 15 3h-1.5Z"
-                                                    clip-rule="evenodd" />
-
-                                                <path fill-rule="evenodd"
-                                                    d="M3 9.375C3 8.339 3.84 7.5 4.875 7.5h9.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-9.75A1.875 1.875 0 0 1 3 20.625V9.375ZM6 12a.75.75 0 0 1 .75-.75h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H6.75a.75.75 0 0 1-.75-.75V12Zm2.25 0a.75.75 0 0 1 .75-.75h3.75a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75ZM6 15a.75.75 0 0 1 .75-.75h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H6.75a.75.75 0 0 1-.75-.75V15Zm2.25 0a.75.75 0 0 1 .75-.75h3.75a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75ZM6 18a.75.75 0 0 1 .75-.75h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H6.75a.75.75 0 0 1-.75-.75V18Zm2.25 0a.75.75 0 0 1 .75-.75h3.75a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75Z"
-                                                    clip-rule="evenodd" />
-                                            </svg>
-
-                                        </a>
-
-                                    </li>
-                                    }
-
-
-                                    <!-- DERIVAR COPIA -->
-                                    @if (segui.estado === 'ARCHIVADO') {
-
-                                    <li>
-                                        <a class="text-accent" (click)="desarchivar(segui)">
-
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                                                fill="currentColor" class="size-5">
-                                                <path
-                                                    d="M2 3a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H2Z" />
-                                                <path fill-rule="evenodd"
-                                                    d="M2 7.5h16l-.811 7.71a2 2 0 0 1-1.99 1.79H4.802a2 2 0 0 1-1.99-1.79L2 7.5Zm5.22 1.72a.75.75 0 0 1 1.06 0L10 10.94l1.72-1.72a.75.75 0 1 1 1.06 1.06L11.06 12l1.72 1.72a.75.75 0 1 1-1.06 1.06L10 13.06l-1.72 1.72a.75.75 0 0 1-1.06-1.06L8.94 12l-1.72-1.72a.75.75 0 0 1 0-1.06Z"
-                                                    clip-rule="evenodd" />
-                                            </svg>
-
-
-                                            Desarchivar
-
-                                        </a>
-                                    </li>
-                                    }
-
-
-                                    <!-- SEPARADOR -->
-                                    <!--   <li class="menu-title">
-                                    <span>Más acciones</span>
-                                </li> -->
-
-
-                                    <!-- VER DETALLE -->
-                                    <!-- <li>
-                                    <a (click)="verDetalle(segui)">
-
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-5">
-
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M2.036 12.322a1.012 1.012 0 0 1 0-.644C3.423 7.51 7.36 4.5 12 4.5c4.64 0 8.577 3.01 9.964 7.178.08.24.08.5 0 .644C20.577 16.49 16.64 19.5 12 19.5c-4.64 0-8.577-3.01-9.964-7.178Z" />
-
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-
-                                        </svg>
-
-                                        Ver detalle
-
-                                    </a>
-                                </li> -->
-
-
-                                </ul>
-
-                            </div>
                         </div>
                     </th>
-                    <!-- <th>   
-
-                        @if (segui.estado === 'DERIVADO') {
-
-                        <a (click)="openNewModalSeg(segui, true)" class="btn btn-ghost text-accent btn-xs lg:tooltip"
-                            data-tip="Derivar Copia">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                                class="size-6">
-                                <path fill-rule="evenodd"
-                                    d="M7.5 3.75A1.5 1.5 0 0 0 6 5.25v13.5a1.5 1.5 0 0 0 1.5 1.5h6a1.5 1.5 0 0 0 1.5-1.5V15a.75.75 0 0 1 1.5 0v3.75a3 3 0 0 1-3 3h-6a3 3 0 0 1-3-3V5.25a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3V9A.75.75 0 0 1 15 9V5.25a1.5 1.5 0 0 0-1.5-1.5h-6Zm10.72 4.72a.75.75 0 0 1 1.06 0l3 3a.75.75 0 0 1 0 1.06l-3 3a.75.75 0 1 1-1.06-1.06l1.72-1.72H9a.75.75 0 0 1 0-1.5h10.94l-1.72-1.72a.75.75 0 0 1 0-1.06Z"
-                                    clip-rule="evenodd" />
-                            </svg>
-
-                        </a>
-
-
-                        }
-
-                        @if (segui.estado === 'DERIVADO') {
-
-                        <a (click)="anularEnvio(segui)" class="btn btn-ghost text-error btn-xs">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                                class="size-6">
-                                <path fill-rule="evenodd"
-                                    d="M2.515 10.674a1.875 1.875 0 0 0 0 2.652L8.89 19.7c.352.351.829.549 1.326.549H19.5a3 3 0 0 0 3-3V6.75a3 3 0 0 0-3-3h-9.284c-.497 0-.974.198-1.326.55l-6.375 6.374ZM12.53 9.22a.75.75 0 1 0-1.06 1.06L13.19 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06l1.72-1.72 1.72 1.72a.75.75 0 1 0 1.06-1.06L15.31 12l1.72-1.72a.75.75 0 1 0-1.06-1.06l-1.72 1.72-1.72-1.72Z"
-                                    clip-rule="evenodd" />
-                            </svg>
-
-
-                        </a>
-
-                        }
-
-                    </th> -->
+                    
                 </tr>
                 }
             </tbody>
@@ -1588,242 +1486,242 @@
 </dialog>
 
 @if (showModalArchivar()) {
+
 <dialog class="modal modal-open">
+
     <div class="modal-box max-w-2xl">
 
+        <!-- ================================================= -->
         <!-- HEADER -->
-        <div class="flex items-center justify-between border-b pb-3">
+        <!-- ================================================= -->
+
+        <div class="flex items-center justify-between border-b border-base-300 pb-3">
+
             <div>
+
                 <h3 class="text-lg font-bold">
                     Archivar Hoja de Ruta
                 </h3>
 
                 @if (seguiSeleccionado(); as segui) {
-                <p class="text-sm text-base-content/60 mt-1">
-                    HR N.º {{ segui.numeroHr }}
-                </p>
+
+                    <p class="text-sm text-base-content/60 mt-1">
+                        HR N.º {{ segui.numeroHr }}
+                    </p>
+
                 }
+
             </div>
 
-            <button type="button" class="btn btn-sm btn-circle btn-ghost" (click)="closeModalArchivar()">
 
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="size-5">
+            <!-- CERRAR -->
 
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+            <button
+                type="button"
+                class="btn btn-sm btn-circle btn-ghost"
+                (click)="closeModalArchivar()">
+
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-5">
+
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M6 18 18 6M6 6l12 12" />
+
                 </svg>
+
             </button>
+
         </div>
 
 
+        <!-- ================================================= -->
         <!-- CONTENIDO -->
+        <!-- ================================================= -->
+
         <div class="py-5">
 
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
 
-                @if ($any(user()?.idUnidadOrg)?.hrArchivo?.length) {
+            <!-- ================================================= -->
+            <!-- HAY ARCHIVADORES -->
+            <!-- ================================================= -->
 
-                @for (archivo of archivadores(); track archivo._id) {
+            @if (archivadores().length > 0) {
 
-                <button type="button" class="group rounded-xl border border-base-300
-                    bg-base-200/40
-                    hover:bg-base-200
-                    hover:border-amber-500
-                    transition-all duration-200
-                    text-left
-                    overflow-hidden" (click)="seleccionarArchivador(archivo)">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
 
-                    <div class="flex justify-center pt-5 pb-3">
+                    @for (
+                        archivo of archivadores();
+                        track archivo._id
+                    ) {
 
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-16 text-amber-500
-                       group-hover:text-amber-400
-                       group-hover:scale-105
-                       transition-all">
+                        <button
+                            type="button"
+                            class="
+                                group
+                                rounded-xl
+                                border
+                                border-base-300
+                                bg-base-200/40
+                                hover:bg-base-200
+                                hover:border-amber-500
+                                transition-all
+                                duration-200
+                                text-left
+                                overflow-hidden
+                            "
+                            (click)="seleccionarArchivador(archivo)">
 
-                            <path
-                                d="M19.5 6.75h-7.379a.75.75 0 0 1-.53-.22l-1.342-1.341A2.25 2.25 0 0 0 8.659 4.5H4.5A2.25 2.25 0 0 0 2.25 6.75v10.5A2.25 2.25 0 0 0 4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25v-8.25a2.25 2.25 0 0 0-2.25-2.25Z" />
 
-                        </svg>
+                            <!-- ICONO -->
 
-                    </div>
+                            <div class="flex justify-center pt-5 pb-3">
 
-                    <div class="px-4 pb-4">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    fill="currentColor"
+                                    class="
+                                        size-16
+                                        text-amber-500
+                                        group-hover:text-amber-400
+                                        group-hover:scale-105
+                                        transition-all
+                                    ">
 
-                        <h4 class="font-semibold text-base truncate">
-                            {{ archivo.nombre }}
-                        </h4>
+                                    <path
+                                        d="M19.5 6.75h-7.379a.75.75 0 0 1-.53-.22l-1.342-1.341A2.25 2.25 0 0 0 8.659 4.5H4.5A2.25 2.25 0 0 0 2.25 6.75v10.5A2.25 2.25 0 0 0 4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25v-8.25a2.25 2.25 0 0 0-2.25-2.25Z" />
 
-                        @if (archivo.descripcion) {
+                                </svg>
 
-                        <p class="text-sm text-base-content/60 mt-1 line-clamp-2">
-                            {{ archivo.descripcion }}
-                        </p>
+                            </div>
 
-                        } @else {
 
-                        <p class="text-sm text-base-content/40 italic mt-1">
-                            Sin descripción
-                        </p>
+                            <!-- INFORMACIÓN -->
 
-                        }
+                            <div class="px-4 pb-4">
 
-                    </div>
+                                <h4 class="font-semibold text-base truncate">
+                                    {{ archivo.nombre }}
+                                </h4>
 
-                </button>
 
-                }
+                                @if (archivo.descripcion) {
 
-                }
+                                    <p class="
+                                        text-sm
+                                        text-base-content/60
+                                        mt-1
+                                        line-clamp-2
+                                    ">
+                                        {{ archivo.descripcion }}
+                                    </p>
 
+                                } @else {
 
-                @if ($any(user()?.idUnidadFuncional)?.hrArchivo?.length) {
+                                    <p class="
+                                        text-sm
+                                        text-base-content/40
+                                        italic
+                                        mt-1
+                                    ">
+                                        Sin descripción
+                                    </p>
 
-                @for (archivo of archivadores(); track archivo._id) {
+                                }
 
-                <button type="button" class="group rounded-xl border border-base-300
-               bg-base-200/40
-               hover:bg-base-200
-               hover:border-amber-500
-               transition-all duration-200
-               text-left
-               overflow-hidden" (click)="seleccionarArchivador(archivo)">
+                            </div>
 
-                    <div class="flex justify-center pt-5 pb-3">
+                        </button>
 
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-16 text-amber-500
-                       group-hover:text-amber-400
-                       group-hover:scale-105
-                       transition-all">
+                    }
 
-                            <path
-                                d="M19.5 6.75h-7.379a.75.75 0 0 1-.53-.22l-1.342-1.341A2.25 2.25 0 0 0 8.659 4.5H4.5A2.25 2.25 0 0 0 2.25 6.75v10.5A2.25 2.25 0 0 0 4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25v-8.25a2.25 2.25 0 0 0-2.25-2.25Z" />
+                </div>
 
-                        </svg>
 
-                    </div>
+            } @else {
 
-                    <div class="px-4 pb-4">
 
-                        <h4 class="font-semibold text-base truncate">
-                            {{ archivo.nombre }}
-                        </h4>
-
-                        @if (archivo.descripcion) {
-
-                        <p class="text-sm text-base-content/60 mt-1 line-clamp-2">
-                            {{ archivo.descripcion }}
-                        </p>
-
-                        } @else {
-
-                        <p class="text-sm text-base-content/40 italic mt-1">
-                            Sin descripción
-                        </p>
-
-                        }
-
-                    </div>
-
-                </button>
-
-                }
-
-                }
-
-
-                @if ($any(user()?.idSubUnidad)?.hrArchivo?.length) {
-
-                @for (archivo of archivadores(); track archivo._id) {
-
-                <button type="button" class="group rounded-xl border border-base-300
-                    bg-base-200/40
-                    hover:bg-base-200
-                    hover:border-amber-500
-                    transition-all duration-200
-                    text-left
-                    overflow-hidden" (click)="seleccionarArchivador(archivo)">
-
-                    <div class="flex justify-center pt-5 pb-3">
-
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-16 text-amber-500
-                       group-hover:text-amber-400
-                       group-hover:scale-105
-                       transition-all">
-
-                            <path
-                                d="M19.5 6.75h-7.379a.75.75 0 0 1-.53-.22l-1.342-1.341A2.25 2.25 0 0 0 8.659 4.5H4.5A2.25 2.25 0 0 0 2.25 6.75v10.5A2.25 2.25 0 0 0 4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25v-8.25a2.25 2.25 0 0 0-2.25-2.25Z" />
-
-                        </svg>
-
-                    </div>
-
-                    <div class="px-4 pb-4">
-
-                        <h4 class="font-semibold text-base truncate">
-                            {{ archivo.nombre }}
-                        </h4>
-
-                        @if (archivo.descripcion) {
-
-                        <p class="text-sm text-base-content/60 mt-1 line-clamp-2">
-                            {{ archivo.descripcion }}
-                        </p>
-
-                        } @else {
-
-                        <p class="text-sm text-base-content/40 italic mt-1">
-                            Sin descripción
-                        </p>
-
-                        }
-
-                    </div>
-
-                </button>
-
-                }
-
-                }
-
-            </div>
-
-
-            <!-- NO HAY ARCHIVADORES -->
-            @if (
-            !$any(user()?.idUnidadOrg)?.hrArchivo?.length &&
-            !$any(user()?.idUnidadFuncional)?.hrArchivo?.length &&
-            !$any(user()?.idSubUnidad)?.hrArchivo?.length
-            ) {
-
-            <div class="flex flex-col items-center justify-center py-10">
-
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="size-12 text-base-content/30">
-
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M2.25 12.75V6.375a2.25 2.25 0 0 1 2.25-2.25h5.379c.597 0 1.17.237 1.591.659l1.122 1.122c.422.422.994.659 1.591.659h5.442a2.25 2.25 0 0 1 2.25 2.25v7.5a2.25 2.25 0 0 1-2.25 2.25H4.5a2.25 2.25 0 0 1-2.25-2.25v-1.5Z" />
-
-                </svg>
-
-                <p class="text-sm text-base-content/50 mt-3">
-                    No tiene archivadores configurados
-                </p>
-
-            </div>
+                <!-- ================================================= -->
+                <!-- NO HAY ARCHIVADORES -->
+                <!-- ================================================= -->
+
+                <div class="
+                    flex
+                    flex-col
+                    items-center
+                    justify-center
+                    py-10
+                ">
+
+                    <!-- ICONO CARPETA -->
+
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="size-14 text-base-content/30">
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M2.25 12.75V6.375a2.25 2.25 0 0 1 2.25-2.25h5.379c.597 0 1.17.237 1.591.659l1.122 1.122c.422.422.994.659 1.591.659h5.442a2.25 2.25 0 0 1 2.25 2.25v7.5a2.25 2.25 0 0 1-2.25 2.25H4.5a2.25 2.25 0 0 1-2.25-2.25v-1.5Z" />
+
+                    </svg>
+
+
+                    <p class="
+                        text-sm
+                        text-base-content/50
+                        mt-3
+                    ">
+                        No tiene archivadores configurados
+                    </p>
+
+                </div>
 
             }
 
 
-            <!-- CREAR ARCHIVADOR -->
-            <div class="flex justify-end mt-6 pt-4 border-t border-base-300">
+            <!-- ================================================= -->
+            <!-- NUEVO ARCHIVADOR -->
+            <!-- ================================================= -->
 
-                <button type="button" class="btn btn-primary" (click)="crearArchivador()">
+            <div class="
+                flex
+                justify-end
+                mt-6
+                pt-4
+                border-t
+                border-base-300
+            ">
 
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    (click)="crearArchivador()">
+
+                    <!-- ICONO -->
+
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
                         class="size-6 text-warning">
-                        <path fill-rule="evenodd"
+
+                        <path
+                            fill-rule="evenodd"
                             d="M19.5 21a3 3 0 0 0 3-3V9a3 3 0 0 0-3-3h-5.379a.75.75 0 0 1-.53-.22L11.47 3.66A2.25 2.25 0 0 0 9.879 3H4.5a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h15Zm-6.75-10.5a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25v2.25a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V10.5Z"
                             clip-rule="evenodd" />
+
                     </svg>
 
 
@@ -1835,10 +1733,17 @@
 
         </div>
 
+
+        <!-- ================================================= -->
         <!-- FOOTER -->
+        <!-- ================================================= -->
+
         <div class="modal-action">
 
-            <button type="button" class="btn" (click)="closeModalArchivar()">
+            <button
+                type="button"
+                class="btn"
+                (click)="closeModalArchivar()">
 
                 Cancelar
 
@@ -1848,16 +1753,27 @@
 
     </div>
 
-    <!-- CLICK FUERA -->
-    <form method="dialog" class="modal-backdrop">
 
-        <button type="button" (click)="closeModalArchivar()">
+    <!-- ================================================= -->
+    <!-- CLICK FUERA DEL MODAL -->
+    <!-- ================================================= -->
+
+    <form
+        method="dialog"
+        class="modal-backdrop">
+
+        <button
+            type="button"
+            (click)="closeModalArchivar()">
+
             cerrar
+
         </button>
 
     </form>
 
 </dialog>
+
 }
 
 <dialog #modalPdfAsociados class="modal modal-bottom sm:modal-middle" (click)="closeDialog($event)">

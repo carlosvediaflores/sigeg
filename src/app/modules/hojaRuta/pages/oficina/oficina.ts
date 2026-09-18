@@ -856,42 +856,111 @@ private pdfAsociadosBlobUrl: string | null = null;
 
   }
 
-  asociarSeleccionados() {
-    const oficial = this.seguimientoOficial();
-    if (!oficial) {
-      return;
-    }
-    const ids = this.selectedSeguimientos()
-      .filter(
-        x => x._id !== oficial._id
-      )
-      .map(
-        x => x._id
-      );
+ async asociarSeleccionados() {
+  const oficial = this.seguimientoOficial();
 
-    this.seguimientosService
-      .asociarHojaRuta(
+  if (!oficial) return;
+
+  const ids = this.selectedSeguimientos()
+    .filter(x => x._id !== oficial._id)
+    .map(x => x._id);
+
+  if (ids.length === 0) {
+    await Swal.fire({
+      icon: 'warning',
+      title: 'Sin seguimientos para asociar',
+      text: 'Debe seleccionar al menos un Seguimiento además del H.R. principal.',
+      confirmButtonText: 'Aceptar',
+    });
+
+    return;
+  }
+
+  // Cerramos el <dialog> antes de mostrar SweetAlert
+  const modal = document.getElementById(
+    'modal_asociar'
+  ) as HTMLDialogElement;
+
+  modal.close();
+
+  // Confirmación
+  const result = await Swal.fire({
+    title: '¿Está seguro de asociar?',
+    html: `
+      <p>Se asociarán las Hojas de Ruta seleccionadas al:</p>
+
+      <p class="font-bold text-lg mt-3">
+        H.R. Nº ${oficial.numeroHr}
+      </p>
+
+      <p class="text-warning font-semibold mt-4">
+        ⚠️ Esta acción no se puede revertir.
+      </p>
+
+      <p class="text-sm mt-2 opacity-70">
+        Verifique que los seguimientos seleccionados sean los correctos
+        antes de continuar.
+      </p>
+    `,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, asociar',
+    cancelButtonText: 'Cancelar',
+    reverseButtons: true,
+    focusCancel: true,
+  });
+
+  // Si cancela, volvemos a abrir el modal
+  if (!result.isConfirmed) {
+    modal.showModal();
+    return;
+  }
+
+  // Ejecutamos la asociación
+  try {
+    const resp = await firstValueFrom(
+      this.seguimientosService.asociarHojaRuta(
         oficial._id,
         ids
       )
-      .subscribe({
+    );
 
-        next: (resp) => {
-          console.log('Asociado', resp);
-          this.selectedSeguimientos.set([]);
-          const modal =
-            document.getElementById(
-              'modal_asociar'
-            ) as HTMLDialogElement;
-          modal.close();
-          this.seguimientosResource.reload();
-        },
-        error: (err) => {
-          console.error(err);
-        }
+    console.log('Asociado:', resp);
 
-      });
+    this.selectedSeguimientos.set([]);
+    this.seguimientoOficial.set(null);
+
+    await Swal.fire({
+      icon: 'success',
+      title: 'Asociación realizada',
+      text: 'Las Hojas de Ruta fueron asociadas correctamente.',
+      timer: 1800,
+      showConfirmButton: false,
+    });
+
+    this.seguimientosResource.reload();
+
+  } catch (err: any) {
+
+    console.error('Error al asociar:', err);
+
+    // Mostrar el mensaje REAL enviado por NestJS
+    const mensaje =
+      err?.error?.message ??
+      err?.message ??
+      'Ocurrió un error al asociar las Hojas de Ruta.';
+
+    await Swal.fire({
+      icon: 'error',
+      title: 'No se pudo realizar la asociación',
+      text: mensaje,
+      confirmButtonText: 'Aceptar',
+    });
+
+    // Volvemos a abrir el modal para que pueda corregir la selección
+    modal.showModal();
   }
+}
 
   verDetalle(segui: Seguimiento) {
 
@@ -908,20 +977,35 @@ private pdfAsociadosBlobUrl: string | null = null;
 
   openModalArchivar(segui: Seguimiento) {
 
-    this.seguiSeleccionado.set(segui);
+  this.seguiSeleccionado.set(segui);
+  this.showModalArchivar.set(true);
 
-    const usuario = this.user();
+  const usuario = this.user();
 
-    const archivos = [
-      ...(usuario?.idUnidadOrg?.hrArchivo ?? []),
-      ...(usuario?.idUnidadFuncional?.hrArchivo ?? []),
-      ...(usuario?.idSubUnidad?.hrArchivo ?? []),
-    ];
+  const archivadoresOrg =
+    (usuario?.idUnidadOrg?.hrArchivo ?? []);
 
-    this.archivadores.set(archivos);
+  const archivadoresFuncional =
+    (usuario?.idUnidadFuncional?.hrArchivo ?? []);
 
-    this.showModalArchivar.set(true);
-  }
+  const archivadoresSubUnidad =
+    (usuario?.idSubUnidad?.hrArchivo ?? []);
+
+  const todos = [
+    ...archivadoresOrg,
+    ...archivadoresFuncional,
+    ...archivadoresSubUnidad,
+  ];
+
+  // Evitar archivadores duplicados
+  const unicos = Array.from(
+    new Map(
+      todos.map(archivo => [archivo._id, archivo])
+    ).values()
+  );
+
+  this.archivadores.set(unicos);
+}
 
   closeModalArchivar() {
     this.showModalArchivar.set(false);
@@ -930,10 +1014,11 @@ private pdfAsociadosBlobUrl: string | null = null;
 
   async crearArchivador() {
 
-    const result = await Swal.fire({
-      title: 'Nuevo archivo',
+  const result = await Swal.fire({
 
-      html: `
+    title: 'Nuevo archivo',
+
+    html: `
       <div class="text-left">
 
         <label
@@ -962,103 +1047,127 @@ private pdfAsociadosBlobUrl: string | null = null;
       </div>
     `,
 
-      showCancelButton: true,
+    showCancelButton: true,
+    confirmButtonText: 'Crear archivo',
+    cancelButtonText: 'Cancelar',
+    focusConfirm: false,
 
-      confirmButtonText: 'Crear archivo',
-      cancelButtonText: 'Cancelar',
+    preConfirm: () => {
 
-      focusConfirm: false,
+      const nombre = (
+        document.getElementById(
+          'nombreArchivador'
+        ) as HTMLInputElement
+      )?.value.trim();
 
-      preConfirm: () => {
+      const descripcion = (
+        document.getElementById(
+          'descripcionArchivador'
+        ) as HTMLTextAreaElement
+      )?.value.trim();
 
-        const nombre = (
-          document.getElementById(
-            'nombreArchivador'
-          ) as HTMLInputElement
-        )?.value.trim();
+      if (!nombre) {
+        Swal.showValidationMessage(
+          'El nombre del archivo es obligatorio'
+        );
 
-        const descripcion = (
-          document.getElementById(
-            'descripcionArchivador'
-          ) as HTMLTextAreaElement
-        )?.value.trim();
+        return false;
+      }
 
-        if (!nombre) {
-          Swal.showValidationMessage(
-            'El nombre del archivo es obligatorio'
+      return {
+        nombre,
+        descripcion,
+      };
+    },
+
+  });
+
+  if (!result.isConfirmed || !result.value) {
+    return;
+  }
+
+  const usuario = this.user();
+
+  if (!usuario) {
+    return;
+  }
+
+  const archivo: Partial<HrArchivado> = {
+    nombre: result.value.nombre,
+    descripcion: result.value.descripcion,
+
+    idUnidadOrg:
+      typeof usuario.idUnidadOrg === 'string'
+        ? usuario.idUnidadOrg
+        : usuario.idUnidadOrg?._id,
+
+    idUnidadFuncional:
+      typeof usuario.idUnidadFuncional === 'string'
+        ? usuario.idUnidadFuncional
+        : usuario.idUnidadFuncional?._id,
+
+    idSubUnidad:
+      typeof usuario.idSubUnidad === 'string'
+        ? usuario.idSubUnidad
+        : usuario.idSubUnidad?._id,
+  };
+
+  console.log('Enviando archivador:', archivo);
+
+  this.seguimientosService
+    .createArchivador(archivo)
+    .subscribe({
+
+      next: (response: HrArchivado) => {
+
+        console.log('Archivador creado:', response);
+
+        // Agregar inmediatamente el nuevo archivador al modal
+        this.archivadores.update(archivos => {
+
+          const existe = archivos.some(
+            archivo => archivo._id === response._id
           );
 
-          return false;
-        }
+          if (existe) {
+            return archivos;
+          }
 
-        return {
-          nombre,
-          descripcion,
-        };
+          return [
+            ...archivos,
+            response,
+          ];
+        });
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Archivo creado',
+          text: 'El archivador se agregó correctamente.',
+          timer: 1500,
+          showConfirmButton: false,
+        });
+
+      },
+
+      error: (error) => {
+
+        console.error(
+          'Error al crear archivador:',
+          error
+        );
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text:
+            error?.error?.message ??
+            'No se pudo crear el archivo',
+        });
+
       },
 
     });
-
-    if (!result.isConfirmed) {
-      return;
-    }
-
-    const usuario = this.user();
-
-    if (!usuario) {
-      return;
-    }
-
-    const archivo: Partial<HrArchivado> = {
-      nombre: result.value.nombre,
-      descripcion: result.value.descripcion,
-
-      idUnidadOrg: usuario.idUnidadOrg?._id,
-
-      idUnidadFuncional: usuario.idUnidadFuncional?._id,
-
-      idSubUnidad: usuario.idSubUnidad?._id,
-
-    };
-
-    console.log('Enviando archivador:', archivo);
-
-    this.seguimientosService
-      .createArchivador(archivo)
-      .subscribe({
-        next: (response) => {
-
-          this.archivadores.update(
-            archivos => [...archivos, response]
-          );
-
-          Swal.fire({
-            icon: 'success',
-            title: 'Archivo creado',
-            timer: 1500,
-            showConfirmButton: false,
-          });
-
-        },
-
-        error: (error) => {
-
-          console.error(
-            'Error al crear archivador:',
-            error
-          );
-
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text:
-              error?.error?.message ??
-              'No se pudo crear el archivo',
-          });
-
-        },
-      });
-  }
+}
 
   seleccionarArchivador(archivo: HrArchivado) {
 
