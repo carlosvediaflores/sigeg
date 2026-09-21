@@ -121,11 +121,27 @@ export class HojaRutaService {
 
   printAsociados(id: string) {
 
-  return this.http.get(
-    `${baseUrl}/hojarutas/printAsociados/${id}`,
-    {
-      responseType: 'blob',
-    },
+    return this.http.get(
+      `${baseUrl}/hojarutas/printAsociados/${id}`,
+      {
+        responseType: 'blob',
+      },
+    );
+  }
+
+  printSeguimientos(id: string) {
+
+    return this.http.get(
+      `${baseUrl}/hojarutas/printSegui/${id}`,
+      {
+        responseType: 'blob',
+      },
+    );
+  }
+
+  desasociarHojaRuta(idHojaRuta: string) {
+  return this.http.delete(
+    `${baseUrl}/hojarutas/${idHojaRuta}/desasociar`
   );
 }
 }

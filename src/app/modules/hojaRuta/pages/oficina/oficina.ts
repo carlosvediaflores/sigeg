@@ -72,15 +72,23 @@ export class Oficina {
     this.totalPendientesRecepcion() > 0
   );
 
-   @ViewChild('modalPdfAsociados')
-modalPdfAsociados!: ElementRef<HTMLDialogElement>;
+  @ViewChild('modalPdfAsociados')
+  modalPdfAsociados!: ElementRef<HTMLDialogElement>;
 
-pdfAsociadosUrl = signal<SafeResourceUrl | null>(null);
-pdfAsociadosLoading = signal(false);
+  pdfAsociadosUrl = signal<SafeResourceUrl | null>(null);
+  pdfAsociadosLoading = signal(false);
 
-private pdfAsociadosBlobUrl: string | null = null;
+  private pdfAsociadosBlobUrl: string | null = null;
 
- constructor(
+    @ViewChild('modalPdfSeguimientos')
+  modalPdfSeguimientos!: ElementRef<HTMLDialogElement>;
+
+  pdfSeguimientosUrl = signal<SafeResourceUrl | null>(null);
+  pdfSeguimientosLoading = signal(false);
+
+  private pdfSeguimientosBlobUrl: string | null = null;
+
+  constructor(
     private sanitizer: DomSanitizer,
   ) {
   }
@@ -856,37 +864,37 @@ private pdfAsociadosBlobUrl: string | null = null;
 
   }
 
- async asociarSeleccionados() {
-  const oficial = this.seguimientoOficial();
+  async asociarSeleccionados() {
+    const oficial = this.seguimientoOficial();
 
-  if (!oficial) return;
+    if (!oficial) return;
 
-  const ids = this.selectedSeguimientos()
-    .filter(x => x._id !== oficial._id)
-    .map(x => x._id);
+    const ids = this.selectedSeguimientos()
+      .filter(x => x._id !== oficial._id)
+      .map(x => x._id);
 
-  if (ids.length === 0) {
-    await Swal.fire({
-      icon: 'warning',
-      title: 'Sin seguimientos para asociar',
-      text: 'Debe seleccionar al menos un Seguimiento además del H.R. principal.',
-      confirmButtonText: 'Aceptar',
-    });
+    if (ids.length === 0) {
+      await Swal.fire({
+        icon: 'warning',
+        title: 'Sin seguimientos para asociar',
+        text: 'Debe seleccionar al menos un Seguimiento además del H.R. principal.',
+        confirmButtonText: 'Aceptar',
+      });
 
-    return;
-  }
+      return;
+    }
 
-  // Cerramos el <dialog> antes de mostrar SweetAlert
-  const modal = document.getElementById(
-    'modal_asociar'
-  ) as HTMLDialogElement;
+    // Cerramos el <dialog> antes de mostrar SweetAlert
+    const modal = document.getElementById(
+      'modal_asociar'
+    ) as HTMLDialogElement;
 
-  modal.close();
+    modal.close();
 
-  // Confirmación
-  const result = await Swal.fire({
-    title: '¿Está seguro de asociar?',
-    html: `
+    // Confirmación
+    const result = await Swal.fire({
+      title: '¿Está seguro de asociar?',
+      html: `
       <p>Se asociarán las Hojas de Ruta seleccionadas al:</p>
 
       <p class="font-bold text-lg mt-3">
@@ -902,65 +910,65 @@ private pdfAsociadosBlobUrl: string | null = null;
         antes de continuar.
       </p>
     `,
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonText: 'Sí, asociar',
-    cancelButtonText: 'Cancelar',
-    reverseButtons: true,
-    focusCancel: true,
-  });
-
-  // Si cancela, volvemos a abrir el modal
-  if (!result.isConfirmed) {
-    modal.showModal();
-    return;
-  }
-
-  // Ejecutamos la asociación
-  try {
-    const resp = await firstValueFrom(
-      this.seguimientosService.asociarHojaRuta(
-        oficial._id,
-        ids
-      )
-    );
-
-    console.log('Asociado:', resp);
-
-    this.selectedSeguimientos.set([]);
-    this.seguimientoOficial.set(null);
-
-    await Swal.fire({
-      icon: 'success',
-      title: 'Asociación realizada',
-      text: 'Las Hojas de Ruta fueron asociadas correctamente.',
-      timer: 1800,
-      showConfirmButton: false,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, asociar',
+      cancelButtonText: 'Cancelar',
+      reverseButtons: true,
+      focusCancel: true,
     });
 
-    this.seguimientosResource.reload();
+    // Si cancela, volvemos a abrir el modal
+    if (!result.isConfirmed) {
+      modal.showModal();
+      return;
+    }
 
-  } catch (err: any) {
+    // Ejecutamos la asociación
+    try {
+      const resp = await firstValueFrom(
+        this.seguimientosService.asociarHojaRuta(
+          oficial._id,
+          ids
+        )
+      );
 
-    console.error('Error al asociar:', err);
+      console.log('Asociado:', resp);
 
-    // Mostrar el mensaje REAL enviado por NestJS
-    const mensaje =
-      err?.error?.message ??
-      err?.message ??
-      'Ocurrió un error al asociar las Hojas de Ruta.';
+      this.selectedSeguimientos.set([]);
+      this.seguimientoOficial.set(null);
 
-    await Swal.fire({
-      icon: 'error',
-      title: 'No se pudo realizar la asociación',
-      text: mensaje,
-      confirmButtonText: 'Aceptar',
-    });
+      await Swal.fire({
+        icon: 'success',
+        title: 'Asociación realizada',
+        text: 'Las Hojas de Ruta fueron asociadas correctamente.',
+        timer: 1800,
+        showConfirmButton: false,
+      });
 
-    // Volvemos a abrir el modal para que pueda corregir la selección
-    modal.showModal();
+      this.seguimientosResource.reload();
+
+    } catch (err: any) {
+
+      console.error('Error al asociar:', err);
+
+      // Mostrar el mensaje REAL enviado por NestJS
+      const mensaje =
+        err?.error?.message ??
+        err?.message ??
+        'Ocurrió un error al asociar las Hojas de Ruta.';
+
+      await Swal.fire({
+        icon: 'error',
+        title: 'No se pudo realizar la asociación',
+        text: mensaje,
+        confirmButtonText: 'Aceptar',
+      });
+
+      // Volvemos a abrir el modal para que pueda corregir la selección
+      modal.showModal();
+    }
   }
-}
 
   verDetalle(segui: Seguimiento) {
 
@@ -977,35 +985,35 @@ private pdfAsociadosBlobUrl: string | null = null;
 
   openModalArchivar(segui: Seguimiento) {
 
-  this.seguiSeleccionado.set(segui);
-  this.showModalArchivar.set(true);
+    this.seguiSeleccionado.set(segui);
+    this.showModalArchivar.set(true);
 
-  const usuario = this.user();
+    const usuario = this.user();
 
-  const archivadoresOrg =
-    (usuario?.idUnidadOrg?.hrArchivo ?? []);
+    const archivadoresOrg =
+      (usuario?.idUnidadOrg?.hrArchivo ?? []);
 
-  const archivadoresFuncional =
-    (usuario?.idUnidadFuncional?.hrArchivo ?? []);
+    const archivadoresFuncional =
+      (usuario?.idUnidadFuncional?.hrArchivo ?? []);
 
-  const archivadoresSubUnidad =
-    (usuario?.idSubUnidad?.hrArchivo ?? []);
+    const archivadoresSubUnidad =
+      (usuario?.idSubUnidad?.hrArchivo ?? []);
 
-  const todos = [
-    ...archivadoresOrg,
-    ...archivadoresFuncional,
-    ...archivadoresSubUnidad,
-  ];
+    const todos = [
+      ...archivadoresOrg,
+      ...archivadoresFuncional,
+      ...archivadoresSubUnidad,
+    ];
 
-  // Evitar archivadores duplicados
-  const unicos = Array.from(
-    new Map(
-      todos.map(archivo => [archivo._id, archivo])
-    ).values()
-  );
+    // Evitar archivadores duplicados
+    const unicos = Array.from(
+      new Map(
+        todos.map(archivo => [archivo._id, archivo])
+      ).values()
+    );
 
-  this.archivadores.set(unicos);
-}
+    this.archivadores.set(unicos);
+  }
 
   closeModalArchivar() {
     this.showModalArchivar.set(false);
@@ -1014,11 +1022,11 @@ private pdfAsociadosBlobUrl: string | null = null;
 
   async crearArchivador() {
 
-  const result = await Swal.fire({
+    const result = await Swal.fire({
 
-    title: 'Nuevo archivo',
+      title: 'Nuevo archivo',
 
-    html: `
+      html: `
       <div class="text-left">
 
         <label
@@ -1047,127 +1055,127 @@ private pdfAsociadosBlobUrl: string | null = null;
       </div>
     `,
 
-    showCancelButton: true,
-    confirmButtonText: 'Crear archivo',
-    cancelButtonText: 'Cancelar',
-    focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'Crear archivo',
+      cancelButtonText: 'Cancelar',
+      focusConfirm: false,
 
-    preConfirm: () => {
+      preConfirm: () => {
 
-      const nombre = (
-        document.getElementById(
-          'nombreArchivador'
-        ) as HTMLInputElement
-      )?.value.trim();
+        const nombre = (
+          document.getElementById(
+            'nombreArchivador'
+          ) as HTMLInputElement
+        )?.value.trim();
 
-      const descripcion = (
-        document.getElementById(
-          'descripcionArchivador'
-        ) as HTMLTextAreaElement
-      )?.value.trim();
+        const descripcion = (
+          document.getElementById(
+            'descripcionArchivador'
+          ) as HTMLTextAreaElement
+        )?.value.trim();
 
-      if (!nombre) {
-        Swal.showValidationMessage(
-          'El nombre del archivo es obligatorio'
-        );
-
-        return false;
-      }
-
-      return {
-        nombre,
-        descripcion,
-      };
-    },
-
-  });
-
-  if (!result.isConfirmed || !result.value) {
-    return;
-  }
-
-  const usuario = this.user();
-
-  if (!usuario) {
-    return;
-  }
-
-  const archivo: Partial<HrArchivado> = {
-    nombre: result.value.nombre,
-    descripcion: result.value.descripcion,
-
-    idUnidadOrg:
-      typeof usuario.idUnidadOrg === 'string'
-        ? usuario.idUnidadOrg
-        : usuario.idUnidadOrg?._id,
-
-    idUnidadFuncional:
-      typeof usuario.idUnidadFuncional === 'string'
-        ? usuario.idUnidadFuncional
-        : usuario.idUnidadFuncional?._id,
-
-    idSubUnidad:
-      typeof usuario.idSubUnidad === 'string'
-        ? usuario.idSubUnidad
-        : usuario.idSubUnidad?._id,
-  };
-
-  console.log('Enviando archivador:', archivo);
-
-  this.seguimientosService
-    .createArchivador(archivo)
-    .subscribe({
-
-      next: (response: HrArchivado) => {
-
-        console.log('Archivador creado:', response);
-
-        // Agregar inmediatamente el nuevo archivador al modal
-        this.archivadores.update(archivos => {
-
-          const existe = archivos.some(
-            archivo => archivo._id === response._id
+        if (!nombre) {
+          Swal.showValidationMessage(
+            'El nombre del archivo es obligatorio'
           );
 
-          if (existe) {
-            return archivos;
-          }
+          return false;
+        }
 
-          return [
-            ...archivos,
-            response,
-          ];
-        });
-
-        Swal.fire({
-          icon: 'success',
-          title: 'Archivo creado',
-          text: 'El archivador se agregó correctamente.',
-          timer: 1500,
-          showConfirmButton: false,
-        });
-
-      },
-
-      error: (error) => {
-
-        console.error(
-          'Error al crear archivador:',
-          error
-        );
-
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text:
-            error?.error?.message ??
-            'No se pudo crear el archivo',
-        });
-
+        return {
+          nombre,
+          descripcion,
+        };
       },
 
     });
-}
+
+    if (!result.isConfirmed || !result.value) {
+      return;
+    }
+
+    const usuario = this.user();
+
+    if (!usuario) {
+      return;
+    }
+
+    const archivo: Partial<HrArchivado> = {
+      nombre: result.value.nombre,
+      descripcion: result.value.descripcion,
+
+      idUnidadOrg:
+        typeof usuario.idUnidadOrg === 'string'
+          ? usuario.idUnidadOrg
+          : usuario.idUnidadOrg?._id,
+
+      idUnidadFuncional:
+        typeof usuario.idUnidadFuncional === 'string'
+          ? usuario.idUnidadFuncional
+          : usuario.idUnidadFuncional?._id,
+
+      idSubUnidad:
+        typeof usuario.idSubUnidad === 'string'
+          ? usuario.idSubUnidad
+          : usuario.idSubUnidad?._id,
+    };
+
+    console.log('Enviando archivador:', archivo);
+
+    this.seguimientosService
+      .createArchivador(archivo)
+      .subscribe({
+
+        next: (response: HrArchivado) => {
+
+          console.log('Archivador creado:', response);
+
+          // Agregar inmediatamente el nuevo archivador al modal
+          this.archivadores.update(archivos => {
+
+            const existe = archivos.some(
+              archivo => archivo._id === response._id
+            );
+
+            if (existe) {
+              return archivos;
+            }
+
+            return [
+              ...archivos,
+              response,
+            ];
+          });
+
+          Swal.fire({
+            icon: 'success',
+            title: 'Archivo creado',
+            text: 'El archivador se agregó correctamente.',
+            timer: 1500,
+            showConfirmButton: false,
+          });
+
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Error al crear archivador:',
+            error
+          );
+
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text:
+              error?.error?.message ??
+              'No se pudo crear el archivo',
+          });
+
+        },
+
+      });
+  }
 
   seleccionarArchivador(archivo: HrArchivado) {
 
@@ -1340,47 +1348,47 @@ private pdfAsociadosBlobUrl: string | null = null;
   }
 
   printHojaRuta(hr: HojaRutaSimple) {
-  
-      this.hojaRutaService.printHojaRuta(hr._id)
-        .subscribe(blob => {
-  
-          const url = window.URL.createObjectURL(blob);
-  
-          window.open(url, '_blank');
-  
-          // Liberar memoria después de unos segundos
-          setTimeout(() => {
-            window.URL.revokeObjectURL(url);
-          }, 1000);
-  
-        });
-  
-    }
-  
-   printAsociados(hr: HojaRutaSimple) {
-  
+
+    this.hojaRutaService.printHojaRuta(hr._id)
+      .subscribe(blob => {
+
+        const url = window.URL.createObjectURL(blob);
+
+        window.open(url, '_blank');
+
+        // Liberar memoria después de unos segundos
+        setTimeout(() => {
+          window.URL.revokeObjectURL(url);
+        }, 1000);
+
+      });
+
+  }
+
+  printAsociados(hr: HojaRutaSimple) {
+
     // --------------------------------------------------
     // Limpiar PDF anterior
     // --------------------------------------------------
     this.limpiarPdfAsociados();
-  
+
     // --------------------------------------------------
     // Mostrar loading
     // --------------------------------------------------
     this.pdfAsociadosLoading.set(true);
-  
+
     // --------------------------------------------------
     // Abrir modal
     // --------------------------------------------------
     const modal = this.modalPdfAsociados?.nativeElement;
-  
+
     if (!modal) {
       console.error('No se encontró el modal de asociados');
       return;
     }
-  
+
     modal.showModal();
-  
+
     // --------------------------------------------------
     // Generar PDF
     // --------------------------------------------------
@@ -1388,37 +1396,37 @@ private pdfAsociadosBlobUrl: string | null = null;
       .printAsociados(hr._id)
       .subscribe({
         next: (blob: Blob) => {
-  
+
           console.log('PDF recibido:', blob);
           console.log('Tamaño PDF:', blob.size);
-  
+
           if (!blob || blob.size === 0) {
             console.error('El PDF está vacío');
-  
+
             this.pdfAsociadosLoading.set(false);
-  
+
             Swal.fire(
               'Error',
               'El PDF generado está vacío.',
               'error'
             );
-  
+
             this.closeModalPdfAsociados();
-  
+
             return;
           }
-  
+
           // ------------------------------------------------
           // Crear URL temporal
           // ------------------------------------------------
           this.pdfAsociadosBlobUrl =
             window.URL.createObjectURL(blob);
-  
+
           console.log(
             'URL PDF:',
             this.pdfAsociadosBlobUrl
           );
-  
+
           // ------------------------------------------------
           // Sanitizar URL
           // ------------------------------------------------
@@ -1426,69 +1434,308 @@ private pdfAsociadosBlobUrl: string | null = null;
             this.sanitizer.bypassSecurityTrustResourceUrl(
               this.pdfAsociadosBlobUrl
             );
-  
+
           // ------------------------------------------------
           // Actualizar signal
           // ------------------------------------------------
           this.pdfAsociadosUrl.set(safeUrl);
-  
+
           // ------------------------------------------------
           // Ocultar loading
           // ------------------------------------------------
           this.pdfAsociadosLoading.set(false);
         },
-  
+
         error: (error) => {
-  
+
           console.error(
             'Error al generar PDF de asociados:',
             error
           );
-  
+
           this.pdfAsociadosLoading.set(false);
-  
+
           Swal.fire(
             'Error',
             error?.error?.message ??
             'No se pudo generar el PDF de las hojas de ruta asociadas.',
             'error'
           );
-  
+
           this.closeModalPdfAsociados();
         }
       });
   }
-   closeModalPdfAsociados() {
-  
+  closeModalPdfAsociados() {
+
     // --------------------------------------------------
     // Cerrar modal
     // --------------------------------------------------
     if (this.modalPdfAsociados?.nativeElement) {
       this.modalPdfAsociados.nativeElement.close();
     }
-  
+
     // --------------------------------------------------
     // Limpiar PDF
     // --------------------------------------------------
     this.limpiarPdfAsociados();
   }
-    private limpiarPdfAsociados() {
-  
+  private limpiarPdfAsociados() {
+
     // Quitar URL del iframe
     this.pdfAsociadosUrl.set(null);
-  
+
     // Ocultar loading
     this.pdfAsociadosLoading.set(false);
-  
+
     // Liberar Blob URL
     if (this.pdfAsociadosBlobUrl) {
-  
+
       window.URL.revokeObjectURL(
         this.pdfAsociadosBlobUrl
       );
-  
+
       this.pdfAsociadosBlobUrl = null;
     }
   }
+
+  //-----pint seguimientos---//
+
+  printSeguimientos(hr: HojaRutaSimple) {
+
+    // --------------------------------------------------
+    // Limpiar PDF anterior
+    // --------------------------------------------------
+    this.limpiarPdfSeguimientos();
+
+    // --------------------------------------------------
+    // Mostrar loading
+    // --------------------------------------------------
+    this.pdfSeguimientosLoading.set(true);
+
+    // --------------------------------------------------
+    // Abrir modal
+    // --------------------------------------------------
+    const modal = this.modalPdfSeguimientos?.nativeElement;
+
+    if (!modal) {
+      console.error('No se encontró el modal de asociados');
+      return;
+    }
+
+    modal.showModal();
+
+    // --------------------------------------------------
+    // Generar PDF
+    // --------------------------------------------------
+    this.hojaRutaService
+      .printSeguimientos(hr._id)
+      .subscribe({
+        next: (blob: Blob) => {
+
+          console.log('PDF recibido:', blob);
+          console.log('Tamaño PDF:', blob.size);
+
+          if (!blob || blob.size === 0) {
+            console.error('El PDF está vacío');
+
+            this.pdfSeguimientosLoading.set(false);
+
+            Swal.fire(
+              'Error',
+              'El PDF generado está vacío.',
+              'error'
+            );
+
+            this.closeModalPdfSeguimientos();
+
+            return;
+          }
+
+          // ------------------------------------------------
+          // Crear URL temporal
+          // ------------------------------------------------
+          this.pdfSeguimientosBlobUrl =
+            window.URL.createObjectURL(blob);
+
+          console.log(
+            'URL PDF:',
+            this.pdfSeguimientosBlobUrl
+          );
+
+          // ------------------------------------------------
+          // Sanitizar URL
+          // ------------------------------------------------
+          const safeUrl =
+            this.sanitizer.bypassSecurityTrustResourceUrl(
+              this.pdfSeguimientosBlobUrl
+            );
+
+          // ------------------------------------------------
+          // Actualizar signal
+          // ------------------------------------------------
+          this.pdfSeguimientosUrl.set(safeUrl);
+
+          // ------------------------------------------------
+          // Ocultar loading
+          // ------------------------------------------------
+          this.pdfSeguimientosLoading.set(false);
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Error al generar PDF de asociados:',
+            error
+          );
+
+          this.pdfSeguimientosLoading.set(false);
+
+          Swal.fire(
+            'Error',
+            error?.error?.message ??
+            'No se pudo generar el PDF de las hojas de ruta asociadas.',
+            'error'
+          );
+
+          this.closeModalPdfSeguimientos();
+        }
+      });
+  }
+  closeModalPdfSeguimientos() {
+
+    // --------------------------------------------------
+    // Cerrar modal
+    // --------------------------------------------------
+    if (this.modalPdfSeguimientos?.nativeElement) {
+      this.modalPdfSeguimientos.nativeElement.close();
+    }
+
+    // --------------------------------------------------
+    // Limpiar PDF
+    // --------------------------------------------------
+    this.limpiarPdfSeguimientos();
+  }
+  private limpiarPdfSeguimientos() {
+
+    // Quitar URL del iframe
+    this.pdfSeguimientosUrl.set(null);
+
+    // Ocultar loading
+    this.pdfSeguimientosLoading.set(false);
+
+    // Liberar Blob URL
+    if (this.pdfSeguimientosBlobUrl) {
+
+      window.URL.revokeObjectURL(
+        this.pdfSeguimientosBlobUrl
+      );
+
+      this.pdfSeguimientosBlobUrl = null;
+    }
+  }
+
+  async desasociarHojaRuta(
+  hojaRuta: HojaRutaSimple
+) {
+
+  const result = await Swal.fire({
+
+    title: '¿Desasociar Hojas de Ruta?',
+
+    html: `
+      <div class="text-left">
+
+        <p>
+          Se desasociará el grupo correspondiente a:
+        </p>
+
+        <p class="font-bold text-lg mt-2">
+          H.R. Nº ${hojaRuta.numero}
+        </p>
+
+        <p class="text-warning font-semibold mt-4">
+          Esta acción restaurará las Hojas de Ruta
+          y sus seguimientos a estado RECIBIDO.
+        </p>
+
+        <p class="text-error font-semibold mt-2">
+          Esta acción no se puede revertir automáticamente.
+        </p>
+
+      </div>
+    `,
+
+    icon: 'warning',
+
+    showCancelButton: true,
+
+    confirmButtonText:
+      'Sí, desasociar',
+
+    cancelButtonText:
+      'Cancelar',
+
+    confirmButtonColor:
+      '#dc2626',
+
+    reverseButtons: true,
+
+  });
+
+  if (!result.isConfirmed) {
+    return;
+  }
+
+  try {
+
+    await firstValueFrom(
+      this.hojaRutaService.desasociarHojaRuta(
+        hojaRuta._id
+      )
+    );
+
+    await Swal.fire({
+
+      icon: 'success',
+
+      title: 'Desasociado correctamente',
+
+      text:
+        'Las Hojas de Ruta fueron restauradas a RECIBIDO.',
+
+      timer: 2000,
+
+      showConfirmButton: false,
+
+    });
+
+    this.seguimientosResource.reload();
+
+  } catch (error: any) {
+
+    console.error(
+      'Error al desasociar:',
+      error,
+    );
+
+    await Swal.fire({
+
+      icon: 'error',
+
+      title: 'No se pudo desasociar',
+
+      text:
+        error?.error?.message ??
+        error?.message ??
+        'Ocurrió un error al desasociar las Hojas de Ruta.',
+
+      confirmButtonText:
+        'Aceptar',
+
+    });
+
+  }
+}
 
 }

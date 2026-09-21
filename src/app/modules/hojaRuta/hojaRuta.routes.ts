@@ -6,6 +6,7 @@ import { HojaRuta } from "./pages/hoja-ruta/hoja-ruta";
 import { NewSeguimiento } from "./pages/new-seguimiento/new-seguimiento";
 import { Oficina } from "./pages/oficina/oficina";
 import { Archivados } from "./pages/archivados/archivados";
+import { ReportsHR } from "./pages/reportsHR/reportsHR";
 
 export const hojaRutaRoutes: Routes = [
   {
@@ -22,7 +23,7 @@ export const hojaRutaRoutes: Routes = [
 
      {path: 'archivados', component: Archivados, },
 
-    /*  {path: 'roles-list', component: RolesList, }, */
+     {path: 'report-hoja-ruta', component: ReportsHR, },
 
      /*  {path: 'enviar/:id', component: NewSeguimiento, }, */
       {path: 'enviar/:id/:idSeg', component: NewSeguimiento, },

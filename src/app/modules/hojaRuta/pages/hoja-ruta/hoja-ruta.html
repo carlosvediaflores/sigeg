@@ -263,55 +263,92 @@
 
                         @if (hr.estado === 'RECIBIDO') {
 
-                        <a (click)="openNewModalSeg(hr)" class="btn btn-ghost text-accent btn-xs lg:tooltip"
-                            data-tip="Derivar">
+                        <button (click)="openNewModalSeg(hr)" class="btn btn-xs  text-accent p-0">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" class="size-6">
+                                stroke="currentColor" class="size-5">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
                             </svg>
-                        </a>
+                            Derivar
+                        </button>
 
                         }
 
                         @if (hr.estado === 'ENVIADO' ) {
 
-                        <a (click)="openNewModalSeg(hr)" class="btn btn-ghost text-accent btn-xs lg:tooltip"
-                            data-tip="Derivar Copia">
+                        <button class="btn btn-xs text-cyan-300 p-0" (click)="openNewModalSeg(hr)">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                                class="size-6">
+                                class="size-5">
+
                                 <path fill-rule="evenodd"
                                     d="M7.5 3.75A1.5 1.5 0 0 0 6 5.25v13.5a1.5 1.5 0 0 0 1.5 1.5h6a1.5 1.5 0 0 0 1.5-1.5V15a.75.75 0 0 1 1.5 0v3.75a3 3 0 0 1-3 3h-6a3 3 0 0 1-3-3V5.25a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3V9A.75.75 0 0 1 15 9V5.25a1.5 1.5 0 0 0-1.5-1.5h-6Zm10.72 4.72a.75.75 0 0 1 1.06 0l3 3a.75.75 0 0 1 0 1.06l-3 3a.75.75 0 1 1-1.06-1.06l1.72-1.72H9a.75.75 0 0 1 0-1.5h10.94l-1.72-1.72a.75.75 0 0 1 0-1.06Z"
                                     clip-rule="evenodd" />
+
+                            </svg>
+                            Derivar copia
+                        </button>
+
+                        <!-- ANULAR -->
+
+                        <button class="btn btn-xs text-error p-0" (click)="anularEnvio(hr)">
+
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="size-5">
+
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+
                             </svg>
 
-                        </a>
+                            Anular envío
 
-                        }
-                        @if (hr.estado === 'ENVIADO') {
+                        </button>
 
-                        <a (click)="anularEnvio(hr)" class="btn btn-ghost text-error btn-xs lg:tooltip"
-                            data-tip="Anular Envío">
+                        @if (hr.asociados && hr.asociados.length > 0) {
+                       <button  (click)="desasociarHojaRuta(hr)"type="button" class="btn  text-fuchsia-500 btn-xs p-0 ">
+
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                                class="size-6">
+                                class="size-5">
                                 <path fill-rule="evenodd"
-                                    d="M2.515 10.674a1.875 1.875 0 0 0 0 2.652L8.89 19.7c.352.351.829.549 1.326.549H19.5a3 3 0 0 0 3-3V6.75a3 3 0 0 0-3-3h-9.284c-.497 0-.974.198-1.326.55l-6.375 6.374ZM12.53 9.22a.75.75 0 1 0-1.06 1.06L13.19 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06l1.72-1.72 1.72 1.72a.75.75 0 1 0 1.06-1.06L15.31 12l1.72-1.72a.75.75 0 1 0-1.06-1.06l-1.72 1.72-1.72-1.72Z"
+                                    d="M12 1.5c-1.921 0-3.816.111-5.68.327-1.497.174-2.57 1.46-2.57 2.93V21.75a.75.75 0 0 0 1.029.696l3.471-1.388 3.472 1.388a.75.75 0 0 0 .556 0l3.472-1.388 3.471 1.388a.75.75 0 0 0 1.029-.696V4.757c0-1.47-1.073-2.756-2.57-2.93A49.255 49.255 0 0 0 12 1.5Zm-.97 6.53a.75.75 0 1 0-1.06-1.06L7.72 9.22a.75.75 0 0 0 0 1.06l2.25 2.25a.75.75 0 1 0 1.06-1.06l-.97-.97h3.065a1.875 1.875 0 0 1 0 3.75H12a.75.75 0 0 0 0 1.5h1.125a3.375 3.375 0 1 0 0-6.75h-3.064l.97-.97Z"
                                     clip-rule="evenodd" />
                             </svg>
-                        </a>
+
+
+                            Desasociar
+                        </button>
                         }
 
-                        <button class="btn btn-ghost btn-circle  btn-xs text-info lg:tooltip" data-tip="Editar"
-                            (click)="openEditModal(hr)">
-                            <div class="indicator">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                                    class="size-6">
-                                    <path
-                                        d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32l8.4-8.4Z" />
-                                    <path
-                                        d="M5.25 5.25a3 3 0 0 0-3 3v10.5a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3V13.5a.75.75 0 0 0-1.5 0v5.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5V8.25a1.5 1.5 0 0 1 1.5-1.5h5.25a.75.75 0 0 0 0-1.5H5.25Z" />
-                                </svg>
-                            </div>
+                        }
+
+                        @if (hr.estado === 'ASOCIADO') {
+
+                        <button  (click)="desasociarHojaRuta(hr)"type="button" class="btn  text-fuchsia-500 btn-xs p-0 ">
+
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                class="size-5">
+                                <path fill-rule="evenodd"
+                                    d="M12 1.5c-1.921 0-3.816.111-5.68.327-1.497.174-2.57 1.46-2.57 2.93V21.75a.75.75 0 0 0 1.029.696l3.471-1.388 3.472 1.388a.75.75 0 0 0 .556 0l3.472-1.388 3.471 1.388a.75.75 0 0 0 1.029-.696V4.757c0-1.47-1.073-2.756-2.57-2.93A49.255 49.255 0 0 0 12 1.5Zm-.97 6.53a.75.75 0 1 0-1.06-1.06L7.72 9.22a.75.75 0 0 0 0 1.06l2.25 2.25a.75.75 0 1 0 1.06-1.06l-.97-.97h3.065a1.875 1.875 0 0 1 0 3.75H12a.75.75 0 0 0 0 1.5h1.125a3.375 3.375 0 1 0 0-6.75h-3.064l.97-.97Z"
+                                    clip-rule="evenodd" />
+                            </svg>
+
+
+                            Desasociar
+                        </button>
+                         }
+                        <!-- EDITAR -->
+
+                        <button class="btn btn-xs text-info p-0" (click)="openEditModal(hr)">
+
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                class="size-5">
+                                <path
+                                    d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32l8.4-8.4Z" />
+                                <path
+                                    d="M5.25 5.25a3 3 0 0 0-3 3v10.5a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3V13.5a.75.75 0 0 0-1.5 0v5.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5V8.25a1.5 1.5 0 0 1 1.5-1.5h5.25a.75.75 0 0 0 0-1.5H5.25Z" />
+                            </svg>
+
+                            Editar registro
+
                         </button>
 
                     </th>
@@ -734,6 +771,15 @@
 
         <h3 class="font-bold text-base text-center">
             Hoja de Ruta Nº {{ hr.numero }}
+            <button (click)=" printSeguimientos(hr)" class="btn btn-xs  text-secondary  ">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+                    <path fill-rule="evenodd"
+                        d="M7.875 1.5C6.839 1.5 6 2.34 6 3.375v2.99c-.426.053-.851.11-1.274.174-1.454.218-2.476 1.483-2.476 2.917v6.294a3 3 0 0 0 3 3h.27l-.155 1.705A1.875 1.875 0 0 0 7.232 22.5h9.536a1.875 1.875 0 0 0 1.867-2.045l-.155-1.705h.27a3 3 0 0 0 3-3V9.456c0-1.434-1.022-2.7-2.476-2.917A48.716 48.716 0 0 0 18 6.366V3.375c0-1.036-.84-1.875-1.875-1.875h-8.25ZM16.5 6.205v-2.83A.375.375 0 0 0 16.125 3h-8.25a.375.375 0 0 0-.375.375v2.83a49.353 49.353 0 0 1 9 0Zm-.217 8.265c.178.018.317.16.333.337l.526 5.784a.375.375 0 0 1-.374.409H7.232a.375.375 0 0 1-.374-.409l.526-5.784a.373.373 0 0 1 .333-.337 41.741 41.741 0 0 1 8.566 0Zm.967-3.97a.75.75 0 0 1 .75-.75h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H18a.75.75 0 0 1-.75-.75V10.5ZM15 9.75a.75.75 0 0 0-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 0 0 .75-.75V10.5a.75.75 0 0 0-.75-.75H15Z"
+                        clip-rule="evenodd" />
+                </svg>
+
+                Imprimir
+            </button>
         </h3>
         <div class="divider p-0 m-0"></div>
 
@@ -1390,6 +1436,132 @@
              shrink-0">
 
             <button type="button" class="btn btn-sm" (click)="closeModalPdfAsociados()">
+                Cerrar
+            </button>
+
+        </div>
+
+    </div>
+
+</dialog>
+
+<dialog #modalPdfSeguimientos class="modal modal-bottom sm:modal-middle" (click)="closeDialog($event)">
+
+    <div class="modal-box w-11/12 max-w-7xl h-[95vh] p-0 flex flex-col">
+
+        <!-- ============================================== -->
+        <!-- HEADER -->
+        <!-- ============================================== -->
+
+        <div class="flex items-center justify-between
+             px-4 py-3
+             border-b border-base-300
+             bg-base-200
+             shrink-0">
+
+            <div class="flex items-center gap-2">
+
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-6 text-warning">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-1.5 3h1.5M9 21.75h6.75A2.25 2.25 0 0 0 18 19.5V6.108c0-1.505-1.125-2.811-2.664-2.94
+            a48.972 48.972 0 0 0-.673-.05A3 3 0 0 0 12 1.5a3 3 0 0 0-2.663 1.618
+            c-.225.015-.45.032-.673.05C7.125 3.297 6 4.603 6 6.108V19.5
+            A2.25 2.25 0 0 0 8.25 21.75Z" />
+                </svg>
+
+                <h3 class="font-bold text-lg">
+                    Hojas de Ruta Seguimientos
+                </h3>
+
+            </div>
+
+            <button type="button" class="btn btn-sm btn-ghost" (click)="closeModalPdfSeguimientos()">
+                ✕
+            </button>
+
+        </div>
+
+
+        <!-- ============================================== -->
+        <!-- CONTENIDO -->
+        <!-- ============================================== -->
+
+        <div class="relative flex-1 min-h-0 bg-base-300">
+
+            <!-- ========================================== -->
+            <!-- LOADING -->
+            <!-- ========================================== -->
+
+            @if (pdfSeguimientosLoading()) {
+
+            <div class="absolute inset-0
+                 flex flex-col
+                 items-center justify-center
+                 bg-base-300
+                 z-10">
+
+                <span class="loading loading-spinner loading-lg text-primary"></span>
+
+                <span class="mt-3 text-sm opacity-70">
+                    Generando documento...
+                </span>
+
+            </div>
+
+            }
+
+
+            <!-- ========================================== -->
+            <!-- PDF -->
+            <!-- ========================================== -->
+
+            @if (pdfSeguimientosUrl()) {
+
+            <iframe [src]="pdfSeguimientosUrl()" class="w-full h-full border-0" title="Hojas de Ruta Seguimientos">
+            </iframe>
+
+            }
+
+
+            <!-- ========================================== -->
+            <!-- SIN PDF -->
+            <!-- ========================================== -->
+
+            @if (
+            !pdfSeguimientosLoading() &&
+            !pdfSeguimientosUrl()
+            ) {
+
+            <div class="w-full h-full
+                 flex items-center justify-center">
+
+                <div class="text-center opacity-60">
+
+                    <div class="text-lg">
+                        No hay documento para mostrar
+                    </div>
+
+                </div>
+
+            </div>
+
+            }
+
+        </div>
+
+
+        <!-- ============================================== -->
+        <!-- FOOTER -->
+        <!-- ============================================== -->
+
+        <div class="modal-action
+             px-4 py-2
+             m-0
+             border-t border-base-300
+             bg-base-200
+             shrink-0">
+
+            <button type="button" class="btn btn-sm" (click)="closeModalPdfSeguimientos()">
                 Cerrar
             </button>
 

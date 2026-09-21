@@ -5,6 +5,7 @@ import { map, combineLatest, switchMap, tap, debounceTime, distinctUntilChanged,
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SeguimientosService } from '../services/seguimientos.service';
+import { AuthService } from '@auth/services/auth.service';
 
 @Component({
   selector: 'app-dasboard',
@@ -16,6 +17,8 @@ import { SeguimientosService } from '../services/seguimientos.service';
 export class Dasboard {
   hojaRutaService = inject(HojaRutaService);
   seguimientosService = inject(SeguimientosService);
+  authService = inject(AuthService);
+    user = computed(() => this.authService.user());
   dashboard = toSignal(this.hojaRutaService.getHojaRutas({}));
   route = inject(ActivatedRoute);
   fb = inject(FormBuilder);
@@ -90,6 +93,10 @@ export class Dasboard {
     termino: [''],
     estado: [''],
     numero: [''],
+    destinoUser: [this.user()?._id ?? ''],
+    idUnidadOrgDest: [this.user()?.idUnidadOrg?._id ?? ''],
+    idUnidadFuncDest: [this.user()?.idUnidadFuncional?._id ?? ''],
+    idSubUnidadDest: [this.user()?.idSubUnidad?._id ?? ''],
   });
   searchFormSegui$ = this.searchFormSegui.valueChanges.pipe(
     startWith(this.searchFormSegui.value),
