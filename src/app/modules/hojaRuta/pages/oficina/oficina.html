@@ -572,7 +572,8 @@
                             </button>
 
                             @if(segui.idHojaRuta.asociados && segui.idHojaRuta.asociados.length > 0) {
-                            <button  (click)="desasociarHojaRuta(segui.idHojaRuta)" type="button" class="btn  text-fuchsia-500 btn-xs p-0 ">
+                            <button (click)="desasociarHojaRuta(segui.idHojaRuta)" type="button"
+                                class="btn  text-fuchsia-500 btn-xs p-0 ">
 
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                     class="size-5">
@@ -589,7 +590,12 @@
 
                             <!-- DERIVAR COPIA -->
                             @if (segui.estado === 'DERIVADO') {
-                            <button class="btn btn-xs text-cyan-300 p-0" (click)="openNewModalSeg(segui, true)">
+
+                            <!-- DERIVAR COPIA -->
+
+                            <button type="button" class="btn btn-xs text-cyan-300 p-0"
+                                (click)="openNewModalSeg(segui, true)">
+
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                     class="size-5">
 
@@ -598,22 +604,21 @@
                                         clip-rule="evenodd" />
 
                                 </svg>
+
                                 Derivar copia
+
                             </button>
+
                             <!-- ANULAR -->
 
-                            <button class="btn btn-xs text-error p-0" (click)="anularEnvio(segui)">
+                            <button type="button" class="btn btn-xs text-error p-0" (click)="anularEnvio(segui)">
 
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-5">
-
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-
-                                </svg>
+                                <!-- ... -->
 
                                 Anular envío
 
                             </button>
+
                             }
 
                             <!-- ARCHIVADO -->
@@ -652,7 +657,8 @@
                                 Asociados
                             </button>
 
-                            <button  (click)="desasociarHojaRuta(segui.idHojaRuta)"   type="button" class="btn  text-fuchsia-500 btn-xs p-0 ">
+                            <button (click)="desasociarHojaRuta(segui.idHojaRuta)" type="button"
+                                class="btn  text-fuchsia-500 btn-xs p-0 ">
 
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                     class="size-5">
@@ -704,27 +710,91 @@
 
         <form [formGroup]="seguiForm" (ngSubmit)="onSubmitSeg()">
 
-            <div class="flex items-center justify-evenly">
+            <!-- ========================================================== -->
+            <!-- TIPO DE DERIVACIÓN -->
+            <!-- ========================================================== -->
 
-                <div>
+            <div class="w-full my-4">
 
-                    <fieldset class="fieldset flex gap-4">
-                        @if(seguiForm.get('numeroCopia')?.value === 0) {
-                        <label class="cursor-pointer flex items-center gap-2">
-                            <input type="radio" class="radio radio-sm radio-success" formControlName="tipoEnvio"
-                                value="OFICIAL">
-                            <span class="text-success font-medium">Oficial</span>
-                        </label>
-                        } @else {
+                @if(seguiForm.get('numeroCopia')?.value === 0) {
 
-                        <label class="cursor-pointer flex items-center gap-2">
-                            <input type="radio" class="radio radio-sm radio-error" formControlName="tipoEnvio"
-                                value="COPIA">
-                            <span class="text-error font-medium">Copia {{ seguiForm.get('numeroCopia')?.value }}</span>
-                        </label>
-                        }
-                    </fieldset>
+                <!-- ================================================== -->
+                <!-- DERIVACIÓN OFICIAL -->
+                <!-- ================================================== -->
+
+                <div class="flex items-center justify-center">
+
+                    <div class="badge badge-success badge-lg gap-2 px-6 py-4 shadow-sm">
+
+                        <span class="text-lg">
+                            ✓
+                        </span>
+
+                        <span class="font-bold tracking-wide">
+                            DERIVACIÓN OFICIAL
+                        </span>
+
+                    </div>
+
                 </div>
+
+                } @else {
+
+                <!-- ================================================== -->
+                <!-- DERIVACIÓN COPIA -->
+                <!-- ================================================== -->
+
+                <div class="alert alert-warning shadow-lg border-2 border-warning">
+
+                    <div class="w-full">
+
+                        <!-- ========================================== -->
+                        <!-- COPIA N -->
+                        <!-- ========================================== -->
+
+                        <div class="flex justify-center mb-4">
+
+                            <div class="bg-warning text-warning-content rounded-2xl px-10 py-4 text-center shadow-md">
+
+                                <div class="text-xs font-bold uppercase tracking-[0.2em]">
+                                    Tipo de derivación
+                                </div>
+
+                                <div class="text-4xl font-black uppercase leading-tight">
+                                    COPIA {{ seguiForm.get('numeroCopia')?.value }}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- ========================================== -->
+                        <!-- MENSAJE -->
+                        <!-- ========================================== -->
+
+                        <div class="text-center">
+
+                            <p class="font-semibold text-base">
+                                Esta Hoja de Ruta ya cuenta con una derivación
+                                <strong>OFICIAL</strong> a otro destino.
+                            </p>
+
+                            <p class="text-sm mt-2 opacity-80">
+                                La presente derivación se registra como
+                                <strong>
+                                    COPIA {{ seguiForm.get('numeroCopia')?.value }}
+                                </strong>
+                                para conocimiento, seguimiento o atención,
+                                según corresponda.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                }
 
             </div>
 

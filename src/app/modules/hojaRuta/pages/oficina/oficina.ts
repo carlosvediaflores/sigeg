@@ -80,7 +80,7 @@ export class Oficina {
 
   private pdfAsociadosBlobUrl: string | null = null;
 
-    @ViewChild('modalPdfSeguimientos')
+  @ViewChild('modalPdfSeguimientos')
   modalPdfSeguimientos!: ElementRef<HTMLDialogElement>;
 
   pdfSeguimientosUrl = signal<SafeResourceUrl | null>(null);
@@ -642,12 +642,17 @@ export class Oficina {
 
 
   openNewModalSeg(segui: Seguimiento, copia: boolean) {
+
     this.resetDestinoSeleccionado();
 
-    const user = this.user()
+    const user = this.user();
+
     this.seguimientos.set(segui);
 
-    // Obtener el id de la Hoja de Ruta
+    // ==========================================================
+    // OBTENER ID DE LA HOJA DE RUTA
+    // ==========================================================
+
     const idHojaRuta =
       typeof segui.idHojaRuta === 'string'
         ? segui.idHojaRuta
@@ -656,57 +661,129 @@ export class Oficina {
     this.isPosting.set(true);
 
     this.hojaRutaService.getHojaRuta(idHojaRuta).subscribe({
+
       next: (hojaRuta) => {
+
+        // ==================================================
+        // DATOS INICIALES
+        // ==================================================
 
         let tipoEnvio = segui.tipoEnvio;
         let numeroCopia = segui.numeroCopia ?? 0;
 
+        // ==================================================
+        // CALCULAR SIGUIENTE NÚMERO DE COPIA
+        // ==================================================
+
         const maxNumeroCopia =
           hojaRuta.seguimientos?.reduce(
-            (max, seg) => Math.max(max, seg.numeroCopia ?? 0),
+            (max, seg) =>
+              Math.max(max, seg.numeroCopia ?? 0),
             0
           ) ?? 0;
 
-        const siguienteNumeroCopia = maxNumeroCopia + 1;
+        const siguienteNumeroCopia =
+          maxNumeroCopia + 1;
 
+        // ==================================================
+        // SI SE VA A DERIVAR COMO COPIA
+        // ==================================================
 
         if (copia === true) {
+
           tipoEnvio = 'COPIA';
+
           numeroCopia = siguienteNumeroCopia;
+
         }
 
+        // ==================================================
+        // CARGAR FORMULARIO
+        // ==================================================
+
         this.seguiForm.reset({
+
           origenHr: segui.origenHr,
-          idHojaRuta: typeof segui.idHojaRuta === 'string' ? segui.idHojaRuta : segui.idHojaRuta._id,
+
+          idHojaRuta:
+            typeof segui.idHojaRuta === 'string'
+              ? segui.idHojaRuta
+              : segui.idHojaRuta._id,
+
           numeroHr: segui.numeroHr,
+
           tipoEnvio: tipoEnvio,
+
           detalle: '',
+
           fechaDerivado: new Date(),
+
           numeroCopia: numeroCopia,
-          idUnidadOrgOrigen: user?.idUnidadOrg ? (typeof user.idUnidadOrg === 'string' ? user.idUnidadOrg : user.idUnidadOrg._id) : '',
-          idUnidadFuncOrigen: user?.idUnidadFuncional ? (typeof user.idUnidadFuncional === 'string' ? user.idUnidadFuncional : user.idUnidadFuncional._id) : '',
-          idSubUnidadOrigen: user?.idSubUnidad ? (typeof user.idSubUnidad === 'string' ? user.idSubUnidad : user.idSubUnidad._id) : '',
+
+          idUnidadOrgOrigen:
+            user?.idUnidadOrg
+              ? (
+                typeof user.idUnidadOrg === 'string'
+                  ? user.idUnidadOrg
+                  : user.idUnidadOrg._id
+              )
+              : '',
+
+          idUnidadFuncOrigen:
+            user?.idUnidadFuncional
+              ? (
+                typeof user.idUnidadFuncional === 'string'
+                  ? user.idUnidadFuncional
+                  : user.idUnidadFuncional._id
+              )
+              : '',
+
+          idSubUnidadOrigen:
+            user?.idSubUnidad
+              ? (
+                typeof user.idSubUnidad === 'string'
+                  ? user.idSubUnidad
+                  : user.idSubUnidad._id
+              )
+              : '',
+
           idUnidadFuncDest: '',
+
           idUnidadOrgDest: '',
+
           idSubUnidadDest: '',
+
           origenUser: user?._id,
+
           destinoUser: '',
+
         });
+
+        // ==================================================
+        // MOSTRAR MODAL
+        // ==================================================
 
         this.isPosting.set(false);
 
-        const modal = document.getElementById(
-          'newSeg_modal'
-        ) as HTMLDialogElement | null;
+        const modal =
+          document.getElementById(
+            'newSeg_modal'
+          ) as HTMLDialogElement | null;
 
         modal?.showModal();
+
       },
 
       error: (err) => {
+
         this.isPosting.set(false);
+
         console.error(err);
-      },
+
+      }
+
     });
+
   }
 
   onSubmitSeg() {
@@ -1636,14 +1713,14 @@ export class Oficina {
   }
 
   async desasociarHojaRuta(
-  hojaRuta: HojaRutaSimple
-) {
+    hojaRuta: HojaRutaSimple
+  ) {
 
-  const result = await Swal.fire({
+    const result = await Swal.fire({
 
-    title: '¿Desasociar Hojas de Ruta?',
+      title: '¿Desasociar Hojas de Ruta?',
 
-    html: `
+      html: `
       <div class="text-left">
 
         <p>
@@ -1666,76 +1743,76 @@ export class Oficina {
       </div>
     `,
 
-    icon: 'warning',
+      icon: 'warning',
 
-    showCancelButton: true,
-
-    confirmButtonText:
-      'Sí, desasociar',
-
-    cancelButtonText:
-      'Cancelar',
-
-    confirmButtonColor:
-      '#dc2626',
-
-    reverseButtons: true,
-
-  });
-
-  if (!result.isConfirmed) {
-    return;
-  }
-
-  try {
-
-    await firstValueFrom(
-      this.hojaRutaService.desasociarHojaRuta(
-        hojaRuta._id
-      )
-    );
-
-    await Swal.fire({
-
-      icon: 'success',
-
-      title: 'Desasociado correctamente',
-
-      text:
-        'Las Hojas de Ruta fueron restauradas a RECIBIDO.',
-
-      timer: 2000,
-
-      showConfirmButton: false,
-
-    });
-
-    this.seguimientosResource.reload();
-
-  } catch (error: any) {
-
-    console.error(
-      'Error al desasociar:',
-      error,
-    );
-
-    await Swal.fire({
-
-      icon: 'error',
-
-      title: 'No se pudo desasociar',
-
-      text:
-        error?.error?.message ??
-        error?.message ??
-        'Ocurrió un error al desasociar las Hojas de Ruta.',
+      showCancelButton: true,
 
       confirmButtonText:
-        'Aceptar',
+        'Sí, desasociar',
+
+      cancelButtonText:
+        'Cancelar',
+
+      confirmButtonColor:
+        '#dc2626',
+
+      reverseButtons: true,
 
     });
 
+    if (!result.isConfirmed) {
+      return;
+    }
+
+    try {
+
+      await firstValueFrom(
+        this.hojaRutaService.desasociarHojaRuta(
+          hojaRuta._id
+        )
+      );
+
+      await Swal.fire({
+
+        icon: 'success',
+
+        title: 'Desasociado correctamente',
+
+        text:
+          'Las Hojas de Ruta fueron restauradas a RECIBIDO.',
+
+        timer: 2000,
+
+        showConfirmButton: false,
+
+      });
+
+      this.seguimientosResource.reload();
+
+    } catch (error: any) {
+
+      console.error(
+        'Error al desasociar:',
+        error,
+      );
+
+      await Swal.fire({
+
+        icon: 'error',
+
+        title: 'No se pudo desasociar',
+
+        text:
+          error?.error?.message ??
+          error?.message ??
+          'Ocurrió un error al desasociar las Hojas de Ruta.',
+
+        confirmButtonText:
+          'Aceptar',
+
+      });
+
+    }
   }
-}
 
 }

@@ -304,7 +304,8 @@
                         </button>
 
                         @if (hr.asociados && hr.asociados.length > 0) {
-                       <button  (click)="desasociarHojaRuta(hr)"type="button" class="btn  text-fuchsia-500 btn-xs p-0 ">
+                        <button (click)="desasociarHojaRuta(hr)" type="button"
+                            class="btn  text-fuchsia-500 btn-xs p-0 ">
 
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                 class="size-5">
@@ -322,7 +323,8 @@
 
                         @if (hr.estado === 'ASOCIADO') {
 
-                        <button  (click)="desasociarHojaRuta(hr)"type="button" class="btn  text-fuchsia-500 btn-xs p-0 ">
+                        <button (click)="desasociarHojaRuta(hr)" type="button"
+                            class="btn  text-fuchsia-500 btn-xs p-0 ">
 
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                 class="size-5">
@@ -334,7 +336,7 @@
 
                             Desasociar
                         </button>
-                         }
+                        }
                         <!-- EDITAR -->
 
                         <button class="btn btn-xs text-info p-0" (click)="openEditModal(hr)">
@@ -511,7 +513,7 @@
                             <option value="" disabled selected>Selecciona tipo de Documento</option>
                             <option value="NORMAL">NORMAL</option>
                             <option value="PAGO">PAGO</option>
-                            <option value="CATASTRO">CATASTRO</option>
+                            <!-- <option value="CATASTRO">CATASTRO</option> -->
                             <option value="OTRO">OTRO</option>
                         </select>
                         <span>Tipo de documemto</span>
@@ -608,24 +610,75 @@
 
             <div class="flex items-center justify-evenly">
 
-                <div>
+                <div class="w-full">
 
-                    <fieldset class="fieldset flex gap-4">
-                        @if(hojaRuta()?.estado=='RECIBIDO') {
-                        <label class="cursor-pointer flex items-center gap-2">
-                            <input type="radio" class="radio radio-sm radio-success" formControlName="tipoEnvio"
-                                value="OFICIAL">
-                            <span class="text-success font-medium">Oficial</span>
-                        </label>
-                        } @else {
+                    @if(hojaRuta()?.estado === 'RECIBIDO') {
 
-                        <label class="cursor-pointer flex items-center gap-2">
-                            <input type="radio" class="radio radio-sm radio-error" formControlName="tipoEnvio"
-                                value="COPIA">
-                            <span class="text-error font-medium">Copia {{ seguiForm.get('numeroCopia')?.value }}</span>
-                        </label>
-                        }
-                    </fieldset>
+                    <!-- ===================================================== -->
+                    <!-- DERIVACIÓN OFICIAL -->
+                    <!-- ===================================================== -->
+
+                    <div class="flex items-center justify-center my-3">
+
+                        <div class="badge badge-success badge-lg gap-2 px-5 py-4">
+                            <span class="text-lg">✓</span>
+                            <span class="font-bold">
+                                DERIVACIÓN OFICIAL
+                            </span>
+                        </div>
+
+                    </div>
+
+                    } @else {
+
+                    <!-- ===================================================== -->
+                    <!-- DERIVACIÓN COPIA -->
+                    <!-- ===================================================== -->
+
+                    <div class="alert alert-warning shadow-lg my-4 border-2 border-warning">
+
+                        <div class="w-full">
+
+                            <!-- ENCABEZADO -->
+                            <div class="flex items-center justify-center mb-3">
+
+                                <div class="bg-warning text-warning-content rounded-xl px-8 py-3 shadow-md text-center">
+
+                                    <div class="text-xs font-semibold uppercase tracking-widest">
+                                        Tipo de derivación
+                                    </div>
+
+                                    <div class="text-3xl font-black uppercase leading-tight">
+                                        COPIA {{ seguiForm.get('numeroCopia')?.value }}
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <!-- MENSAJE -->
+                            <div class="text-center">
+
+                                <p class="font-semibold text-base">
+                                    Esta Hoja de Ruta ya cuenta con una derivación
+                                    <strong>OFICIAL</strong> a otro destino.
+                                </p>
+
+                                <p class="text-sm mt-1 opacity-80">
+                                    La presente derivación se registra en calidad de
+                                    <strong>COPIA {{ seguiForm.get('numeroCopia')?.value }}</strong>
+                                    para conocimiento, seguimiento o atención,
+                                    según corresponda.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    }
+
                 </div>
 
             </div>
