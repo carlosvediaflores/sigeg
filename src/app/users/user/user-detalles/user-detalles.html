@@ -33,17 +33,18 @@
                 <label class="floating-label">
                     <span class="label-text">Apellidos</span>
                     <input type="text" placeholder="Apellidos" class="input input-bordered w-full"
-                        formControlName="apellidos" [class.border-red-500]="userForm.get('apellidos')?.errors ?? false" />
+                        formControlName="apellidos"
+                        [class.border-red-500]="userForm.get('apellidos')?.errors ?? false" />
                 </label>
                 <form-error-label [errorMessage]="getFieldError('apellidos')" />
             </div>
         </div>
 
         <label class="floating-label">
-            <span class="label-text">Correo electrónico</span   >
+            <span class="label-text">Correo electrónico</span>
 
-        <input type="text" placeholder="Email" class="input input-bordered w-full" formControlName="email"
-            [class.border-red-500]="userForm.get('email')?.errors ?? false" />
+            <input type="text" placeholder="Email" class="input input-bordered w-full" formControlName="email"
+                [class.border-red-500]="userForm.get('email')?.errors ?? false" />
         </label>
         <form-error-label [errorMessage]="getFieldError('email')" />
 

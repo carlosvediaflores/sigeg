@@ -487,13 +487,25 @@
                 <form-error-label [errorMessage]="getFieldError('referencia')" />
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
+                @if(selectedHRId() != 'new') {
                 <div>
+                    <label class="floating-label">
+                        <span class="label-text">Fecha del Recepción</span>
+                        <input type="date" placeholder="Fecha del Recepción" class="input input-bordered w-full"
+                            formControlName="fechaRecepcion" [class.input-error]="getFieldError('fechaDocumento')" />
 
-                    <input type="date" placeholder="Fecha del Documento" class="input input-bordered w-full"
-                        formControlName="fechaDocumento" [class.input-error]="getFieldError('fechaDocumento')" />
+                        <form-error-label [errorMessage]="getFieldError('fechaRecepcion')" />
+                    </label>
+                </div>
+                }
+                <div>
+                    <label class="floating-label">
+                        <span class="label-text">Fecha del Documento</span>
+                        <input type="date" placeholder="Fecha del Documento" class="input input-bordered w-full"
+                            formControlName="fechaDocumento" [class.input-error]="getFieldError('fechaDocumento')" />
+                    </label>
 
-                    <form-error-label [errorMessage]="getFieldError('fechaDocumento')" />
+                    <form-error-label [errorMessage]="getFieldError('fechaNac')" />
                 </div>
 
                 <div>
