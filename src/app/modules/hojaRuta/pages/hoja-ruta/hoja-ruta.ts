@@ -19,7 +19,7 @@ import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-hoja-ruta',
-  imports: [RouterLink, Pagination, DatePipe, FormErrorLabel, ReactiveFormsModule, JsonPipe],
+  imports: [RouterLink, Pagination, DatePipe, FormErrorLabel, ReactiveFormsModule,],
   templateUrl: './hoja-ruta.html',
   styleUrl: './hoja-ruta.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -189,8 +189,21 @@ export class HojaRuta {
     numero: [''],
   });
 
+  searchFormHR2 = this.fb.group({
+    gestion: [this.year],
+    termino: [''],
+    estado: [''],
+    numero: [''],
+  });
+
   searchFormHR$ = this.searchFormHR.valueChanges.pipe(
     startWith(this.searchFormHR.value),
+    debounceTime(300),
+    distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b))
+  );
+
+  searchFormHR2$ = this.searchFormHR2.valueChanges.pipe(
+    startWith(this.searchFormHR2.value),
     debounceTime(300),
     distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b))
   );
@@ -198,7 +211,7 @@ export class HojaRuta {
 
   usersResource = rxResource({
     stream: () => this.userService.getUsers({ limit: 1000 })
-      .pipe(tap((resp) => console.log('Users', resp))),
+    //  .pipe(tap((resp) => console.log('Users', resp))),
   });
 
   currentPage = toSignal(
@@ -233,6 +246,32 @@ export class HojaRuta {
         this.currentPage$,
         this.hojaRutaPerPage$,
         this.searchFormHR$,
+      ]).pipe(
+
+        switchMap(([page, limit, filters]) => {
+          const normalizedFilters = {
+            gestion: filters?.gestion ?? undefined,
+            termino: filters?.termino ?? undefined,
+            estado: filters?.estado ?? undefined,
+            numero: filters?.numero ?? undefined,
+          };
+
+          return this.hojaRutaService.getHojaRutas({
+            offset: (page - 1) * limit,
+            limit,
+            ...normalizedFilters,
+          });
+        })
+      )
+        .pipe(tap((resp) => console.log('hojasRuta', resp))),
+  });
+
+  hojaRutaResourceCount = rxResource({
+    stream: () =>
+      combineLatest([
+        this.currentPage$,
+        this.hojaRutaPerPage$,
+        this.searchFormHR2$,
       ]).pipe(
 
         switchMap(([page, limit, filters]) => {
@@ -407,6 +446,7 @@ export class HojaRuta {
         );
       }
       this.hojaRutaResource.reload();
+      this.hojaRutaResourceCount.reload();
 
       this.hRutaForm.reset({
         origen: '',
@@ -473,6 +513,7 @@ export class HojaRuta {
     );
 
     this.hojaRutaResource.reload();
+    this.hojaRutaResourceCount.reload();
 
     Swal.fire(
       'Actualizado',
@@ -502,6 +543,7 @@ export class HojaRuta {
     );
 
     this.hojaRutaResource.reload();
+    this.hojaRutaResourceCount.reload();
 
     Swal.fire(
       'Actualizado',
@@ -530,6 +572,7 @@ export class HojaRuta {
         );
 
         this.hojaRutaResource.reload();
+        this.hojaRutaResourceCount.reload();
 
         Swal.fire(
           'Correcto',
@@ -781,6 +824,7 @@ export class HojaRuta {
 
                 this.hojaRutaService.clearCache();
                 this.hojaRutaResource.reload();
+                this.hojaRutaResourceCount.reload();
 
                 this.isPosting.set(false);
 
@@ -1200,14 +1244,14 @@ export class HojaRuta {
   }
 
   async desasociarHojaRuta(
-  hojaRuta: HojaRutaSimple
-) {
+    hojaRuta: HojaRutaSimple
+  ) {
 
-  const result = await Swal.fire({
+    const result = await Swal.fire({
 
-    title: '¿Desasociar Hojas de Ruta?',
+      title: '¿Desasociar Hojas de Ruta?',
 
-    html: `
+      html: `
       <div class="text-left">
 
         <p>
@@ -1230,75 +1274,76 @@ export class HojaRuta {
       </div>
     `,
 
-    icon: 'warning',
+      icon: 'warning',
 
-    showCancelButton: true,
-
-    confirmButtonText:
-      'Sí, desasociar',
-
-    cancelButtonText:
-      'Cancelar',
-
-    confirmButtonColor:
-      '#dc2626',
-
-    reverseButtons: true,
-
-  });
-
-  if (!result.isConfirmed) {
-    return;
-  }
-
-  try {
-
-    await firstValueFrom(
-      this.hojaRutaService.desasociarHojaRuta(
-        hojaRuta._id
-      )
-    );
-
-    await Swal.fire({
-
-      icon: 'success',
-
-      title: 'Desasociado correctamente',
-
-      text:
-        'Las Hojas de Ruta fueron restauradas a RECIBIDO.',
-
-      timer: 2000,
-
-      showConfirmButton: false,
-
-    });
-
-    this.hojaRutaResource.reload();
-
-  } catch (error: any) {
-
-    console.error(
-      'Error al desasociar:',
-      error,
-    );
-
-    await Swal.fire({
-
-      icon: 'error',
-
-      title: 'No se pudo desasociar',
-
-      text:
-        error?.error?.message ??
-        error?.message ??
-        'Ocurrió un error al desasociar las Hojas de Ruta.',
+      showCancelButton: true,
 
       confirmButtonText:
-        'Aceptar',
+        'Sí, desasociar',
+
+      cancelButtonText:
+        'Cancelar',
+
+      confirmButtonColor:
+        '#dc2626',
+
+      reverseButtons: true,
 
     });
 
+    if (!result.isConfirmed) {
+      return;
+    }
+
+    try {
+
+      await firstValueFrom(
+        this.hojaRutaService.desasociarHojaRuta(
+          hojaRuta._id
+        )
+      );
+
+      await Swal.fire({
+
+        icon: 'success',
+
+        title: 'Desasociado correctamente',
+
+        text:
+          'Las Hojas de Ruta fueron restauradas a RECIBIDO.',
+
+        timer: 2000,
+
+        showConfirmButton: false,
+
+      });
+
+      this.hojaRutaResource.reload();
+      this.hojaRutaResourceCount.reload();
+
+    } catch (error: any) {
+
+      console.error(
+        'Error al desasociar:',
+        error,
+      );
+
+      await Swal.fire({
+
+        icon: 'error',
+
+        title: 'No se pudo desasociar',
+
+        text:
+          error?.error?.message ??
+          error?.message ??
+          'Ocurrió un error al desasociar las Hojas de Ruta.',
+
+        confirmButtonText:
+          'Aceptar',
+
+      });
+
+    }
   }
-}
 }

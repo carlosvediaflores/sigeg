@@ -37,10 +37,23 @@
             <!-- RIGHT -->
             <div class="flex gap-2">
 
-                <!-- SEARCH -->
-                <!-- <div class="hidden md:block">
-                    <input type="text" placeholder="Buscar..." class="input input-bordered w-64" />
-                </div> -->
+
+                <!-- BUSCADOR GLOBAL -->
+                <form class="input input-sm" (submit)="buscarDesdeLayout($event)">
+
+                    <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+
+                        <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none"
+                            stroke="currentColor">
+
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.3-4.3"></path>
+                        </g>
+                    </svg>
+
+                    <input type="search" placeholder="Buscar..." aria-label="Buscar hojas de ruta"
+                        [value]="terminoGlobal()" (input)="terminoGlobal.set($any($event.target).value)" />
+                </form>
 
                 <!-- IR A INICIO -->
                 <button routerLink="/main" class="btn btn-ghost btn-circle">
@@ -89,7 +102,7 @@
 
                         <div class="avatar">
                             <div class="w-10 rounded-full">
-                                <img src="https://i.pravatar.cc/100" />
+                                <img src="assets/images/avatar.png" />
                             </div>
                         </div>
 
@@ -268,19 +281,79 @@
                         <span class="text-sm text-slate-500 hidden md:block">Archivos</span>
                     </div>
                 </a>
-                <a routerLink="/hojaRuta/report-hoja-ruta" routerLinkActive=" active bg-slate-800"
-                    class="w-full px-2 inline-flex space-x-2 items-center border-b border-slate-700 py-3 hover:bg-white/5 transition ease-linear duration-150 text-accent text-lg hover:underline cursor-pointer">
-                    <div>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
-                            <path
-                                d="M18.375 2.25c-1.035 0-1.875.84-1.875 1.875v15.75c0 1.035.84 1.875 1.875 1.875h.75c1.035 0 1.875-.84 1.875-1.875V4.125c0-1.036-.84-1.875-1.875-1.875h-.75ZM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-.75a1.875 1.875 0 0 1-1.875-1.875V8.625ZM3 13.125c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v6.75c0 1.035-.84 1.875-1.875 1.875h-.75A1.875 1.875 0 0 1 3 19.875v-6.75Z" />
+
+                <!-- MENÚ REPORTES -->
+                <div class="w-full border-b border-slate-700">
+
+                    <!-- BOTÓN PRINCIPAL -->
+                    <button type="button" routerLink="/hojaRuta/report-hoja-ruta" routerLinkActive="bg-slate-800"
+                        (click)="mostrarSubmenuReportes = !mostrarSubmenuReportes" class="w-full px-2 inline-flex space-x-2 items-center py-3
+               hover:bg-white/5 transition ease-linear duration-150
+               text-accent text-lg cursor-pointer" [attr.aria-expanded]="mostrarSubmenuReportes">
+
+                        <!-- ICONO -->
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                class="size-6">
+                                <path d="M11.625 16.5a1.875 1.875 0 1 0 0-3.75 1.875 1.875 0 0 0 0 3.75Z" />
+                                <path fill-rule="evenodd"
+                                    d="M5.625 1.5H9a3.75 3.75 0 0 1 3.75 3.75v1.875c0 1.036.84 1.875 1.875 1.875H16.5a3.75 3.75 0 0 1 3.75 3.75v7.875c0 1.035-.84 1.875-1.875 1.875H5.625a1.875 1.875 0 0 1-1.875-1.875V3.375c0-1.036.84-1.875 1.875-1.875Zm6 16.5c.66 0 1.277-.19 1.797-.518l1.048 1.048a.75.75 0 0 0 1.06-1.06l-1.047-1.048A3.375 3.375 0 1 0 11.625 18Z"
+                                    clip-rule="evenodd" />
+                                <path
+                                    d="M14.25 5.25a5.23 5.23 0 0 0-1.279-3.434 9.768 9.768 0 0 1 6.963 6.963A5.23 5.23 0 0 0 16.5 7.5h-1.875a.375.375 0 0 1-.375-.375V5.25Z" />
+                            </svg>
+
+                        </div>
+
+                        <!-- TEXTOS -->
+                        <div class="flex flex-col flex-1 text-left">
+                            <span class="text-lg text-slate-300 font-bold leading-5">
+                                Reportes
+                            </span>
+
+                            <span class="text-sm text-slate-500 hidden md:block">
+                                Consultas y Reportes
+                            </span>
+                        </div>
+
+                        <!-- FLECHA -->
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                            class="size-5 text-slate-400 transition-transform duration-200"
+                            [class.rotate-180]="mostrarSubmenuReportes">
+
+                            <path fill-rule="evenodd"
+                                d="M5.22 7.22a.75.75 0 0 1 1.06 0L10 10.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 8.28a.75.75 0 0 1 0-1.06Z"
+                                clip-rule="evenodd" />
                         </svg>
+                    </button>
+
+                    <!-- SUBMENÚS -->
+                    @if (mostrarSubmenuReportes) {
+                    <div class="pb-2 pl-9 pr-2 space-y-1">
+
+                        <!-- SUBMENÚ 1 -->
+                        <a routerLink="/hojaRuta/report-hoja-ruta" routerLinkActive="bg-slate-800 text-white"
+                            [routerLinkActiveOptions]="{ exact: true }" class="flex items-center gap-2 px-3 py-2 rounded-md
+                       text-sm text-slate-400 hover:text-white
+                       hover:bg-white/5 transition duration-150">
+
+                            <span class="size-1.5 rounded-full bg-current"></span>
+                            <span>Hoja de Ruta</span>
+                        </a>
+
+                        <!-- SUBMENÚ 2 -->
+                        <a routerLink="/hojaRuta/report-my-oficina" routerLinkActive="bg-slate-800 text-white"
+                            [routerLinkActiveOptions]="{ exact: true }" class="flex items-center gap-2 px-3 py-2 rounded-md
+                       text-sm text-slate-400 hover:text-white
+                       hover:bg-white/5 transition duration-150">
+
+                            <span class="size-1.5 rounded-full bg-current"></span>
+                            <span>Mi Oficina</span>
+                        </a>
+
                     </div>
-                    <div class="flex flex-col">
-                        <span class="text-lg text-slate-300 font-bold leading-5">Reportes</span>
-                        <span class="text-sm text-slate-500 hidden md:block">Reportes</span>
-                    </div>
-                </a>
+                    }
+                </div>
 
 
                 <!-- Menu Item End -->

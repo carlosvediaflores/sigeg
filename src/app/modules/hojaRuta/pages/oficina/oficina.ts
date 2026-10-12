@@ -330,6 +330,7 @@ export class Oficina {
         );
 
         this.seguimientosResource.reload();
+        this.seguimientosResourceCount.reload();
 
         Swal.fire(
           'Correcto',
@@ -371,6 +372,7 @@ export class Oficina {
         );
 
         this.seguimientosResource.reload();
+        this.seguimientosResourceCount.reload();
 
         Swal.fire(
           'Correcto',
@@ -412,6 +414,7 @@ export class Oficina {
     );
 
     this.seguimientosResource.reload();
+    this.seguimientosResourceCount.reload();
 
     Swal.fire(
       'Actualizado',
@@ -619,6 +622,8 @@ export class Oficina {
       });
 
       this.seguimientosResource.reload();
+      this.seguimientosResourceCount.reload();
+
 
     } catch (error: any) {
 
@@ -841,6 +846,7 @@ export class Oficina {
 
                 this.hojaRutaService.clearCache();
                 this.seguimientosResource.reload();
+                this.seguimientosResourceCount.reload();
 
                 this.isPosting.set(false);
 
@@ -958,6 +964,7 @@ export class Oficina {
         confirmButtonText: 'Aceptar',
       });
 
+
       return;
     }
 
@@ -1024,6 +1031,7 @@ export class Oficina {
       });
 
       this.seguimientosResource.reload();
+      this.seguimientosResourceCount.reload();
 
     } catch (err: any) {
 
@@ -1399,6 +1407,8 @@ export class Oficina {
             timer: 1800,
             showConfirmButton: false,
           });
+          this.seguimientosResource.reload();
+          this.seguimientosResourceCount.reload();
 
           this.closeModalArchivar();
 
@@ -1788,6 +1798,7 @@ export class Oficina {
       });
 
       this.seguimientosResource.reload();
+      this.seguimientosResourceCount.reload();
 
     } catch (error: any) {
 

@@ -1,3 +1,5 @@
+import { isActive } from "@angular/router";
+
 export interface HeroSlide {
   id: number;
   titulo: string;
@@ -23,6 +25,10 @@ export interface DocumentoGaceta {
   gestion: number;
 
   archivo: string;
+
+  isActive: boolean;
+
+  isPublic: boolean
 
   fechaAprobacion: string; // NUEVO
 

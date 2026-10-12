@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { DocumentoGaceta } from '../../interfaces/hero-slide.interface';
 import { toSignal, toObservable, rxResource } from '@angular/core/rxjs-interop';
-import { map, combineLatest, switchMap, debounceTime, startWith } from 'rxjs';
+import { map, combineLatest, switchMap, debounceTime, startWith, tap } from 'rxjs';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { GacetaService } from '../../../modules/gacetaAdmin/services/gaceta.service';
@@ -50,8 +50,8 @@ export class Gaceta {
     searchFormGaceta = this.fb.group({
     gestion: [this.year],
     termino: [''],
-    isActive: [''],
-    isPublic: [''],
+    isActive: [true],
+    isPublic: [true],
     tipo: [''],
   });
 
@@ -81,7 +81,7 @@ export class Gaceta {
                         limit,
                         ...filters,
                     });
-                })
+                })  
             )
     });
 

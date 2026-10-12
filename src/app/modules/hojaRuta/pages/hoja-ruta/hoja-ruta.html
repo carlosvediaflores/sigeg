@@ -4,14 +4,14 @@
         <h1 class="text-1xl font-bold">Registro Hojas de Ruta</h1>
         <h3 class="text-lg">
             Total
-            <span class="text-accent">{{ hojaRutaResource.value()?.total }}</span>
+            <span class="text-accent">{{ hojaRutaResourceCount.value()?.total }}</span>
         </h3>
     </div>
 
     <div class="flex gap-2 items-center p-0 m-0" [formGroup]="searchFormHR">
 
         <label class="floating-label">
-            <select class="select select-bordered w-20" (change)="hojaRutaPerPage.set(+selectPerPage.value)"
+            <select class="select select-bordered w-20 select-xs" (change)="hojaRutaPerPage.set(+selectPerPage.value)"
                 #selectPerPage>
                 <option value="10">10</option>
                 <option value="20">20</option>
@@ -22,7 +22,7 @@
         </label>
 
         <label class="floating-label">
-            <select formControlName="gestion" class="select select-bordered w-20" #selectPerPage>
+            <select formControlName="gestion" class="select select-bordered w-20 select-xs" #selectPerPage>
                 <option value="2026">2026</option>
                 <option value="2027">2027</option>
                 <option value="2028">2028</option>
@@ -34,58 +34,58 @@
         </label>
         <div class="flex flex-1"></div>
         <div class="indicator mr-2">
-            <span class="indicator-item badge badge-sm">{{ hojaRutaResource.value()?.total }}</span>
-            <button type="button" class="btn btn-info btn-sm" (click)="searchFormHR.get('estado')?.setValue('')">
+            <span class="indicator-item badge badge-sm">{{ hojaRutaResourceCount.value()?.total }}</span>
+            <button type="button" class="btn btn-info btn-xs" (click)="searchFormHR.get('estado')?.setValue('')">
                 Todos
             </button>
         </div>
 
         <div class="indicator mr-2">
-            <span class="indicator-item badge badge-sm badge-accent">{{ hojaRutaResource.value()?.totalEnviado }}</span>
-            <button type="button" class="btn btn-info btn-sm" (click)="searchFormHR.get('estado')?.setValue('ENVIADO')">
+            <span class="indicator-item badge badge-sm badge-accent">{{ hojaRutaResourceCount.value()?.totalEnviado }}</span>
+            <button type="button" class="btn btn-info btn-xs" (click)="searchFormHR.get('estado')?.setValue('ENVIADO')">
                 Enviados
             </button>
         </div>
 
         <div class="indicator mr-2">
-            <span class="indicator-item badge badge-sm badge-success">{{ hojaRutaResource.value()?.totalRecibido
+            <span class="indicator-item badge badge-sm badge-success">{{ hojaRutaResourceCount.value()?.totalRecibido
                 }}</span>
-            <button type="button" class="btn btn-info btn-sm"
+            <button type="button" class="btn btn-info btn-xs"
                 (click)="searchFormHR.get('estado')?.setValue('RECIBIDO')">
                 Recibidos
             </button>
         </div>
         <div class="indicator mr-2">
-            <span class="indicator-item badge badge-sm badge-secondary">{{ hojaRutaResource.value()?.totalRegistrado
+            <span class="indicator-item badge badge-sm badge-secondary">{{ hojaRutaResourceCount.value()?.totalRegistrado
                 }}</span>
-            <button type="radio" class="btn btn-info btn-sm"
+            <button type="radio" class="btn btn-info btn-xs"
                 (click)="searchFormHR.get('estado')?.setValue('REGISTRADO')">Registrados</button>
         </div>
         <div class="indicator ">
-            <span class="indicator-item badge badge-sm badge-error">{{ hojaRutaResource.value()?.totalAnulado }}</span>
-            <button type="radio" class="btn btn-info btn-sm"
+            <span class="indicator-item badge badge-sm badge-error">{{ hojaRutaResourceCount.value()?.totalAnulado }}</span>
+            <button type="radio" class="btn btn-info btn-xs"
                 (click)="searchFormHR.get('estado')?.setValue('ANULADO')">Anulados</button>
         </div>
 
         <div class="flex flex-1"></div>
 
         <label class="floating-label w-25">
-            <input type="number" placeholder="N° Hoja ruta" class="input select-xs sm:input-sm md:input-md "
+            <input type="number" placeholder="N° Hoja ruta" class="input input-xs"
                 formControlName="numero" />
             <span>N° Hoja de ruta</span>
         </label>
 
         <label class="floating-label w-50">
-            <input type="text" placeholder="Búsqueda General" class="input select-xs sm:input-sm md:input-md "
+            <input type="text" placeholder="Búsqueda General" class="input input-xs  "
                 formControlName="termino" />
             <span>Búsqueda General</span>
         </label>
-        <button type="button" class="btn btn-info btn-sm"
+        <button type="button" class="btn btn-info btn-xs"
             (click)="searchFormHR.reset({ termino: '', numero: '', estado: '', gestion: year })">
             Limpiar
         </button>
 
-        <button class="btn btn-sm btn-info text-cyan-50 p-1 " (click)="openNewModal()">
+        <button class="btn btn-xs btn-info text-cyan-50 p-1 " (click)="openNewModal()">
             + Registrar Nuevo
         </button>
     </div>
@@ -94,7 +94,7 @@
     {{hRutaForm.value | json }}
 </pre> -->
     <div class="overflow-x-auto mt-0">
-        <table class="table table-zebra btn-xs">
+        <table class="table table-zebra table-xs ">
             <!-- head -->
             <thead>
                 <tr class="text-center">
@@ -124,7 +124,7 @@
                         </label>
                     </th> -->
                     <td>
-                        <div class="flex items-center gap-3">
+                        <div class="flex items-center ">
                             <div class="items-center cursor-pointer lg:tooltip" data-tip="Ver Seguimientos"
                                 (click)="openSeguiModal(hr)">
                                 <div class=" text-accent ">
@@ -249,7 +249,12 @@
 
                     </td>
                     <td class="text-center">
-
+                        @if(hr.prioridad === 'URGENTE') {
+                        <div class="inline-grid *:[grid-area:1/1]">
+                            <div class="status status-error animate-ping"></div>
+                            <div class="status status-error"></div>
+                        </div>
+                        }
                         <a (click)="printHojaRuta(hr)" class="btn btn-ghost text-accent btn-xs lg:tooltip"
                             data-tip="Imprimir">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -358,8 +363,8 @@
                 }
             </tbody>
         </table>
-        <app-pagination [pages]="hojaRutaResource.value()?.pages ?? 0" [currentPage]="currentPage()" />
     </div>
+    <app-pagination [pages]="hojaRutaResource.value()?.pages ?? 0" [currentPage]="currentPage()" />
 </div>
 
 <dialog id="hRuta_modal" class="modal">

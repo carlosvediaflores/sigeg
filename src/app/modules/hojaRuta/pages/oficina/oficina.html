@@ -272,7 +272,7 @@
     <div class="flex gap-2 items-center p-0 m-0" [formGroup]="searchFormSegui">
 
         <label class="floating-label w-20">
-            <select class="select select-bordered w-15" (change)="seguimientosPerPage.set($any(+selectPerPage.value))"
+            <select class="select select-bordered w-15 select-xs" (change)="seguimientosPerPage.set($any(+selectPerPage.value))"
                 #selectPerPage>
                 <option value="10">10</option>
                 <option value="20">20</option>
@@ -283,7 +283,7 @@
         </label>
 
         <label class="floating-label">
-            <select formControlName="gestion" class="select select-bordered w-20" #selectPerPage>
+            <select formControlName="gestion" class="select select-bordered w-20 select-xs" #selectPerPage>
                 <option value="2026">2026</option>
                 <option value="2027">2027</option>
                 <option value="2028">2028</option>
@@ -296,7 +296,7 @@
         @if(searchFormSegui.value.estado==='RECIBIDO'
         && selectedSeguimientos().length >= 2){
 
-        <button class="btn btn-success" (click)="openModalAsociar()">
+        <button class="btn btn-success btn-xs" (click)="openModalAsociar()">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
                 class="size-5 *:text-primary">
                 <path
@@ -316,7 +316,7 @@
         <div class="flex flex-1"></div>
         <div class="indicator mr-2">
             <span class="indicator-item badge badge-sm">{{ seguimientosResourceCount.value()?.total }}</span>
-            <button type="button" class="btn btn-info btn-sm" (click)="searchFormSegui.get('estado')?.setValue('')">
+            <button type="button" class="btn btn-info btn-xs" (click)="searchFormSegui.get('estado')?.setValue('')">
                 Todos
             </button>
         </div>
@@ -325,7 +325,7 @@
             <span class="indicator-item badge badge-sm badge-accent">{{
                 seguimientosResourceCount.value()?.totalDerivados
                 }}</span>
-            <button type="button" class="btn btn-info btn-sm"
+            <button type="button" class="btn btn-info btn-xs"
                 (click)="searchFormSegui.get('estado')?.setValue('DERIVADO')">
                 Derivados
             </button>
@@ -335,7 +335,7 @@
             <span class="indicator-item badge badge-sm badge-success">{{
                 seguimientosResourceCount.value()?.totalRecibidos
                 }}</span>
-            <button type="button" class="btn btn-info btn-sm"
+            <button type="button" class="btn btn-info btn-xs"
                 (click)="searchFormSegui.get('estado')?.setValue('RECIBIDO')">
                 Recibidos
             </button>
@@ -344,31 +344,31 @@
             <span class="indicator-item badge badge-sm badge-secondary">{{
                 seguimientosResourceCount.value()?.totalEnviados
                 }}</span>
-            <button type="radio" class="btn btn-info btn-sm"
+            <button type="radio" class="btn btn-info btn-xs"
                 (click)="searchFormSegui.get('estado')?.setValue('ENVIADO')">Sin Recibir</button>
         </div>
         <div class="indicator ">
             <span class="indicator-item badge badge-sm badge-error">{{
                 seguimientosResourceCount.value()?.totalArchivados
                 }}</span>
-            <button type="radio" class="btn btn-info btn-sm"
+            <button type="radio" class="btn btn-info btn-xs"
                 (click)="searchFormSegui.get('estado')?.setValue('ARCHIVADO')">Archivados</button>
         </div>
 
         <div class="flex flex-1"></div>
 
         <label class="floating-label w-25">
-            <input type="number" placeholder="N° Hoja ruta" class="input select-xs sm:input-sm md:input-md "
+            <input type="number" placeholder="N° Hoja ruta" class="input input-xs "
                 formControlName="numeroHr" />
             <span>N° Hoja de ruta</span>
         </label>
 
         <label class="floating-label w-50">
-            <input type="text" placeholder="Búsqueda General" class="input select-xs sm:input-sm md:input-md "
+            <input type="text" placeholder="Búsqueda General" class="input input-xs "
                 formControlName="termino" />
             <span>Búsqueda General</span>
         </label>
-        <button type="button" class="btn btn-info btn-sm"
+        <button type="button" class="btn btn-info btn-xs"
             (click)="searchFormSegui.reset({ termino: '', numeroHr: '', estado: 'RECIBIDO', gestion: year, idUnidadOrgDest:user()?.idUnidadOrg?._id ?? '', idUnidadFuncDest: user()?.idUnidadFuncional?._id ?? '', idSubUnidadDest:user()?.idSubUnidad?._id ?? '' , destinoUser: user()?._id ?? '' })">
             Limpiar
         </button>
@@ -376,7 +376,7 @@
 
 
     <div class="overflow-x-auto mt-0">
-        <table class="table table-zebra table-sm">
+        <table class="table table-zebra table-xs">
             <!-- head -->
             <thead>
                 <tr class="text-center">
@@ -412,7 +412,13 @@
                     </th>
                     }
                     <td>
-                        <div class="flex items-center gap-3">
+                        <div class="flex items-center ">
+                            @if(segui.idHojaRuta.prioridad === 'URGENTE') {
+                            <div class="inline-grid *:[grid-area:1/1] p-0 m-0">
+                                <div class="status status-error animate-ping"></div>
+                                <div class="status status-error"></div>
+                            </div>
+                            }
                             <div class="items-center cursor-pointer" (click)="openSeguiModal(segui.idHojaRuta)">
                                 <div class=" text-accent">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -688,7 +694,7 @@
 
     <div class="modal-box max-w-5xl p-8">
         <form method="dialog">
-            <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            <button class="btn btn-xs btn-circle btn-ghost absolute right-2 top-2">✕</button>
         </form>
 
         <!--   <pre>

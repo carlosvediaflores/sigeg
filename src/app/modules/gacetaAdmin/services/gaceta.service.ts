@@ -27,7 +27,6 @@ export class GacetaService {
   }
 
   getGacetas(options: Options): Observable<GacetaResponse> {
-    console.log('optionsSegui', options)
     const params = Object.fromEntries(
       Object.entries(options).filter(([_, value]) =>
         value !== null && value !== undefined && value !== ''
