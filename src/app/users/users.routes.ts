@@ -9,6 +9,7 @@ import { Roles } from "./roles/roles";
 import { PermisosList } from "./permisos/permisos-list/permisos-list";
 import { RolesList } from "./roles/roles-list/roles-list";
 import { UserDetalles } from "./user/user-detalles/user-detalles";
+import { DataBase } from "./pages/data-base/data-base";
 
 export const mainRoutes: Routes = [
   {
@@ -24,6 +25,7 @@ export const mainRoutes: Routes = [
      {path: 'permisos-list', component: PermisosList, },
 
      {path: 'roles-list', component: RolesList, },
+     {path: 'db', component: DataBase, },
 
       {path: 'roles/:id', component: Roles, },
 
