@@ -39,14 +39,14 @@
                 Todos
             </button>
         </div>
-
         <div class="indicator mr-2">
-            <span class="indicator-item badge badge-sm badge-accent">{{ hojaRutaResourceCount.value()?.totalEnviado }}</span>
-            <button type="button" class="btn btn-info btn-xs" (click)="searchFormHR.get('estado')?.setValue('ENVIADO')">
-                Enviados
-            </button>
+            <span class="indicator-item badge badge-sm badge-secondary">{{ hojaRutaResourceCount.value()?.totalRegistrado
+                }}</span>
+            <button type="radio" class="btn btn-info btn-xs"
+                (click)="searchFormHR.get('estado')?.setValue('REGISTRADO')">Registrados</button>
         </div>
 
+        
         <div class="indicator mr-2">
             <span class="indicator-item badge badge-sm badge-success">{{ hojaRutaResourceCount.value()?.totalRecibido
                 }}</span>
@@ -56,10 +56,16 @@
             </button>
         </div>
         <div class="indicator mr-2">
-            <span class="indicator-item badge badge-sm badge-secondary">{{ hojaRutaResourceCount.value()?.totalRegistrado
-                }}</span>
-            <button type="radio" class="btn btn-info btn-xs"
-                (click)="searchFormHR.get('estado')?.setValue('REGISTRADO')">Registrados</button>
+            <span class="indicator-item badge badge-sm badge-accent">{{ hojaRutaResourceCount.value()?.totalEnviado }}</span>
+            <button type="button" class="btn btn-info btn-xs" (click)="searchFormHR.get('estado')?.setValue('ENVIADO')">
+                Enviados
+            </button>
+        </div>
+        <div class="indicator mr-2">
+            <span class="indicator-item badge badge-sm badge-primary">{{ hojaRutaResourceCount.value()?.totalFinalizado}}</span>
+            <button type="button" class="btn btn-info btn-xs" (click)="searchFormHR.get('estado')?.setValue('FINALIZADO')">
+                Finalizados
+            </button>
         </div>
         <div class="indicator ">
             <span class="indicator-item badge badge-sm badge-error">{{ hojaRutaResourceCount.value()?.totalAnulado }}</span>

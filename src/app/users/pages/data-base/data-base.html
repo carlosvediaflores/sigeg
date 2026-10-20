@@ -1,6 +1,8 @@
-
 <div class="p-6 space-y-5">
-  <div class="flex items-center justify-between">
+
+
+
+  <div class="flex items-center justify-between gap-4">
     <div>
       <h1 class="text-2xl font-bold">Backups de SIGEG</h1>
       <p class="text-sm text-gray-500">
@@ -8,82 +10,161 @@
       </p>
     </div>
 
-    <button
-      class="btn btn-primary"
-      (click)="listar()"
-      [disabled]="cargando()">
-      Actualizar
-    </button>
+    <div class="flex items-center gap-2">
+      <button class="btn btn-success" (click)="crearBackupManual()" [disabled]="creandoBackup() || restaurando()">
+        @if (creandoBackup()) {
+        Creando backup...
+        } @else {
+        Crear backup
+        }
+      </button>
 
+      <button class="btn btn-error" (click)="abrirModalRestaurar()" [disabled]="creandoBackup()">
+        Restaurar backup
+      </button>
+
+      <button class="btn btn-primary" (click)="listar()" [disabled]="cargando() || creandoBackup()">
+        Actualizar
+      </button>
+    </div>
   </div>
 
+
   @if (error()) {
-    <div class="alert alert-error">
-      {{ error() }}
-    </div>
+  <div class="alert alert-error">
+    {{ error() }}
+  </div>
   }
 
   @if (cargando()) {
-    <p>Cargando respaldos...</p>
+  <p>Cargando respaldos...</p>
   } @else {
-    <div class="overflow-x-auto rounded-xl border border-base-300">
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Archivo</th>
-            <th>Fecha</th>
-            <th>Tamaño</th>
-            <th>Acción</th>
-          </tr>
-        </thead>
+  <div class="overflow-x-auto rounded-xl border border-base-300">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Archivo</th>
+          <th>Fecha</th>
+          <th>Tamaño</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
 
-        <tbody>
-          @for (backup of backups(); track backup.nombre) {
-            <tr>
-              <td>
-                <div class="flex items-center gap-2">
-                  <span class="icon">📦</span>
-                  <span class="font-medium">
-                    {{ backup.nombre }}
-                  </span>
-                </div>
-              </td>
+      <tbody>
+        @for (backup of backups(); track backup.nombre) {
+        <tr>
+          <td>
+            <div class="flex items-center gap-2">
+              <span class="icon">📦</span>
+              <span class="font-medium">
+                {{ backup.nombre }}
+              </span>
+            </div>
+          </td>
 
-              <td>
-                {{ backup.fecha | date:'dd/MM/yyyy HH:mm:ss' }}
-              </td>
+          <td>
+            {{ backup.fecha | date:'dd/MM/yyyy HH:mm:ss' }}
+          </td>
 
-              <td>{{ tamano(backup.tamano) }}</td>
+          <td>{{ tamano(backup.tamano) }}</td>
 
-              <td>
-                <button
-                  class="btn btn-sm btn-outline btn-primary"
-                  (click)="descargar(backup)"
-                  [disabled]="descargando() !== null">
-                  @if (descargando() === backup.nombre) {
-                    Descargando...
-                  } @else {
-                    Descargar
-                  }
-                </button>
-                <button
-                  class="btn btn-sm btn-error ml-2"
-                  (click)="restaurar(backup)"
-                  [disabled]="descargando() !== null">
-                  Restaurar
-                </button>
-              </td>
-            </tr>
-          } @empty {
-            <tr>
-              <td colspan="4" class="text-center py-8">
-                No hay respaldos disponibles.
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+          <td>
+            <button class="btn btn-sm btn-outline btn-primary" (click)="descargar(backup)"
+              [disabled]="descargando() !== null">
+              @if (descargando() === backup.nombre) {
+              Descargando...
+              } @else {
+              Descargar
+              }
+            </button>
+            <button class="btn btn-sm btn-error ml-2" (click)="restaurar(backup)" [disabled]="descargando() !== null">
+              Restaurar
+            </button>
+          </td>
+        </tr>
+        } @empty {
+        <tr>
+          <td colspan="4" class="text-center py-8">
+            No hay respaldos disponibles.
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
   }
 </div>
 
+
+@if (modalRestaurar()) {
+<div class="fixed inset-0 z-50 flex items-center justify-center
+           bg-black/60 p-4" (click)="cerrarModalRestaurar()">
+
+  <div class="w-full max-w-lg rounded-2xl border
+             border-base-300 bg-base-100 p-6 shadow-2xl" (click)="$event.stopPropagation()">
+
+    <div class="mb-5 flex items-start justify-between">
+      <div>
+        <h2 class="text-xl font-bold">
+          Restaurar backup de SIGEG
+        </h2>
+        <p class="mt-1 text-sm text-base-content/60">
+          Selecciona un archivo desde tu computadora.
+        </p>
+      </div>
+
+      <button type="button" class="btn btn-sm btn-circle btn-ghost" (click)="cerrarModalRestaurar()"
+        [disabled]="restaurando()">
+        ✕
+      </button>
+    </div>
+
+    <label class="mb-2 block text-sm font-semibold">
+      Archivo de respaldo
+    </label>
+
+    <input #archivoInput type="file" accept=".gz,.archive.gz,application/gzip,application/x-gzip"
+      class="file-input file-input-bordered w-full" [disabled]="restaurando()" (change)="seleccionarArchivo($event)" />
+
+    @if (archivoSeleccionado()) {
+    <div class="mt-3 rounded-lg border border-base-300 p-3">
+      <p class="break-all text-sm font-medium">
+        {{ archivoSeleccionado()!.name }}
+      </p>
+      <p class="mt-1 text-xs text-base-content/60">
+        {{ tamano(archivoSeleccionado()!.size) }}
+      </p>
+    </div>
+    }
+
+    <div class="alert alert-warning mt-5 items-start text-sm">
+      <span>
+        La restauración puede modificar los datos actuales.
+        Asegúrate de seleccionar un backup válido y reciente.
+      </span>
+    </div>
+
+    @if (error()) {
+    <div class="alert alert-error mt-3">
+      {{ error() }}
+    </div>
+    }
+
+    <div class="mt-6 flex justify-end gap-2">
+      <button class="btn btn-ghost" (click)="cerrarModalRestaurar()" [disabled]="restaurando()">
+        Cancelar
+      </button>
+
+      <button class="btn btn-error" (click)="restaurarArchivoLocal()"
+        [disabled]="!archivoSeleccionado() || restaurando()">
+        @if (restaurando()) {
+        Restaurando...
+        } @else {
+        Restaurar sistema
+        }
+      </button>
+    </div>
+
+  </div>
+</div>
+}

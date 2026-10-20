@@ -57,10 +57,35 @@ export class DbService {
   }
 
   restaurar(nombre: string): Observable<{ mensaje: string }> {
-  return this.http.post<{ mensaje: string }>(
-    `${this.apiUrl}/${encodeURIComponent(nombre)}/restaurar`,
-    {},
-  );
-}
- 
+    return this.http.post<{ mensaje: string }>(
+      `${this.apiUrl}/${encodeURIComponent(nombre)}/restaurar`,
+      {},
+    );
+  }
+
+
+  restaurarArchivoLocal(
+    archivo: File,
+  ): Observable<{ mensaje: string }> {
+    const formData = new FormData();
+    formData.append('archivo', archivo);
+
+    return this.http.post<{ mensaje: string }>(
+      `${this.apiUrl}/restaurar-archivo`,
+      formData,
+    );
+  }
+
+
+  crearBackupManual(): Observable<{
+    mensaje: string;
+    archivo: string;
+  }> {
+    return this.http.post<{
+      mensaje: string;
+      archivo: string;
+    }>(`${this.apiUrl}/crear`, {});
+  }
+
+
 }
