@@ -89,19 +89,21 @@
             Buscar normativa
 
         </h2>
-
-
-
-       
-
-
     </div>
 
-     <div class="flex gap-2 items-center p-0 m-0" [formGroup]="searchFormGaceta">
 
-       
-        <label class="floating-label">
-            <select formControlName="gestion" class="select select-bordered w-20">
+    <div class="flex flex-wrap gap-2 items-center p-0 m-0" [formGroup]="searchFormGaceta">
+
+         <label class="floating-label">
+            <select class="select select-bordered w-20 " #selectPerPage>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+            <span>Mostrar</span>
+        </label>
+        <label class="floating-label w-32">
+            <select formControlName="gestion" class="select select-bordered w-full">
                 <option value="2026">2026</option>
                 <option value="2027">2027</option>
                 <option value="2028">2028</option>
@@ -111,9 +113,9 @@
             </select>
             <span>Gestión</span>
         </label>
-        <div class="flex flex-1"></div>
 
-        <div class="my-3">
+
+         <div class="my-3">
             <label class="floating-label">
                 <select class="select select-bordered w-full " formControlName="tipo">
                     <option value="" disabled>
@@ -130,19 +132,48 @@
             </label>
         </div>
 
-        <label class="floating-label w-50">
-            <input type="text" placeholder="Búsqueda General" class="input select-xs sm:input-sm md:input-md "
-                formControlName="termino" />
+
+        <label class="floating-label flex-1 min-w-48">
+            <input type="text" placeholder="Búsqueda General" class="input input-bordered w-full"
+                formControlName="termino" (keydown.enter)="buscarTramite()" />
+
             <span>Búsqueda General</span>
         </label>
-        <button type="button" class="btn btn-info btn-sm"
-            (click)="searchFormGaceta.reset({ termino: '', tipo: '', isActive: true, isPublic: true, gestion: year })">
+
+        <!-- Botón limpiar -->
+        <button class="btn btn-info btn-sm p-1 w-full sm:w-auto" (click)="limpiarBusqueda()">
+
             Limpiar
+
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 text-error">
+
+                <path fill-rule="evenodd"
+                    d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14Zm2.78-4.22a.75.75 0 0 1-1.06 0L8 9.06l-1.72 1.72a.75.75 0 1 1-1.06-1.06L6.94 8 5.22 6.28a.75.75 0 1 1 1.06-1.06L8 6.94l1.72-1.72a.75.75 0 1 1 1.06 1.06L9.06 8l1.72 1.72a.75.75 0 0 1 0 1.06Z"
+                    clip-rule="evenodd" />
+            </svg>
+
         </button>
 
-        
-    </div>
 
+        <!-- Botón buscar -->
+        <button type="button" class="btn btn-info text-cyan-50 btn-sm p-1 w-full sm:w-auto disabled:opacity-50"
+            [disabled]="!puedeBuscar()" (click)="buscarTramite()">
+
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 text-success">
+
+                <path d="M5.94 8.06a1.5 1.5 0 1 1 2.12-2.12 1.5 1.5 0 0 1-2.12 2.12Z" />
+
+                <path fill-rule="evenodd"
+                    d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14ZM4.879 4.879a3 3 0 0 0 3.645 4.706L9.72 10.78a.75.75 0 0 0 1.061-1.06L9.585 8.524A3.001 3.001 0 0 0 4.879 4.88Z"
+                    clip-rule="evenodd" />
+
+            </svg>
+
+            Buscar
+
+        </button>
+
+    </div>
 
 
 
@@ -444,10 +475,10 @@
 
         </article>
 
-
         }
 
 
+        <app-pagination [pages]="gacetaResource.value()?.pages ?? 0" [currentPage]="currentPage()" />
 
 
 

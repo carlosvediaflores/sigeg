@@ -8,46 +8,48 @@ import { GacetaService } from '../../../modules/gacetaAdmin/services/gaceta.serv
 import { DatePipe } from '@angular/common';
 import { GacetaSimple } from '../../../modules/gacetaAdmin/interfaces/gaceta.interface';
 import { environment } from '../../../../environments/environment';
+import { Pagination } from '@shared/components/pagination/pagination';
 
 const baseUrl = environment.baseUrl;
 @Component({
-    selector: 'app-gaceta',
-    imports: [ReactiveFormsModule, DatePipe],
-    templateUrl: './gaceta.html',
-    styleUrls: ['./gaceta.css'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'app-gaceta',
+  imports: [ReactiveFormsModule, DatePipe, Pagination],
+  templateUrl: './gaceta.html',
+  styleUrls: ['./gaceta.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Gaceta {
 
-     errorMessage = signal('');
+  errorMessage = signal('');
   wasError = signal(false);
-    gacetaService = inject(GacetaService);
-    
-    route = inject(ActivatedRoute);
-    fb = inject(FormBuilder);
-    currentPage = toSignal(
-        this.route.queryParamMap.pipe(
+  cargando = signal(false);
+  gacetaService = inject(GacetaService);
 
-            map((params) =>
-                params.get('page')
-                    ? +params.get('page')!
-                    : 1
-            ),
+  route = inject(ActivatedRoute);
+  fb = inject(FormBuilder);
+  currentPage = toSignal(
+    this.route.queryParamMap.pipe(
 
-            map((page) =>
-                isNaN(page)
-                    ? 1
-                    : page
-            )
-        ),
-        {
-            initialValue: 1,
-        }
-    );
+      map((params) =>
+        params.get('page')
+          ? +params.get('page')!
+          : 1
+      ),
 
-    year = new Date().getFullYear();
+      map((page) =>
+        isNaN(page)
+          ? 1
+          : page
+      )
+    ),
+    {
+      initialValue: 1,
+    }
+  );
 
-    searchFormGaceta = this.fb.group({
+  year = new Date().getFullYear();
+
+  searchFormGaceta = this.fb.group({
     gestion: [this.year],
     termino: [''],
     isActive: [true],
@@ -56,40 +58,40 @@ export class Gaceta {
   });
 
   searchFormGaceta$ = this.searchFormGaceta.valueChanges.pipe(
-        debounceTime(300),
-        startWith(this.searchFormGaceta.getRawValue())
-      );
+    debounceTime(300),
+    startWith(this.searchFormGaceta.getRawValue())
+  );
 
-    gacetaPerPage = signal(20);
-    currentPage$ = toObservable(this.currentPage);
+  gacetaPerPage = signal(20);
+  currentPage$ = toObservable(this.currentPage);
 
-    gacetaPerPage$ = toObservable(this.gacetaPerPage);
+  gacetaPerPage$ = toObservable(this.gacetaPerPage);
 
 
 
-    gacetaResource = rxResource({
-        stream: () =>
-            combineLatest([
-                this.currentPage$,
-                this.gacetaPerPage$,
-                this.searchFormGaceta$,
-            ]).pipe(
+  gacetaResource = rxResource({
+    stream: () =>
+      combineLatest([
+        this.currentPage$,
+        this.gacetaPerPage$,
+        this.searchFormGaceta$,
+      ]).pipe(
 
-                switchMap(([page, limit, filters]) => {
-                    return this.gacetaService.getGacetas({
-                        offset: (page - 1) * limit,
-                        limit,
-                        ...filters,
-                    });
-                })  
-            )
-    });
+        switchMap(([page, limit, filters]) => {
+          return this.gacetaService.getGacetas({
+            offset: (page - 1) * limit,
+            limit,
+            ...filters,
+          });
+        })
+      )
+  });
 
-     tipoGacetaResource = rxResource({
+  tipoGacetaResource = rxResource({
     stream: () => this.gacetaService.gettipoGaceta(),
   });
 
-   formatFileSize(size?: number): string {
+  formatFileSize(size?: number): string {
     if (!size) return '0 KB';
 
     if (size < 1024) {
@@ -104,25 +106,112 @@ export class Gaceta {
   }
 
   openGacetaPdf(gaceta: GacetaSimple) {
-  
-      if (!gaceta.archivo) {
-        this.errorMessage.set(
-          'Esta gaceta no tiene un documento PDF'
-        );
-  
-        this.wasError.set(true);
-  
-        setTimeout(() => {
-          this.wasError.set(false);
-        }, 4000);
-  
-        return;
-      }
-  
-      const url =
-        `${baseUrl}/gaceta/archivo/${encodeURIComponent(gaceta.archivo)}`;
-  
-      window.open(url, '_blank');
-  
+
+    if (!gaceta.archivo) {
+      this.errorMessage.set(
+        'Esta gaceta no tiene un documento PDF'
+      );
+
+      this.wasError.set(true);
+
+      setTimeout(() => {
+        this.wasError.set(false);
+      }, 4000);
+
+      return;
     }
+
+    const url =
+      `${baseUrl}/gaceta/archivo/${encodeURIComponent(gaceta.archivo)}`;
+
+    window.open(url, '_blank');
+
+  }
+
+  buscarTramite() {
+
+    const values = this.searchFormGaceta.value;
+
+
+    const params = {
+
+      limit: this.gacetaPerPage(),
+
+      offset:
+        (this.currentPage() - 1)
+        *
+        this.gacetaPerPage(),
+
+
+      gestion:
+        Number(values.gestion),
+
+
+      ...(values.tipo && {
+        numero:
+          Number(values.tipo)
+      }),
+
+
+      ...(values.termino?.trim() && {
+        termino:
+          values.termino.trim()
+      })
+
+    };
+
+
+    console.log('PARAMS BUSQUEDA', params);
+
+
+    this.cargando.set(true);
+
+
+    this.gacetaService
+      .getGacetas(params)
+
+      .subscribe({
+
+        next: (data) => {
+
+
+          console.log('RESPUESTA GACETA', data);
+          this.gacetaResource
+            .set(data);
+          this.cargando
+            .set(false);
+        },
+        error: (err) => {
+          console.error(
+            'ERROR BUSCAR GACETA',
+            err
+          );
+          this.gacetaResource
+            .set(undefined);
+          this.cargando
+            .set(false);
+
+
+        }
+
+
+      });
+  }
+
+   limpiarBusqueda() {
+  this.searchFormGaceta.reset({
+    termino: '',
+    tipo: '',
+    gestion: this.year
+  });
+  }
+
+   puedeBuscar(): boolean {
+    const { tipo, termino } = this.searchFormGaceta.value;
+
+    return !!(
+      tipo ||
+      termino?.trim()
+    );
+  }
 }
