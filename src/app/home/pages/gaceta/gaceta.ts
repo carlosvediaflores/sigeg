@@ -62,7 +62,7 @@ export class Gaceta {
     startWith(this.searchFormGaceta.getRawValue())
   );
 
-  gacetaPerPage = signal(20);
+  gacetaPerPage = signal(5);
   currentPage$ = toObservable(this.currentPage);
 
   gacetaPerPage$ = toObservable(this.gacetaPerPage);

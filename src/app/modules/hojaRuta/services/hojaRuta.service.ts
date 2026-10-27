@@ -28,7 +28,7 @@ export class HojaRutaService {
   }
 
   getHojaRutas(options: Options): Observable<HojaRutaResponse> {
-    console.log('optionsHR', options)
+    console.log('optionsHR4', options)
     const params = Object.fromEntries(
       Object.entries(options).filter(([_, value]) =>
         value !== null && value !== undefined && value !== ''
@@ -119,6 +119,15 @@ export class HojaRutaService {
     });
   }
 
+
+  printHojaRutaQuery(filtros: any) {
+    return this.http.get(`${baseUrl}/printHR/query`, {
+      responseType: 'blob',
+      params: filtros
+    });
+  }
+
+
   printAsociados(id: string) {
 
     return this.http.get(
@@ -140,8 +149,8 @@ export class HojaRutaService {
   }
 
   desasociarHojaRuta(idHojaRuta: string) {
-  return this.http.delete(
-    `${baseUrl}/hojarutas/${idHojaRuta}/desasociar`
-  );
-}
+    return this.http.delete(
+      `${baseUrl}/hojarutas/${idHojaRuta}/desasociar`
+    );
+  }
 }

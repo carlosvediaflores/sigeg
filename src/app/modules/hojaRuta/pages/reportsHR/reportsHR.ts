@@ -598,4 +598,64 @@ export class ReportsHR {
       this.pdfAsociadosBlobUrl = null;
     }
   }
+
+
+
+  printHojaRutaQuery(): void {
+    const values = this.searchFormHR.getRawValue();
+
+    const filtros = Object.fromEntries(
+      Object.entries({
+        gestion: values.gestion,
+        numero: values.numero,
+        termino: values.termino?.trim(),
+      }).filter(
+        ([, value]) =>
+          value !== null &&
+          value !== undefined &&
+          value !== ''
+      )
+    );
+
+    console.log('Filtros para PDF:', filtros);
+
+    this.hojaRutaService
+      .printHojaRutaQuery(filtros)
+      .subscribe({
+        next: (blob: Blob) => {
+          if (!blob || blob.size === 0) {
+            Swal.fire(
+              'Atención',
+              'El servidor generó un PDF vacío.',
+              'warning'
+            );
+            return;
+          }
+
+          const url = URL.createObjectURL(blob);
+          const ventana = window.open(url, '_blank');
+
+          if (!ventana) {
+            Swal.fire(
+              'Aviso',
+              'El navegador bloqueó la ventana del PDF. Permite las ventanas emergentes e inténtalo nuevamente.',
+              'info'
+            );
+          }
+
+          setTimeout(() => URL.revokeObjectURL(url), 60000);
+        },
+        error: (error) => {
+          console.error('Error al generar el PDF:', error);
+
+          Swal.fire(
+            'Error',
+            'No se pudo generar el reporte de hojas de ruta.',
+            'error'
+          );
+        },
+      });
+  }
+
+
 }
